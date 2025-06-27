@@ -9,15 +9,19 @@
     }
   },
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
   "dependencies": {
     "@parcel/rsc": "^2.14.3",
+    "@tailwindcss/postcss": "^4.1.11",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
+    "@parcel/packager-react-static": "^2.15.4",
+    "@parcel/transformer-react-static": "^2.15.4",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "parcel": "^2.14.0"
