@@ -23,6 +23,10 @@ const ElementEditor = ({
 
   const editor = element_definition?.editor;
 
+  if (!editor) {
+    return <div>No editor found</div>;
+  }
+
   if (typeof editor === "string") {
     return <div>{editor}</div>;
   }
