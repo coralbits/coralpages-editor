@@ -1,6 +1,7 @@
 import { ElementData, ElementDefinition } from "../types";
 import useElementDefinitions from "./element_definitions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { PageHooks } from "./page";
 
 export interface EditorHooks {
   selectedElement: ElementData | undefined;
@@ -12,7 +13,7 @@ export interface EditorHooks {
   setWidth: (width: number) => void;
 }
 
-const useEditor = (api_url: string): EditorHooks => {
+export const useEditor = (api_url: string): EditorHooks => {
   const [selectedElement, setSelectedElement] = useState<
     ElementData | undefined
   >();
@@ -31,4 +32,22 @@ const useEditor = (api_url: string): EditorHooks => {
   };
 };
 
-export default useEditor;
+export const useElementDefinition = (editor_hooks: EditorHooks) => {
+  const [element_definition, setElementDefinition] = useState<
+    ElementDefinition | undefined
+  >(undefined);
+
+  const element = editor_hooks.selectedElement;
+
+  if (!element) {
+    return undefined;
+  }
+
+  useEffect(() => {
+    const definition = editor_hooks.elementDefinitions.find(
+      (definition) => definition.name === element?.type
+    );
+    setElementDefinition(definition);
+  }, [element, editor_hooks.elementDefinitions]);
+  return element_definition;
+};

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getIcon } from "../hooks/faicon_setup";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
+import ElementStyleEditor from "./ElementStyleEditor";
 
 interface SideBarLeftProps {
   page_hooks: PageHooks;
@@ -35,10 +36,11 @@ const SideBarLeft = (props: SideBarLeftProps) => {
         </button>
         <button
           className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.editor_hooks.selectedTab === "edit" ? "bg-purple-500" : ""
+            props.editor_hooks.selectedTab === "style" ? "bg-purple-500" : ""
           }`}
+          onClick={() => props.editor_hooks.setSelectedTab("style")}
         >
-          <FontAwesomeIcon icon={getIcon("bars")} />
+          <FontAwesomeIcon icon={getIcon("css")} />
         </button>
       </div>
       {props.editor_hooks.selectedTab === "edit" &&
@@ -50,6 +52,12 @@ const SideBarLeft = (props: SideBarLeftProps) => {
         )}
       {props.editor_hooks.selectedTab === "add" && (
         <ElementSelector
+          page_hooks={props.page_hooks}
+          editor_hooks={props.editor_hooks}
+        />
+      )}
+      {props.editor_hooks.selectedTab === "style" && (
+        <ElementStyleEditor
           page_hooks={props.page_hooks}
           editor_hooks={props.editor_hooks}
         />

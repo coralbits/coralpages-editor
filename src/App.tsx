@@ -5,7 +5,7 @@ import MainContent from "./components/MainContent";
 import SideBarRight from "./components/SideBarRight";
 import BottomBar from "./components/BottomBar";
 import usePage from "./hooks/page";
-import useEditor from "./hooks/editor";
+import { useEditor } from "./hooks/editor";
 
 interface AppProps {
   api_url: string;

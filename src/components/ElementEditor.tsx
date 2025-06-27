@@ -35,8 +35,13 @@ const ElementEditor = ({
     if (!page_hooks) {
       return;
     }
-    const new_element = { ...editor_hooks.selectedElement };
-    new_element.data[field.name] = value;
+    const new_element = {
+      ...editor_hooks.selectedElement,
+      data: {
+        ...editor_hooks.selectedElement?.data,
+        [field.name]: value,
+      },
+    };
     page_hooks.onChangeElement(new_element as ElementData);
   };
 

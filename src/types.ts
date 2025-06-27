@@ -9,6 +9,7 @@ export interface ElementData {
   id?: string;
   type: string;
   data?: any;
+  style?: Record<string, string>;
   children?: ElementData[];
 }
 
