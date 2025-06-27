@@ -25,7 +25,7 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
     <div className="flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center">
       <div
         style={{ width: editor_hooks.width }}
-        className="bg-white p-4 text-black overflow-auto"
+        className="overflow-auto bg-white text-black"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>
