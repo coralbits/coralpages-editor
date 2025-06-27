@@ -11,3 +11,10 @@ export interface PageData {
   data?: any;
   children?: PageData[];
 }
+
+export interface ElementDefinition {
+  name: string;
+  store: string;
+  data: Record<string, any>;
+  style: Record<string, any>;
+}
