@@ -31,10 +31,10 @@ const DocumentLayout = ({
   editor_hooks: EditorHooks;
 }) => {
   return (
-    <div className="flex flex-col pl-8">
+    <div className="flex flex-col pl-8 overflow-y-auto">
       {children.map((child, idx) =>
         child.children ? (
-          <details open={true} key={child.id || idx}>
+          <details open={true} key={child.id || idx} className="">
             <summary>
               <DocumentItem child={child} editor_hooks={editor_hooks} />
             </summary>
@@ -66,7 +66,7 @@ const DocumentItem = ({
 
   return (
     <button
-      className={`w-full text-left cursor-pointer hover:bg-purple-500 active:bg-purple-400 transition-colors ${
+      className={`inline-blockw-full text-left cursor-pointer hover:bg-purple-500 active:bg-purple-400 transition-colors ${
         is_selected ? "bg-purple-500" : ""
       }`}
       onClick={() => {

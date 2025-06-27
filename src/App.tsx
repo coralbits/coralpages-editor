@@ -9,10 +9,11 @@ import useEditor from "./hooks/editor";
 
 interface AppProps {
   api_url: string;
+  page_name: string;
 }
 
-const App = ({ api_url }: AppProps) => {
-  const page_hooks = usePage();
+const App = ({ api_url, page_name }: AppProps) => {
+  const page_hooks = usePage(api_url, page_name);
   const editor_hooks = useEditor(api_url);
 
   if (!page_hooks?.page || !editor_hooks.elementDefinitions) {

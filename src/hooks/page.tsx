@@ -9,7 +9,7 @@ export interface PageHooks {
   setPage: (page: Page) => void;
 }
 
-const usePage = (): PageHooks => {
+const usePage = (api_url: string, page_name: string): PageHooks => {
   const [page, setPage] = useState<Page | undefined>(undefined);
 
   const onChangeElement = (element: ElementData) => {
@@ -41,8 +41,10 @@ const usePage = (): PageHooks => {
   };
 
   useEffect(() => {
-    setPage(page_json as Page);
-  }, []);
+    fetch(`${api_url}/api/v1/page/${page_name}/json`)
+      .then((res) => res.json())
+      .then((page) => setPage(page as Page));
+  }, [page_name]);
 
   return {
     page,

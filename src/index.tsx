@@ -11,4 +11,7 @@ config.autoAddCss = false;
 const apiUrl = "http://localhost:8000";
 
 const root = createRoot(document.getElementById("root")!);
-root.render(<App api_url={apiUrl} />);
+// page name from hash
+const page_name = window.location.hash.slice(1) || "index";
+
+root.render(<App api_url={apiUrl} page_name={page_name} />);
