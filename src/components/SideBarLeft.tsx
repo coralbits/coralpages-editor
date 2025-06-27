@@ -1,15 +1,21 @@
-import { Page, ElementData, ElementDefinition } from "../types";
+import { ElementData, ElementDefinition } from "../types";
 import ElementEditor from "./ElementEditor";
 import ElementSelector from "./ElementSelector";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getIcon } from "../hooks/faicon_setup";
+import { PageHooks } from "../hooks/page";
+
+interface EditorHooks {
+  selectedElement: ElementData | undefined;
+  setSelectedElement: (element: ElementData) => void;
+  elementDefinitions: ElementDefinition[];
+  selectedTab: "add" | "edit";
+  setSelectedTab: (tab: "add" | "edit") => void;
+}
 
 interface SideBarLeftProps {
-  page: Page;
-  element?: ElementData;
-  elementDefinitions: ElementDefinition[];
-  selected_tab?: "add" | "edit";
-  setSelectedTab?: (tab: "add" | "edit") => void;
+  page_hooks: PageHooks;
+  editor_hooks: EditorHooks;
 }
 
 const SideBarLeft = (props: SideBarLeftProps) => {
@@ -18,37 +24,40 @@ const SideBarLeft = (props: SideBarLeftProps) => {
       <div className="flex flex-row bg-purple-200 h-16">
         <button
           className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.selected_tab === "add" ? "bg-purple-500" : ""
+            props.editor_hooks.selectedTab === "add" ? "bg-purple-500" : ""
           }`}
-          onClick={() => props.setSelectedTab?.("add")}
+          onClick={() => props.editor_hooks.setSelectedTab("add")}
         >
           <FontAwesomeIcon icon={getIcon("plus")} />
         </button>
         <button
           className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.selected_tab === "edit" ? "bg-purple-500" : ""
+            props.editor_hooks.selectedTab === "edit" ? "bg-purple-500" : ""
           }`}
-          onClick={() => props.setSelectedTab?.("edit")}
+          onClick={() => props.editor_hooks.setSelectedTab("edit")}
         >
-          {props.element ? props.element.type : "No element selected"}
+          {props.editor_hooks.selectedElement
+            ? props.editor_hooks.selectedElement.type
+            : "No element selected"}
         </button>
         <button
           className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.selected_tab === "edit" ? "bg-purple-500" : ""
+            props.editor_hooks.selectedTab === "edit" ? "bg-purple-500" : ""
           }`}
         >
           <FontAwesomeIcon icon={getIcon("bars")} />
         </button>
       </div>
-      {props.selected_tab === "edit" && props.element && (
-        <ElementEditor
-          element={props.element}
-          elementDefinitions={props.elementDefinitions}
-        />
-      )}
-      {props.selected_tab === "add" && (
+      {props.editor_hooks.selectedTab === "edit" &&
+        props.editor_hooks.selectedElement && (
+          <ElementEditor
+            editor_hooks={props.editor_hooks}
+            page_hooks={props.page_hooks}
+          />
+        )}
+      {props.editor_hooks.selectedTab === "add" && (
         <ElementSelector
-          elementDefinitions={props.elementDefinitions}
+          elementDefinitions={props.editor_hooks.elementDefinitions}
           // onSelect={setSelectedElement}
         />
       )}

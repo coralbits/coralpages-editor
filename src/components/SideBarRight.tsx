@@ -1,24 +1,23 @@
-import { useState } from "react";
-import { Page, ElementData } from "../types";
+import { ElementData } from "../types";
+import { PageHooks } from "../hooks/page";
+import { EditorHooks } from "../hooks/editor";
 
 interface SideBarRightProps {
-  page: Page;
-  setSelectedElement: (element: ElementData) => void;
-  selectedElement?: ElementData;
+  page_hooks: PageHooks;
+  editor_hooks: EditorHooks;
 }
 
-const SideBarRight = ({
-  page,
-  setSelectedElement,
-  selectedElement,
-}: SideBarRightProps) => {
+const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
+  if (!page_hooks.page) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col bg-purple-200 min-w-[400px]">
-      <div className="flex flex-col">{page.title}</div>
+      <div className="flex flex-col">{page_hooks.page.title}</div>
       <DocumentLayout
-        children={page.data}
-        setSelectedElement={setSelectedElement}
-        selectedElement={selectedElement}
+        children={page_hooks.page.data}
+        editor_hooks={editor_hooks}
       />
     </div>
   );
@@ -26,12 +25,10 @@ const SideBarRight = ({
 
 const DocumentLayout = ({
   children,
-  setSelectedElement,
-  selectedElement,
+  editor_hooks,
 }: {
   children: ElementData[];
-  setSelectedElement: (element: ElementData) => void;
-  selectedElement?: ElementData;
+  editor_hooks: EditorHooks;
 }) => {
   return (
     <div className="flex flex-col pl-8">
@@ -39,25 +36,16 @@ const DocumentLayout = ({
         child.children ? (
           <details open={true} key={child.id || idx}>
             <summary>
-              <DocumentItem
-                child={child}
-                setSelectedElement={setSelectedElement}
-                selectedElement={selectedElement}
-              />
+              <DocumentItem child={child} editor_hooks={editor_hooks} />
             </summary>
             <DocumentLayout
               children={child.children}
-              setSelectedElement={setSelectedElement}
-              selectedElement={selectedElement}
+              editor_hooks={editor_hooks}
             />
           </details>
         ) : (
           <div key={child.id || idx}>
-            <DocumentItem
-              child={child}
-              setSelectedElement={setSelectedElement}
-              selectedElement={selectedElement}
-            />
+            <DocumentItem child={child} editor_hooks={editor_hooks} />
           </div>
         )
       )}
@@ -67,23 +55,33 @@ const DocumentLayout = ({
 
 const DocumentItem = ({
   child,
-  setSelectedElement,
-  selectedElement,
+  editor_hooks,
 }: {
   child: ElementData;
-  setSelectedElement: (element: ElementData) => void;
-  selectedElement?: ElementData;
+  editor_hooks: EditorHooks;
 }) => {
-  const is_selected = selectedElement && child.id === selectedElement.id;
+  const is_selected =
+    editor_hooks.selectedElement &&
+    child.id === editor_hooks.selectedElement.id;
 
   return (
     <button
       className={`w-full text-left cursor-pointer hover:bg-purple-500 active:bg-purple-400 transition-colors ${
         is_selected ? "bg-purple-500" : ""
       }`}
-      onClick={() => setSelectedElement(child)}
+      onClick={() => {
+        editor_hooks.setSelectedElement(child);
+        editor_hooks.setSelectedTab("edit");
+      }}
     >
       {child.type}
+      <span
+        className={`text-xs text-gray-500 pl-2 truncate hover:text-white ${
+          is_selected ? "text-white" : ""
+        }`}
+      >
+        {child.data?.title || child.data?.text}
+      </span>
     </button>
   );
 };

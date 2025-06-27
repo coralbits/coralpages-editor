@@ -5,42 +5,27 @@ import MainContent from "./components/MainContent";
 import SideBarRight from "./components/SideBarRight";
 import BottomBar from "./components/BottomBar";
 import usePage from "./hooks/page";
-import { ElementData } from "./types";
-import useElementDefinitions from "./hooks/element_definitions";
+import useEditor from "./hooks/editor";
 
 interface AppProps {
   api_url: string;
 }
 
 const App = ({ api_url }: AppProps) => {
-  const [page] = usePage();
-  const [selectedElement, setSelectedElement] = useState<
-    ElementData | undefined
-  >();
-  const [elementDefinitions] = useElementDefinitions(api_url);
-  const [selectedTab, setSelectedTab] = useState<"add" | "edit">("add");
+  const page_hooks = usePage();
+  const editor_hooks = useEditor(api_url);
 
-  if (!page || !elementDefinitions) {
+  if (!page_hooks?.page || !editor_hooks.elementDefinitions) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <TopBar page={page} />
-      <div className="flex flex-row flex-1">
-        <SideBarLeft
-          page={page}
-          element={selectedElement}
-          elementDefinitions={elementDefinitions}
-          selected_tab={selectedTab}
-          setSelectedTab={setSelectedTab}
-        />
-        <MainContent page={page} />
-        <SideBarRight
-          page={page}
-          setSelectedElement={setSelectedElement}
-          selectedElement={selectedElement}
-        />
+    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
+      <TopBar page_hooks={page_hooks} />
+      <div className="flex flex-row flex-1 overflow-hidden">
+        <SideBarLeft page_hooks={page_hooks} editor_hooks={editor_hooks} />
+        <MainContent page_hooks={page_hooks} editor_hooks={editor_hooks} />
+        <SideBarRight page_hooks={page_hooks} editor_hooks={editor_hooks} />
       </div>
       <BottomBar />
     </div>
