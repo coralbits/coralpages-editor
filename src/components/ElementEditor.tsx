@@ -72,7 +72,7 @@ const EditorFieldEditor = ({
           className="w-full p-2 border border-gray-800 rounded-md"
           placeholder={field.placeholder}
           name={field.name}
-          value={element.data?.[field.name]}
+          value={element.data?.[field.name] || ""}
           rows={10}
           onChange={(e) => onChange(field, e.target.value)}
         />
@@ -81,7 +81,7 @@ const EditorFieldEditor = ({
           type={field.type}
           placeholder={field.placeholder}
           name={field.name}
-          value={element.data?.[field.name]}
+          value={element.data?.[field.name] || ""}
           className="w-full p-2 border border-gray-800 rounded-md"
           onChange={(e) => onChange(field, e.target.value)}
         />

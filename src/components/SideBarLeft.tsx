@@ -4,14 +4,7 @@ import ElementSelector from "./ElementSelector";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getIcon } from "../hooks/faicon_setup";
 import { PageHooks } from "../hooks/page";
-
-interface EditorHooks {
-  selectedElement: ElementData | undefined;
-  setSelectedElement: (element: ElementData) => void;
-  elementDefinitions: ElementDefinition[];
-  selectedTab: "add" | "edit";
-  setSelectedTab: (tab: "add" | "edit") => void;
-}
+import { EditorHooks } from "../hooks/editor";
 
 interface SideBarLeftProps {
   page_hooks: PageHooks;
@@ -57,8 +50,8 @@ const SideBarLeft = (props: SideBarLeftProps) => {
         )}
       {props.editor_hooks.selectedTab === "add" && (
         <ElementSelector
-          elementDefinitions={props.editor_hooks.elementDefinitions}
-          // onSelect={setSelectedElement}
+          page_hooks={props.page_hooks}
+          editor_hooks={props.editor_hooks}
         />
       )}
     </div>
