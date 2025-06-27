@@ -2,14 +2,14 @@ export interface Page {
   id?: string;
   title: string;
   template?: string;
-  data: PageData[];
+  data: ElementData[];
 }
 
-export interface PageData {
+export interface ElementData {
   id?: string;
   type: string;
   data?: any;
-  children?: PageData[];
+  children?: ElementData[];
 }
 
 export interface ElementDefinition {
@@ -17,4 +17,13 @@ export interface ElementDefinition {
   store: string;
   data: Record<string, any>;
   style: Record<string, any>;
+  icon: string;
+  editor: EditorField[] | string;
+}
+
+export interface EditorField {
+  type: string;
+  label: string;
+  name: string;
+  placeholder: string;
 }

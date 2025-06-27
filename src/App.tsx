@@ -5,7 +5,7 @@ import MainContent from "./components/MainContent";
 import SideBarRight from "./components/SideBarRight";
 import BottomBar from "./components/BottomBar";
 import usePage from "./hooks/page";
-import { PageData } from "./types";
+import { ElementData } from "./types";
 import useElementDefinitions from "./hooks/element_definitions";
 
 interface AppProps {
@@ -15,12 +15,12 @@ interface AppProps {
 const App = ({ api_url }: AppProps) => {
   const [page] = usePage();
   const [selectedElement, setSelectedElement] = useState<
-    PageData | undefined
+    ElementData | undefined
   >();
   const [elementDefinitions] = useElementDefinitions(api_url);
   const [selectedTab, setSelectedTab] = useState<"add" | "edit">("add");
 
-  if (!page) {
+  if (!page || !elementDefinitions) {
     return <div>Loading...</div>;
   }
 
@@ -36,7 +36,11 @@ const App = ({ api_url }: AppProps) => {
           setSelectedTab={setSelectedTab}
         />
         <MainContent page={page} />
-        <SideBarRight page={page} setSelectedElement={setSelectedElement} />
+        <SideBarRight
+          page={page}
+          setSelectedElement={setSelectedElement}
+          selectedElement={selectedElement}
+        />
       </div>
       <BottomBar />
     </div>

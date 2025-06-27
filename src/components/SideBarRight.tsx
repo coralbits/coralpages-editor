@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { Page, PageData } from "../types";
+import { Page, ElementData } from "../types";
 
 interface SideBarRightProps {
   page: Page;
-  setSelectedElement: (element: PageData) => void;
+  setSelectedElement: (element: ElementData) => void;
+  selectedElement?: ElementData;
 }
 
-const SideBarRight = ({ page, setSelectedElement }: SideBarRightProps) => {
+const SideBarRight = ({
+  page,
+  setSelectedElement,
+  selectedElement,
+}: SideBarRightProps) => {
   return (
     <div className="flex flex-col bg-purple-200 min-w-[400px]">
       <div className="flex flex-col">{page.title}</div>
       <DocumentLayout
         children={page.data}
         setSelectedElement={setSelectedElement}
+        selectedElement={selectedElement}
       />
     </div>
   );
@@ -21,24 +27,28 @@ const SideBarRight = ({ page, setSelectedElement }: SideBarRightProps) => {
 const DocumentLayout = ({
   children,
   setSelectedElement,
+  selectedElement,
 }: {
-  children: PageData[];
-  setSelectedElement: (element: PageData) => void;
+  children: ElementData[];
+  setSelectedElement: (element: ElementData) => void;
+  selectedElement?: ElementData;
 }) => {
   return (
     <div className="flex flex-col pl-8">
       {children.map((child, idx) =>
         child.children ? (
-          <details key={child.id} open={true} key={child.id || idx}>
+          <details open={true} key={child.id || idx}>
             <summary>
               <DocumentItem
                 child={child}
                 setSelectedElement={setSelectedElement}
+                selectedElement={selectedElement}
               />
             </summary>
             <DocumentLayout
               children={child.children}
               setSelectedElement={setSelectedElement}
+              selectedElement={selectedElement}
             />
           </details>
         ) : (
@@ -46,6 +56,7 @@ const DocumentLayout = ({
             <DocumentItem
               child={child}
               setSelectedElement={setSelectedElement}
+              selectedElement={selectedElement}
             />
           </div>
         )
@@ -57,13 +68,19 @@ const DocumentLayout = ({
 const DocumentItem = ({
   child,
   setSelectedElement,
+  selectedElement,
 }: {
-  child: PageData;
-  setSelectedElement: (element: PageData) => void;
+  child: ElementData;
+  setSelectedElement: (element: ElementData) => void;
+  selectedElement?: ElementData;
 }) => {
+  const is_selected = selectedElement && child.id === selectedElement.id;
+
   return (
     <button
-      className="w-full text-left cursor-pointer hover:bg-purple-300"
+      className={`w-full text-left cursor-pointer hover:bg-purple-500 active:bg-purple-400 transition-colors ${
+        is_selected ? "bg-purple-500" : ""
+      }`}
       onClick={() => setSelectedElement(child)}
     >
       {child.type}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Page, PageData } from "../types";
+import { Page, ElementData } from "../types";
 import page_json from "../state.json";
 
 const usePage = (): [Page | undefined, (page: Page) => void] => {
