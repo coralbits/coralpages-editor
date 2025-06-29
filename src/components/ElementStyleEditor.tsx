@@ -11,7 +11,7 @@ const ElementStyleEditor = ({
   page_hooks,
   editor_hooks,
 }: ElementStyleEditorProps) => {
-  const element_definition = useElementDefinition(editor_hooks);
+  const element_definition = useElementDefinition(editor_hooks, page_hooks);
 
   if (!element_definition) {
     return <div>No element definition found</div>;

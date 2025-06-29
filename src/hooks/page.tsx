@@ -89,8 +89,8 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     setPage(new_page);
   };
 
-  const findElement = (element_id: string): ElementData | undefined => {
-    if (!page) {
+  const findElement = (element_id?: string): ElementData | undefined => {
+    if (!page || !element_id) {
       return undefined;
     }
     return find_element_rec(page.data, element_id);

@@ -3,27 +3,35 @@ import useElementDefinitions from "./element_definitions";
 import { useEffect, useState } from "react";
 import { PageHooks } from "./page";
 
+export type EditorTab = "add" | "edit" | "style";
+
 export interface EditorHooks {
-  selectedElement: ElementData | undefined;
-  setSelectedElement: (element: ElementData) => void;
+  selectedElementId: string | undefined;
+  setSelectedElementId: (element_id: string | undefined) => void;
+  getSelectedElement: (page_hooks: PageHooks) => ElementData | undefined;
   elementDefinitions: ElementDefinition[];
-  selectedTab: "add" | "edit";
-  setSelectedTab: (tab: "add" | "edit") => void;
+  selectedTab: EditorTab;
+  setSelectedTab: (tab: EditorTab) => void;
   width: number;
   setWidth: (width: number) => void;
 }
 
 export const useEditor = (api_url: string): EditorHooks => {
-  const [selectedElement, setSelectedElement] = useState<
-    ElementData | undefined
-  >();
+  const [selectedElementId, setSelectedElementId] = useState<
+    string | undefined
+  >(undefined);
   const [elementDefinitions] = useElementDefinitions(api_url);
-  const [selectedTab, setSelectedTab] = useState<"add" | "edit">("add");
+  const [selectedTab, setSelectedTab] = useState<EditorTab>("add");
   const [width, setWidth] = useState(640);
 
+  const getSelectedElement = (page_hooks: PageHooks) => {
+    return page_hooks.findElement(selectedElementId);
+  };
+
   return {
-    selectedElement,
-    setSelectedElement,
+    selectedElementId,
+    setSelectedElementId,
+    getSelectedElement,
     elementDefinitions: elementDefinitions || [],
     selectedTab,
     setSelectedTab,
@@ -32,12 +40,15 @@ export const useEditor = (api_url: string): EditorHooks => {
   };
 };
 
-export const useElementDefinition = (editor_hooks: EditorHooks) => {
+export const useElementDefinition = (
+  editor_hooks: EditorHooks,
+  page_hooks: PageHooks
+) => {
   const [element_definition, setElementDefinition] = useState<
     ElementDefinition | undefined
   >(undefined);
 
-  const element = editor_hooks.selectedElement;
+  const element = editor_hooks.getSelectedElement(page_hooks);
 
   if (!element) {
     return undefined;
@@ -48,6 +59,6 @@ export const useElementDefinition = (editor_hooks: EditorHooks) => {
       (definition) => definition.name === element?.type
     );
     setElementDefinition(definition);
-  }, [element, editor_hooks.elementDefinitions]);
+  }, [element, editor_hooks.elementDefinitions, page_hooks.page]);
   return element_definition;
 };

@@ -16,10 +16,12 @@ const ElementEditor = ({
 
   useEffect(() => {
     const definition = editor_hooks.elementDefinitions.find(
-      (definition) => definition.name === editor_hooks.selectedElement?.type
+      (definition) =>
+        definition.name ===
+        page_hooks?.findElement(editor_hooks.selectedElementId)?.type
     );
     setElementDefinition(definition);
-  }, [editor_hooks.selectedElement]);
+  }, [editor_hooks.selectedElementId, page_hooks?.page]);
 
   const editor = element_definition?.editor;
 
@@ -30,15 +32,21 @@ const ElementEditor = ({
   if (typeof editor === "string") {
     return <div>{editor}</div>;
   }
+  const selected_element = page_hooks?.findElement(
+    editor_hooks.selectedElementId
+  );
+  if (!selected_element) {
+    return <div>No element found</div>;
+  }
 
   const handleChange = (field: EditorField, value: string) => {
     if (!page_hooks) {
       return;
     }
     const new_element = {
-      ...editor_hooks.selectedElement,
+      ...selected_element,
       data: {
-        ...editor_hooks.selectedElement?.data,
+        ...selected_element?.data,
         [field.name]: value,
       },
     };
@@ -51,7 +59,7 @@ const ElementEditor = ({
         <EditorFieldEditor
           field={field}
           key={idx}
-          element={editor_hooks.selectedElement!}
+          element={selected_element}
           className="p-2 border border-gray-300 rounded-md"
           onChange={handleChange}
         />

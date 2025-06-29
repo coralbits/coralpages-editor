@@ -63,8 +63,8 @@ const DocumentItem = ({
   editor_hooks: EditorHooks;
 }) => {
   const is_selected =
-    editor_hooks.selectedElement &&
-    child.id === editor_hooks.selectedElement.id;
+    editor_hooks.selectedElementId &&
+    child.id === editor_hooks.selectedElementId;
 
   return (
     <button
@@ -73,7 +73,7 @@ const DocumentItem = ({
       }`}
       style={{ width: "calc(100% - 2rem )" }}
       onClick={() => {
-        editor_hooks.setSelectedElement(child);
+        editor_hooks.setSelectedElementId(child.id);
         editor_hooks.setSelectedTab("edit");
       }}
     >
