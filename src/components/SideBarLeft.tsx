@@ -18,7 +18,7 @@ const SideBarLeft = (props: SideBarLeftProps) => {
   );
 
   return (
-    <div className="flex flex-col h-full sidebar min-w-[350px] max-w-[350px]">
+    <div className="flex flex-col h-full sidebar sidebar-left min-w-[350px] max-w-[350px]">
       <div className="flex flex-row w-full sidebar-tabs h-16">
         <button
           className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${

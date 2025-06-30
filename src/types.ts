@@ -6,7 +6,7 @@ export interface Page {
 }
 
 export interface ElementData {
-  id?: string;
+  id: string;
   type: string;
   data?: any;
   style?: Record<string, string>;

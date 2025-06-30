@@ -197,6 +197,13 @@
     @apply flex flex-col overflow-y-auto;
     background: var(--bg-secondary);
     color: var(--text-primary);
+  }
+
+  .sidebar-right {
+    border-left: 1px solid var(--border-primary);
+  }
+
+  .sidebar-left {
     border-right: 1px solid var(--border-primary);
   }
 

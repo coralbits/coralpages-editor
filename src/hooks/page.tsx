@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Page, ElementData, ElementDefinition } from "../types";
-import page_json from "../state.json";
 
 export interface PageHooks {
   page?: Page;
   findElement: (element_id?: string) => ElementData | undefined;
   onChangeElement: (element: ElementData) => void;
+  onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
   onAddElement: (element_definition: ElementDefinition) => void;
   setPage: (page: Page) => void;
 }
@@ -96,6 +96,25 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     return find_element_rec(page.data, element_id);
   };
 
+  const onMoveElement = (
+    element_id: string,
+    parent_id: string,
+    idx: number
+  ) => {
+    setPage((page) => {
+      if (!page) {
+        return page;
+      }
+      const new_page = move_element({
+        page,
+        element_id,
+        parent_id,
+        idx,
+      });
+      return new_page;
+    });
+  };
+
   useEffect(() => {
     fetch(`${api_url}/api/v1/page/${page_name}/json`)
       .then((res) => res.json())
@@ -107,8 +126,135 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     findElement,
     onChangeElement,
     onAddElement,
+    onMoveElement,
     setPage,
   };
 };
+
+export function move_element({
+  page,
+  element_id,
+  parent_id,
+  idx,
+}: {
+  page: Page;
+  element_id: string;
+  parent_id: string;
+  idx: number;
+}): Page {
+  const { element, page: new_page } = find_element_and_remove(page, element_id);
+  if (!element) {
+    return page;
+  }
+
+  const new_page2 = insert_element_at_idx(new_page, element, parent_id, idx);
+  return new_page2;
+}
+
+export function find_element_and_remove(
+  page: Page,
+  element_id: string
+): { element: ElementData | undefined; page: Page } {
+  const { element, elements } = find_element_and_remove_rec(
+    page.data,
+    element_id
+  );
+  if (element) {
+    return {
+      element,
+      page: { ...page, data: elements },
+    };
+  }
+  return {
+    element: undefined,
+    page: page,
+  };
+}
+
+function find_element_and_remove_rec(
+  elements: ElementData[],
+  element_id: string
+): { element: ElementData | undefined; elements: ElementData[] } {
+  for (const [idx, element] of elements.entries()) {
+    if (element.id === element_id) {
+      return {
+        element,
+        elements: elements.filter((e) => e.id !== element_id),
+      };
+    }
+
+    if (element.children) {
+      const { element: child_element, elements: child_elements } =
+        find_element_and_remove_rec(element.children, element_id);
+      if (child_element) {
+        return {
+          element: child_element,
+          elements: [
+            ...elements.slice(0, idx),
+            { ...element, children: child_elements },
+            ...elements.slice(idx + 1),
+          ],
+        };
+      }
+    }
+  }
+  return { element: undefined, elements: elements };
+}
+
+export function insert_element_at_idx(
+  page: Page,
+  element: ElementData,
+  parent_id: string,
+  idx: number
+): Page {
+  const children = insert_element_at_idx_rec({
+    elements: page.data,
+    current_id: "root",
+    parent_id,
+    idx,
+    element,
+  });
+  return {
+    ...page,
+    data: children || [],
+  };
+}
+
+function insert_element_at_idx_rec({
+  element,
+  elements,
+  current_id,
+  parent_id,
+  idx,
+}: {
+  element: ElementData;
+  elements?: ElementData[];
+  current_id: string;
+  parent_id: string;
+  idx: number;
+}): ElementData[] | undefined {
+  if (!elements) {
+    if (current_id === parent_id) {
+      return [element];
+    }
+    return undefined;
+  }
+
+  if (current_id === parent_id) {
+    const [pre, post] = [elements.slice(0, idx), elements.slice(idx)];
+    return [...pre, element, ...post];
+  }
+  const new_elements = elements.map((e) => ({
+    ...e,
+    children: insert_element_at_idx_rec({
+      element,
+      elements: e.children,
+      current_id: e.id,
+      parent_id,
+      idx,
+    }),
+  }));
+  return new_elements;
+}
 
 export default usePage;
