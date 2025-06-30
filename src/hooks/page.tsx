@@ -12,6 +12,9 @@ export interface PageHooks {
     idx: number
   ) => void;
   setPage: (page: Page) => void;
+
+  need_save: boolean;
+  savePage: () => Promise<void>;
 }
 
 const children_update_element_rec = (
@@ -63,12 +66,14 @@ const find_element_rec = (
 
 const usePage = (api_url: string, page_name: string): PageHooks => {
   const [page, setPage] = useState<Page | undefined>(undefined);
+  const [need_save, setNeedSave] = useState(false);
 
   const onChangeElement = (element: ElementData) => {
     setPage((page) => {
       if (!page) {
         return page;
       }
+      setNeedSave(true);
       return {
         ...page,
         data: children_update_element_rec(page.data || [], element),
@@ -95,7 +100,10 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
       if (!page) {
         return page;
       }
-      return insert_element_at_idx(page, element, parent_id, index);
+
+      const new_page = insert_element_at_idx(page, element, parent_id, index);
+      setNeedSave(true);
+      return new_page;
     });
   };
 
@@ -121,6 +129,7 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
         parent_id,
         idx,
       });
+      setNeedSave(true);
       return new_page;
     });
   };
@@ -128,8 +137,22 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
   useEffect(() => {
     fetch(`${api_url}/api/v1/page/${page_name}/json`)
       .then((res) => res.json())
-      .then((page) => setPage(page as Page));
+      .then((page) => {
+        setPage(page as Page);
+        setNeedSave(false);
+      });
   }, [page_name]);
+
+  const savePage = async () => {
+    if (!page) {
+      return;
+    }
+    await fetch(`${api_url}/api/v1/page/${page_name}/json`, {
+      method: "POST",
+      body: JSON.stringify(page),
+    });
+    setNeedSave(false);
+  };
 
   return {
     page,
@@ -138,6 +161,9 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     onAddElement,
     onMoveElement,
     setPage,
+
+    savePage,
+    need_save,
   };
 };
 
