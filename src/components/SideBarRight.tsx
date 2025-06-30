@@ -1,7 +1,7 @@
 import { ElementData } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 
 interface SideBarRightProps {
@@ -12,21 +12,36 @@ interface SideBarRightProps {
 const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
   const [is_dragging, setIsDragging] = useState(false);
 
+  useEffect(() => {
+    const handleDragStart = () => {
+      setIsDragging(true);
+    };
+
+    const handleDragEnd = () => {
+      setIsDragging(false);
+    };
+
+    // Listen for drag events on the document level
+    document.addEventListener("dragstart", handleDragStart);
+    document.addEventListener("dragend", handleDragEnd);
+
+    return () => {
+      document.removeEventListener("dragstart", handleDragStart);
+      document.removeEventListener("dragend", handleDragEnd);
+    };
+  }, []);
+
   if (!page_hooks.page) {
     return null;
   }
 
   return (
-    <div className="sidebar sidebar-right min-w-[400px] max-w-[400px]">
+    <div className="sidebar sidebar-right min-w-[400px] max-w-[400px] h-full">
       <div className="sidebar-title">{page_hooks.page.title}</div>
       <div
         className="sidebar-content overflow-x-hidden max-w-full overflow-y-auto"
         onDragOver={(e) => {
           e.preventDefault();
-          setIsDragging(true);
-        }}
-        onDragLeave={(e) => {
-          setIsDragging(false);
         }}
         onDrop={(e) => {
           setIsDragging(false);
@@ -59,9 +74,12 @@ const DocumentLayout = ({
 }) => {
   return (
     <div className="flex flex-col pl-8 ">
-      {is_dragging && (
-        <DropItem page_hooks={page_hooks} parent_id={parent_id} idx={0} />
-      )}
+      <DropItem
+        page_hooks={page_hooks}
+        parent_id={parent_id}
+        idx={0}
+        isVisible={is_dragging}
+      />
       {children.map((child, idx) =>
         child.children ? (
           <React.Fragment key={child.id || idx}>
@@ -77,13 +95,12 @@ const DocumentLayout = ({
                 parent_id={child.id!}
               />
             </details>
-            {is_dragging && (
-              <DropItem
-                page_hooks={page_hooks}
-                parent_id={parent_id}
-                idx={idx + 1}
-              />
-            )}
+            <DropItem
+              page_hooks={page_hooks}
+              parent_id={parent_id}
+              idx={idx + 1}
+              isVisible={is_dragging}
+            />
           </React.Fragment>
         ) : (
           <div key={child.id || idx}>
@@ -99,15 +116,21 @@ const DropItem = ({
   page_hooks,
   parent_id,
   idx,
+  isVisible,
 }: {
   page_hooks: PageHooks;
   parent_id: string;
   idx: number;
+  isVisible: boolean;
 }) => {
   const [is_hovering, setIsHovering] = useState(false);
   return (
     <div
-      className={`min-h-4   border-1 border-solid  rounded-md ${
+      className={`min-h-2 border-1 border-solid rounded-md transition-all duration-300 ease-in-out transform ${
+        isVisible
+          ? "opacity-100 max-h-8 scale-y-100"
+          : "opacity-0 max-h-0 scale-y-0"
+      } ${
         is_hovering
           ? "bg-green-500/50 border-green-500"
           : "bg-amber-500/25 border-amber-500"
@@ -122,6 +145,7 @@ const DropItem = ({
         const element_id = e.dataTransfer.getData("text/plain");
         page_hooks.onMoveElement(element_id, parent_id, idx);
         setIsHovering(false);
+        // Don't reset is_dragging here - let the global dragend event handle it
       }}
     ></div>
   );
