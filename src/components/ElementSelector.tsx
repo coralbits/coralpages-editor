@@ -15,7 +15,7 @@ const ElementSelector = (props: ElementSelectorProps) => {
       {props.editor_hooks.elementDefinitions?.map((element) => (
         <button
           key={element.name}
-          className="flex flex-col gap-2 items-center justify-center h-24 w-24 border-2 border-purple-300 rounded-md cursor-pointer hover:bg-purple-500 active:bg-purple-600 transition-colors"
+          className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button"
           onClick={() => props.page_hooks.onAddElement(element)}
         >
           <FontAwesomeIcon icon={getIcon(element.icon)} className="text-2xl" />

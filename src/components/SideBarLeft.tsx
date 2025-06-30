@@ -18,27 +18,33 @@ const SideBarLeft = (props: SideBarLeftProps) => {
   );
 
   return (
-    <div className="flex flex-col h-full bg-purple-200 min-w-[320px] max-w-[320px]">
-      <div className="flex flex-row bg-purple-200 h-16">
+    <div className="flex flex-col h-full sidebar min-w-[350px] max-w-[350px]">
+      <div className="flex flex-row w-full sidebar-tabs h-16">
         <button
-          className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.editor_hooks.selectedTab === "add" ? "bg-purple-500" : ""
+          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${
+            props.editor_hooks.selectedTab === "add"
+              ? "sidebar-button-active"
+              : ""
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("add")}
         >
           <FontAwesomeIcon icon={getIcon("plus")} />
         </button>
         <button
-          className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.editor_hooks.selectedTab === "edit" ? "bg-purple-500" : ""
+          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${
+            props.editor_hooks.selectedTab === "edit"
+              ? "sidebar-button-active"
+              : ""
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("edit")}
         >
           {selected_element ? selected_element.type : "No element selected"}
         </button>
         <button
-          className={`hover:bg-purple-500 flex-1 cursor-pointer border-purple-300 border-2 ${
-            props.editor_hooks.selectedTab === "style" ? "bg-purple-500" : ""
+          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${
+            props.editor_hooks.selectedTab === "style"
+              ? "sidebar-button-active"
+              : ""
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("style")}
         >
