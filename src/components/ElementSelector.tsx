@@ -16,7 +16,14 @@ const ElementSelector = (props: ElementSelectorProps) => {
         <button
           key={element.name}
           className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button"
-          onClick={() => props.page_hooks.onAddElement(element)}
+          onClick={() => props.page_hooks.onAddElement(element, "root", 10000)}
+          draggable
+          onDragStart={(e) => {
+            e.dataTransfer.setData(
+              "application/json",
+              JSON.stringify({ action: "create", element_definition: element })
+            );
+          }}
         >
           <FontAwesomeIcon icon={getIcon(element.icon)} className="text-2xl" />
           <span className="text-sm text-nowrap">

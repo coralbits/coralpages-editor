@@ -6,7 +6,11 @@ export interface PageHooks {
   findElement: (element_id?: string) => ElementData | undefined;
   onChangeElement: (element: ElementData) => void;
   onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
-  onAddElement: (element_definition: ElementDefinition) => void;
+  onAddElement: (
+    element_definition: ElementDefinition,
+    parent_id: string,
+    idx: number
+  ) => void;
   setPage: (page: Page) => void;
 }
 
@@ -72,7 +76,11 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     });
   };
 
-  const onAddElement = (element_definition: ElementDefinition) => {
+  const onAddElement = (
+    element_definition: ElementDefinition,
+    parent_id: string,
+    index: number
+  ) => {
     const element = {
       id: crypto.randomUUID(),
       type: element_definition.name,
@@ -82,11 +90,13 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     if (!page) {
       return;
     }
-    const new_page = {
-      ...page,
-      data: [...(page.data || []), element],
-    };
-    setPage(new_page);
+
+    setPage((page) => {
+      if (!page) {
+        return page;
+      }
+      return insert_element_at_idx(page, element, parent_id, index);
+    });
   };
 
   const findElement = (element_id?: string): ElementData | undefined => {
