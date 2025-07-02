@@ -180,7 +180,7 @@
 
   /* Bottom bar */
   .bottombar {
-    @apply w-full flex items-center justify-between px-4 h-16;
+    @apply w-full flex items-center justify-between px-4 h-8;
     background: var(--bg-elevated);
     border-top: 1px solid var(--border-primary);
     box-shadow: var(--shadow-sm);
@@ -188,7 +188,7 @@
   }
 
   .bottombar-title {
-    @apply text-xl font-semibold tracking-tight;
+    @apply text-sm font-semibold tracking-tight;
     color: var(--text-primary);
   }
 
