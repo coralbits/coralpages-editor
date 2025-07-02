@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { i18n } from "../utils/i18n";
 import { Bucket, useBucketList, useAssetList, Asset } from "../hooks/assets";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faFile, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export interface AssetSelectorButtonProps {
@@ -24,14 +24,29 @@ export const AssetSelectorButton = ({
   return (
     <>
       <button
-        className={`p-2 rounded-md bg-blue-500 hover:bg-blue-600 cursor-pointer text-white ${className} `}
+        className={`p-2 rounded-md bg-blue-500 hover:bg-blue-600 cursor-pointer flex flex-row gap-2 text-white items-center ${className} `}
         onClick={() => setIsOpen((open) => !open)}
       >
+        <div className="flex flex-row gap-2 items-center justify-center min-w-16 min-h-16">
+          {is_image(value) ? (
+            <img
+              src={value}
+              alt="Asset"
+              className="max-w-16 max-h-16 object-contain rounded-md"
+            />
+          ) : (
+            <FontAwesomeIcon icon={faFile} className="w-16 h-16 text-4xl" />
+          )}
+        </div>
         {value || i18n("Select Asset")}
       </button>
       {isOpen && <AssetSelector onChange={onChange} value={value} />}
     </>
   );
+};
+
+const is_image = (url: string) => {
+  return url.endsWith(".png") || url.endsWith(".jpg") || url.endsWith(".jpeg");
 };
 
 interface AssetSelectorProps {

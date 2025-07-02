@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBars,
   faBell,
+  faEye,
   faSave,
   faSearch,
   faUser,
@@ -23,6 +24,19 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
       </div>
 
       <div className="topbar-actions">
+        <button
+          className="topbar-icon-btn cursor-pointer"
+          aria-label="Preview"
+          onClick={() => {
+            window.open(
+              page_hooks.page?.url,
+              `preview-${page_hooks.page?.id}`,
+              "noopener,noreferrer"
+            );
+          }}
+        >
+          <FontAwesomeIcon icon={faEye} />
+        </button>
         <button
           className="topbar-icon-btn cursor-pointer"
           aria-label="Save"
