@@ -19,9 +19,9 @@ const SideBarLeft = (props: SideBarLeftProps) => {
 
   return (
     <div className="flex flex-col h-full sidebar sidebar-left min-w-[350px] max-w-[350px]">
-      <div className="flex flex-row w-full sidebar-tabs h-16">
+      <div className="flex flex-row w-full sidebar-tabs min-h-16">
         <button
-          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${
+          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none rounded-tl-md rounded-bl-md ${
             props.editor_hooks.selectedTab === "add"
               ? "sidebar-button-active"
               : ""
@@ -31,7 +31,7 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           <FontAwesomeIcon icon={getIcon("plus")} />
         </button>
         <button
-          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${
+          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none border border-y-0 border-gray-600 ${
             props.editor_hooks.selectedTab === "edit"
               ? "sidebar-button-active"
               : ""
@@ -41,7 +41,7 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           {selected_element ? selected_element.type : "No element selected"}
         </button>
         <button
-          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center ${
+          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none rounded-tr-md rounded-br-md ${
             props.editor_hooks.selectedTab === "style"
               ? "sidebar-button-active"
               : ""

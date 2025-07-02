@@ -11,11 +11,11 @@ interface ElementSelectorProps {
 
 const ElementSelector = (props: ElementSelectorProps) => {
   return (
-    <div className="flex flex-row gap-2 p-2 flex-wrap w-full justify-around">
+    <div className="flex flex-row gap-4 p-2 flex-wrap w-full mx-2">
       {props.editor_hooks.elementDefinitions?.map((element) => (
         <button
           key={element.name}
-          className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button"
+          className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button shadow-md"
           onClick={() => props.page_hooks.onAddElement(element, "root", 10000)}
           draggable
           onDragStart={(e) => {
