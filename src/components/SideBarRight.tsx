@@ -193,14 +193,27 @@ const DocumentItem = ({
     >
       {child.type}
       <span
-        className={`sidebar-button-text ${
+        className={`sidebar-button-text line-clamp-1 ${
           is_selected ? "sidebar-button-text-active" : ""
         }`}
       >
-        {child.data?.title || child.data?.text}
+        {preview_text(child)}
       </span>
     </button>
   );
+};
+
+const preview_text = (child: ElementData): string => {
+  let text = "";
+  if (child.data?.text) {
+    text = child.data?.text;
+  }
+  if (child.data?.caption) {
+    text = child.data?.caption;
+  }
+  text = text.split("\n")[0].slice(0, 100);
+
+  return text;
 };
 
 export default SideBarRight;
