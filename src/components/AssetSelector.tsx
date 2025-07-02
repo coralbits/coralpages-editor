@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { i18n } from "../utils/i18n";
 import { Bucket, useBucketList, useAssetList, Asset } from "../hooks/assets";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export interface AssetSelectorButtonProps {
   placeholder: string;
@@ -77,9 +79,13 @@ const BucketThumbnailList = ({
   onChange?: (url: string) => void;
   value?: string;
 }) => {
-  const [thumbnailList] = useAssetList(bucket.name, 0, 10);
+  const [thumbnailList, refreshThumbnailList] = useAssetList(
+    bucket.name,
+    0,
+    10
+  );
   return (
-    <div className="flex flex-row gap-2 flex-wrap">
+    <div className="flex flex-row gap-2 flex-wrap m-auto">
       {thumbnailList.map((thumbnail, idx) => (
         <Thumbnail
           key={idx}
@@ -89,6 +95,15 @@ const BucketThumbnailList = ({
           className="m-2"
         />
       ))}
+      <button
+        className="p-2 rounded-md bg-gray-500 hover:bg-blue-600 cursor-pointer text-white w-20 h-20 m-2"
+        onClick={async () => {
+          await addAsset(bucket.name);
+          await refreshThumbnailList();
+        }}
+      >
+        <FontAwesomeIcon icon={faPlus} />
+      </button>
     </div>
   );
 };
@@ -126,11 +141,51 @@ const Thumbnail = ({
         onChange?.(thumbnail.url);
       }}
     >
-      {value === thumbnail.url ? "ok" : "nok"}
       <span className="text-white text-sm">{thumbnail.key}</span>
       <span className="text-white text-xs">
         {bytes_to_human_size(thumbnail.size)}
       </span>
     </div>
   );
+};
+
+const AM_URL = "http://localhost:8004";
+
+const addAsset = async (bucket: string) => {
+  const file: File | undefined = await selectFile();
+
+  if (!file) {
+    return;
+  }
+
+  const file_name = file.name;
+  const response = await fetch(`${AM_URL}/${bucket}/${file_name}`, {
+    method: "PUT",
+    body: file,
+  });
+
+  const data = await response.json();
+  console.log(data);
+};
+
+const selectFile = (): Promise<File | undefined> => {
+  const promise = new Promise<File | undefined>((resolve, reject) => {
+    const body_el = document.body;
+    const input_el = document.createElement("input");
+    input_el.type = "file";
+    input_el.accept = "image/*";
+    input_el.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        resolve(file);
+      } else {
+        reject(new Error("No file selected"));
+      }
+    };
+    body_el.appendChild(input_el);
+    input_el.click();
+    body_el.removeChild(input_el);
+  });
+
+  return promise;
 };

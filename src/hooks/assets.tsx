@@ -51,16 +51,21 @@ const getAssetList = async (
   }));
 };
 
-export const useAssetList = (bucket: string, offset: number, limit: number) => {
+export const useAssetList = (
+  bucket: string,
+  offset: number,
+  limit: number
+): [Asset[], () => Promise<void>] => {
   const [assetList, setAssetList] = useState<Asset[]>([]);
 
-  useEffect(() => {
-    const fetchThumbnailList = async () => {
-      const assetList = await getAssetList(bucket, offset, limit);
-      setAssetList(assetList);
-    };
-    fetchThumbnailList();
-  }, []);
+  const fetchAssetList = async () => {
+    const assetList = await getAssetList(bucket, offset, limit);
+    setAssetList(assetList);
+  };
 
-  return [assetList];
+  useEffect(() => {
+    fetchAssetList();
+  }, [bucket, offset, limit]);
+
+  return [assetList, fetchAssetList];
 };
