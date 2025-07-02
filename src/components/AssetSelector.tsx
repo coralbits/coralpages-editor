@@ -3,6 +3,7 @@ import { i18n } from "../utils/i18n";
 import { Bucket, useBucketList, useAssetList, Asset } from "../hooks/assets";
 import { faFile, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { selectFile } from "../utils/file";
 
 export interface AssetSelectorButtonProps {
   placeholder: string;
@@ -167,7 +168,7 @@ const Thumbnail = ({
 const AM_URL = "http://localhost:8004";
 
 const addAsset = async (bucket: string) => {
-  const file: File | undefined = await selectFile();
+  const file: File | undefined = await selectFile("image/*");
 
   if (!file) {
     return;
@@ -181,26 +182,4 @@ const addAsset = async (bucket: string) => {
 
   const data = await response.json();
   console.log(data);
-};
-
-const selectFile = (): Promise<File | undefined> => {
-  const promise = new Promise<File | undefined>((resolve, reject) => {
-    const body_el = document.body;
-    const input_el = document.createElement("input");
-    input_el.type = "file";
-    input_el.accept = "image/*";
-    input_el.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        resolve(file);
-      } else {
-        reject(new Error("No file selected"));
-      }
-    };
-    body_el.appendChild(input_el);
-    input_el.click();
-    body_el.removeChild(input_el);
-  });
-
-  return promise;
 };

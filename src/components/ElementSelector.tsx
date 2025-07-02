@@ -13,25 +13,46 @@ const ElementSelector = (props: ElementSelectorProps) => {
   return (
     <div className="flex flex-row gap-4 p-2 flex-wrap w-full mx-2">
       {props.editor_hooks.elementDefinitions?.map((element) => (
-        <button
+        <ElementSelectorItem
           key={element.name}
-          className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button shadow-md"
-          onClick={() => props.page_hooks.onAddElement(element, "root", 10000)}
-          draggable
-          onDragStart={(e) => {
-            e.dataTransfer.setData(
-              "application/json",
-              JSON.stringify({ action: "create", element_definition: element })
-            );
-          }}
-        >
-          <FontAwesomeIcon icon={getIcon(element.icon)} className="text-2xl" />
-          <span className="text-sm text-nowrap">
-            {getBasicName(element.name)}
-          </span>
-        </button>
+          element={element}
+          page_hooks={props.page_hooks}
+        />
       ))}
     </div>
+  );
+};
+
+const ElementSelectorItem = (props: {
+  element: ElementDefinition;
+  page_hooks: PageHooks;
+}) => {
+  return (
+    <button
+      key={props.element.name}
+      className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button shadow-md"
+      onClick={() =>
+        props.page_hooks.onAddElement(props.element, "root", 10000)
+      }
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData(
+          "application/json",
+          JSON.stringify({
+            action: "create",
+            element_definition: props.element,
+          })
+        );
+      }}
+    >
+      <FontAwesomeIcon
+        icon={getIcon(props.element.icon)}
+        className="text-2xl"
+      />
+      <span className="text-sm text-nowrap">
+        {getBasicName(props.element.name)}
+      </span>
+    </button>
   );
 };
 
