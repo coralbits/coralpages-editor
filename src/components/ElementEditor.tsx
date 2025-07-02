@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { EditorField, ElementData, ElementDefinition } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
+import { i18n } from "../utils/i18n";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import HoldButton from "./HoldButton";
 
 const ElementEditor = ({
   editor_hooks,
@@ -13,6 +17,10 @@ const ElementEditor = ({
   const [element_definition, setElementDefinition] = useState<
     ElementDefinition | undefined
   >(undefined);
+
+  if (!page_hooks) {
+    return <div>No page hooks</div>;
+  }
 
   useEffect(() => {
     const definition = editor_hooks.elementDefinitions.find(
@@ -64,6 +72,12 @@ const ElementEditor = ({
           onChange={handleChange}
         />
       ))}
+      <div className="flex-1" />
+      <DeleteElementButton
+        className="m-2"
+        page_hooks={page_hooks}
+        editor_hooks={editor_hooks}
+      />
     </div>
   );
 };
@@ -104,6 +118,30 @@ const EditorFieldEditor = ({
         />
       )}
     </div>
+  );
+};
+const DeleteElementButton = ({
+  className,
+  page_hooks,
+  editor_hooks,
+}: {
+  className?: string;
+  page_hooks: PageHooks;
+  editor_hooks: EditorHooks;
+}) => {
+  return (
+    <HoldButton
+      className={`${className} bg-red-500 hover:bg-red-600`}
+      onClick={() => {
+        if (!editor_hooks.selectedElementId) {
+          return;
+        }
+        page_hooks.onDeleteElement(editor_hooks.selectedElementId);
+      }}
+    >
+      <FontAwesomeIcon icon={faTrash} className="text-white" />
+      {i18n("Delete")}
+    </HoldButton>
   );
 };
 

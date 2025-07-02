@@ -11,6 +11,7 @@ export interface PageHooks {
     parent_id: string,
     idx: number
   ) => void;
+  onDeleteElement: (element_id: string) => void;
   setPage: (page: Page) => void;
 
   need_save: boolean;
@@ -134,6 +135,23 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     });
   };
 
+  const onDeleteElement = (element_id: string) => {
+    setPage((page) => {
+      if (!page) {
+        return page;
+      }
+      const { element, page: new_page } = find_element_and_remove(
+        page,
+        element_id
+      );
+      if (!element) {
+        return page;
+      }
+      setNeedSave(true);
+      return new_page;
+    });
+  };
+
   useEffect(() => {
     fetch(`${api_url}/api/v1/page/${page_name}/json`)
       .then((res) => res.json())
@@ -160,6 +178,7 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     onChangeElement,
     onAddElement,
     onMoveElement,
+    onDeleteElement,
     setPage,
 
     savePage,
