@@ -8,10 +8,15 @@ import App from "./App";
 config.autoAddCss = false;
 
 // Use environment variable for API URL, fallback to proxy
-const apiUrl = "http://localhost:8000";
+const apiUrl = "http://localhost:8006";
 
 const root = createRoot(document.getElementById("root")!);
-// page name from hash
-const page_name = window.location.hash.slice(1) || "index";
+// page name from pathname, like  `*/edit/{page_path}`
+let page_name = "index";
+let path = window.location.pathname;
+
+if (path.split("/edit/").length > 1) {
+  page_name = path.split("/edit/")[1];
+}
 
 root.render(<App api_url={apiUrl} page_name={page_name} />);

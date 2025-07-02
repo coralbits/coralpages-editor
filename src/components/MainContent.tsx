@@ -6,6 +6,7 @@ import React from "react";
 interface MainContentProps {
   page_hooks: PageHooks;
   editor_hooks: EditorHooks;
+  api_url: string;
 }
 
 const html_with_injected_js = () => {
@@ -33,8 +34,12 @@ console.log('injected js');
   return URL.createObjectURL(blob);
 };
 
-const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
-  const url = "http://localhost:8000/api/v1/render/";
+const MainContent = ({
+  page_hooks,
+  editor_hooks,
+  api_url,
+}: MainContentProps) => {
+  const url = `${api_url}/api/v1/render/`;
 
   const blob_url = html_with_injected_js();
 

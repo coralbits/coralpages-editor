@@ -8,7 +8,7 @@ The project includes a `parcel.config.js` configuration that proxies API request
 
 **How it works:**
 
-- API requests to `/api/*` are automatically proxied to `http://localhost:8000`
+- API requests to `/api/*` are automatically proxied to `http://localhost:8006`
 - No CORS headers needed on the server
 - Works seamlessly in development
 

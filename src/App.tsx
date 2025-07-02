@@ -25,7 +25,11 @@ const App = ({ api_url, page_name }: AppProps) => {
       <TopBar page_hooks={page_hooks} />
       <div className="flex flex-row flex-1 overflow-hidden">
         <SideBarLeft page_hooks={page_hooks} editor_hooks={editor_hooks} />
-        <MainContent page_hooks={page_hooks} editor_hooks={editor_hooks} />
+        <MainContent
+          page_hooks={page_hooks}
+          editor_hooks={editor_hooks}
+          api_url={api_url}
+        />
         <SideBarRight page_hooks={page_hooks} editor_hooks={editor_hooks} />
       </div>
       <BottomBar />
