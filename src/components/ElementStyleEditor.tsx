@@ -90,7 +90,7 @@ const EditStyleField = ({
         type="text"
         value={value}
         onChange={(ev) => setValue(ev.target.value)}
-        className="w-full p-2 border border-gray-800 rounded-md"
+        className="w-full p-2 border border-gray-400 rounded-md"
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { i18n } from "../utils/i18n";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HoldButton from "./HoldButton";
+import { AssetSelectorButton } from "./AssetSelector";
 
 const ElementEditor = ({
   editor_hooks,
@@ -68,7 +69,7 @@ const ElementEditor = ({
           field={field}
           key={idx}
           element={selected_element}
-          className="p-2 border border-gray-300 rounded-md"
+          className="p-2"
           onChange={handleChange}
         />
       ))}
@@ -100,12 +101,20 @@ const EditorFieldEditor = ({
       </label>
       {field.type === "textarea" ? (
         <textarea
-          className="w-full p-2 border border-gray-800 rounded-md"
+          className="w-full p-2 border border-gray-400 rounded-md"
           placeholder={field.placeholder}
           name={field.name}
           value={element.data?.[field.name] || ""}
           rows={10}
           onChange={(e) => onChange(field, e.target.value)}
+        />
+      ) : field.type === "image" ? (
+        <AssetSelectorButton
+          placeholder={field.placeholder}
+          name={field.name}
+          value={element.data?.[field.name] || ""}
+          className="w-full"
+          onChange={(value) => onChange(field, value)}
         />
       ) : (
         <input
@@ -113,7 +122,7 @@ const EditorFieldEditor = ({
           placeholder={field.placeholder}
           name={field.name}
           value={element.data?.[field.name] || ""}
-          className="w-full p-2 border border-gray-800 rounded-md"
+          className="w-full p-2 border border-gray-400 rounded-md"
           onChange={(e) => onChange(field, e.target.value)}
         />
       )}
