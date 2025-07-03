@@ -51,7 +51,7 @@ const HoldButton = ({
 
   return (
     <button
-      className={`bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer text-white rounded-md flex items-center flex-col overflow-hidden ${className}`}
+      className={`bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer text-white rounded-md flex items-center flex-col ${className}`}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}

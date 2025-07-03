@@ -51,24 +51,26 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           <FontAwesomeIcon icon={getIcon("css")} />
         </button>
       </div>
-      {props.editor_hooks.selectedTab === "edit" && selected_element && (
-        <ElementEditor
-          editor_hooks={props.editor_hooks}
-          page_hooks={props.page_hooks}
-        />
-      )}
-      {props.editor_hooks.selectedTab === "add" && (
-        <ElementSelector
-          page_hooks={props.page_hooks}
-          editor_hooks={props.editor_hooks}
-        />
-      )}
-      {props.editor_hooks.selectedTab === "style" && (
-        <ElementStyleEditor
-          page_hooks={props.page_hooks}
-          editor_hooks={props.editor_hooks}
-        />
-      )}
+      <div className="flex-1 overflow-auto">
+        {props.editor_hooks.selectedTab === "edit" && selected_element && (
+          <ElementEditor
+            editor_hooks={props.editor_hooks}
+            page_hooks={props.page_hooks}
+          />
+        )}
+        {props.editor_hooks.selectedTab === "add" && (
+          <ElementSelector
+            page_hooks={props.page_hooks}
+            editor_hooks={props.editor_hooks}
+          />
+        )}
+        {props.editor_hooks.selectedTab === "style" && (
+          <ElementStyleEditor
+            page_hooks={props.page_hooks}
+            editor_hooks={props.editor_hooks}
+          />
+        )}
+      </div>
     </div>
   );
 };

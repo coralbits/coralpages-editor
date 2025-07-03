@@ -63,7 +63,7 @@ const ElementEditor = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 overflow-auto min-h-full">
+    <div className="flex flex-col gap-2 ">
       {editor?.map((field, idx) => (
         <EditorFieldEditor
           field={field}
@@ -73,6 +73,13 @@ const ElementEditor = ({
           onChange={handleChange}
         />
       ))}
+      {editor?.length === 0 && (
+        <div className="p-2">
+          <p className="text-sm text-gray-500">
+            {i18n("No fields to edit for this element.")}
+          </p>
+        </div>
+      )}
       <div className="flex-1" />
       <DeleteElementButton
         className="m-2"

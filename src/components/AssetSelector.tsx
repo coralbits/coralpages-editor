@@ -59,7 +59,7 @@ const AssetSelector = ({ onChange, value }: AssetSelectorProps) => {
   const [bucketList] = useBucketList();
 
   return (
-    <div className="border-2 rounded-md p-2 border-blue-500 border-t-0 bg-gray-700">
+    <div className="border-2 rounded-md p-2 border-blue-500 border-t-0">
       <div className="flex flex-col gap-2">
         {bucketList.map((bucket) => (
           <div key={bucket.name}>
@@ -149,7 +149,7 @@ const Thumbnail = ({
           : "border-1 bg-gray-700"
       } ${className}`}
       style={{
-        backgroundImage: `url(${thumbnail.url})`,
+        backgroundImage: `linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.0)), url(${thumbnail.url})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
