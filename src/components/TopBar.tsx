@@ -1,18 +1,8 @@
 import { i18n } from "../utils/i18n";
-import page, { PageHooks } from "../hooks/page";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faBell,
-  faDownload,
-  faEye,
-  faSave,
-  faSearch,
-  faUpload,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { PageHooks } from "../hooks/page";
 import { Page } from "../types";
 import { selectFile } from "../utils/file";
+import Icon from "./Icon";
 
 interface TopBarProps {
   page_hooks: PageHooks;
@@ -39,7 +29,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
           }}
           disabled={!page_hooks.page}
         >
-          <FontAwesomeIcon icon={faDownload} />
+          <Icon name="download" />
         </button>
         <button
           className="topbar-icon-btn cursor-pointer"
@@ -47,7 +37,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
           title={i18n("Upload")}
           onClick={() => upload_page(page_hooks.setPage)}
         >
-          <FontAwesomeIcon icon={faUpload} />
+          <Icon name="upload" />
         </button>
 
         <button
@@ -62,7 +52,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
             );
           }}
         >
-          <FontAwesomeIcon icon={faEye} />
+          <Icon name="eye" />
         </button>
         <button
           className="topbar-icon-btn cursor-pointer"
@@ -70,8 +60,8 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
           title={i18n("Save")}
           onClick={page_hooks.savePage}
         >
-          <FontAwesomeIcon
-            icon={faSave}
+          <Icon
+            name="save"
             className={page_hooks.need_save ? "text-red-500" : ""}
           />
         </button>

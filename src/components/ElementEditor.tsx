@@ -3,11 +3,9 @@ import { EditorField, ElementData, ElementDefinition } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { i18n } from "../utils/i18n";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HoldButton from "./HoldButton";
-import { AssetSelectorButton } from "./AssetSelector";
 import { FormField, FormFieldType } from "./FormField";
+import Icon from "./Icon";
 
 const ElementEditor = ({
   editor_hooks,
@@ -133,7 +131,7 @@ const DeleteElementButton = ({
         page_hooks.onDeleteElement(editor_hooks.selectedElementId);
       }}
     >
-      <FontAwesomeIcon icon={faTrash} className="text-white" />
+      <Icon name="trash" className="text-white" />
       {i18n("Delete")}
     </HoldButton>
   );

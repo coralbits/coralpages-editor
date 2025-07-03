@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { i18n } from "../utils/i18n";
 import { Bucket, useBucketList, useAssetList, Asset } from "../hooks/assets";
-import { faFile, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { selectFile } from "../utils/file";
+import Icon from "./Icon";
 
 export interface AssetSelectorButtonProps {
   placeholder: string;
@@ -36,7 +35,7 @@ export const AssetSelectorButton = ({
               className="max-w-16 max-h-16 object-contain rounded-md"
             />
           ) : (
-            <FontAwesomeIcon icon={faFile} className="w-16 h-16 text-4xl" />
+            <Icon name="file" className="w-16 h-16 text-4xl" />
           )}
         </div>
         {value || i18n("Select Asset")}
@@ -118,7 +117,7 @@ const BucketThumbnailList = ({
           await refreshThumbnailList();
         }}
       >
-        <FontAwesomeIcon icon={faPlus} />
+        <Icon name="plus" />
       </button>
     </div>
   );

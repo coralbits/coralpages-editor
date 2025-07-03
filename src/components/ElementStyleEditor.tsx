@@ -6,7 +6,7 @@ import { FormField, FormFieldType } from "./FormField";
 interface Style {
   label: string;
   type: FormFieldType;
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string; icon?: string }[];
 }
 
 const styles: Record<string, Style> = {
@@ -37,32 +37,32 @@ const styles: Record<string, Style> = {
   },
   "flex-direction": {
     label: "Flex Direction",
-    type: "select",
+    type: "select-buttons",
     options: [
-      { label: "Row", value: "row" },
-      { label: "Column", value: "column" },
+      { label: "Row", value: "row", icon: "right" },
+      { label: "Column", value: "column", icon: "down" },
     ],
   },
   "align-items": {
     label: "Align Items",
-    type: "select",
+    type: "select-buttons",
     options: [
-      { label: "Flex Start", value: "flex-start" },
-      { label: "Flex End", value: "flex-end" },
-      { label: "Center", value: "center" },
-      { label: "Space Between", value: "space-between" },
-      { label: "Space Around", value: "space-around" },
+      { label: "Flex Start", value: "flex-start", icon: "up" },
+      { label: "Flex End", value: "flex-end", icon: "down" },
+      { label: "Center", value: "center", icon: "middle" },
+      { label: "Space Between", value: "space-between", icon: "left" },
+      { label: "Space Around", value: "space-around", icon: "right" },
     ],
   },
   "justify-content": {
     label: "Justify Content",
-    type: "select",
+    type: "select-buttons",
     options: [
-      { label: "Flex Start", value: "flex-start" },
-      { label: "Flex End", value: "flex-end" },
-      { label: "Center", value: "center" },
-      { label: "Space Between", value: "space-between" },
-      { label: "Space Around", value: "space-around" },
+      { label: "Flex Start", value: "flex-start", icon: "up" },
+      { label: "Flex End", value: "flex-end", icon: "down" },
+      { label: "Center", value: "center", icon: "middle" },
+      { label: "Space Between", value: "space-between", icon: "left" },
+      { label: "Space Around", value: "space-around", icon: "right" },
     ],
   },
   width: {

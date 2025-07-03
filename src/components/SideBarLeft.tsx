@@ -1,11 +1,9 @@
-import { ElementData, ElementDefinition } from "../types";
 import ElementEditor from "./ElementEditor";
 import ElementSelector from "./ElementSelector";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getIcon } from "../hooks/faicon_setup";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import ElementStyleEditor from "./ElementStyleEditor";
+import Icon from "./Icon";
 
 interface SideBarLeftProps {
   page_hooks: PageHooks;
@@ -28,7 +26,7 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("add")}
         >
-          <FontAwesomeIcon icon={getIcon("plus")} />
+          <Icon name="plus" />
         </button>
         <button
           className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none border border-y-0 border-gray-600 ${
@@ -48,7 +46,7 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("style")}
         >
-          <FontAwesomeIcon icon={getIcon("css")} />
+          <Icon name="css" />
         </button>
       </div>
       <div className="flex-1 overflow-auto">

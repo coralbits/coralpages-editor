@@ -1,8 +1,7 @@
 import { ElementDefinition } from "../types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getIcon } from "../hooks/faicon_setup";
 import { EditorHooks } from "../hooks/editor";
 import { PageHooks } from "../hooks/page";
+import Icon from "./Icon";
 
 interface ElementSelectorProps {
   page_hooks: PageHooks;
@@ -46,10 +45,7 @@ const ElementSelectorItem = (props: {
         );
       }}
     >
-      <FontAwesomeIcon
-        icon={getIcon(props.element.icon)}
-        className="text-2xl"
-      />
+      <Icon name={props.element.icon} className="text-2xl" />
       <span className="text-sm text-nowrap">
         {getBasicName(props.element.name)}
       </span>

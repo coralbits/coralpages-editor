@@ -1,4 +1,5 @@
 import { AssetSelectorButton } from "./AssetSelector";
+import Icon from "./Icon";
 
 export type FormFieldType =
   | "text"
@@ -14,7 +15,8 @@ export type FormFieldType =
   | "range"
   | "image"
   | "hidden"
-  | "boolean";
+  | "boolean"
+  | "select-buttons";
 
 export interface FormFieldProps {
   className?: string;
@@ -165,6 +167,37 @@ export const FormFieldTextarea = ({
   );
 };
 
+export const FormFieldSelectButtons = ({
+  type,
+  label,
+  name,
+  value,
+  options,
+  onChange,
+  className,
+  label_props,
+}: FormFieldProps) => {
+  return (
+    <FormLabel label={label} className={className} direction="row">
+      <div className="flex flex-row bg-gray-700 rounded-md shadow-2xs border-gray-500 border-1 shadow-gray-400/25 overflow-hidden">
+        {options?.map((option, idx) => (
+          <button
+            key={option.value}
+            value={option.value}
+            className={`px-2 cursor-pointer hover:bg-blue-500 hover:text-white ${
+              idx !== 0 ? "border-l border-gray-500" : ""
+            } ${value === option.value ? "bg-blue-500 text-white" : ""}`}
+            onClick={() => onChange(option.value)}
+            title={option.label}
+          >
+            {option.icon ? <Icon name={option.icon} /> : option.label}
+          </button>
+        ))}
+      </div>
+    </FormLabel>
+  );
+};
+
 export const FormField = (props: FormFieldProps) => {
   switch (props.type) {
     case "text":
@@ -179,6 +212,8 @@ export const FormField = (props: FormFieldProps) => {
       return <FormFieldDefault {...props} label_props={{ direction: "row" }} />;
     case "boolean":
       return <FormFieldBoolean {...props} />;
+    case "select-buttons":
+      return <FormFieldSelectButtons {...props} />;
     default:
       return <FormFieldDefault {...props} />;
   }
