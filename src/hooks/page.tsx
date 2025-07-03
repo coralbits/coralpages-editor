@@ -22,10 +22,6 @@ const children_update_element_rec = (
   elements: ElementData[],
   element: ElementData
 ): ElementData[] => {
-  console.log(
-    elements.map((e) => e.id),
-    element.id
-  );
   let found = false;
   const new_elements = elements.map((e) => {
     if (e.id === element.id) {

@@ -7,6 +7,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import HoldButton from "./HoldButton";
 import { AssetSelectorButton } from "./AssetSelector";
+import { FormField, FormFieldType } from "./FormField";
 
 const ElementEditor = ({
   editor_hooks,
@@ -102,38 +103,15 @@ const EditorFieldEditor = ({
   onChange: (field: EditorField, value: string) => void;
 }) => {
   return (
-    <div className={className}>
-      <label htmlFor={field.name} className="text-sm font-bold">
-        {field.label}
-      </label>
-      {field.type === "textarea" ? (
-        <textarea
-          className="w-full p-2 border border-gray-400 rounded-md"
-          placeholder={field.placeholder}
-          name={field.name}
-          value={element.data?.[field.name] || ""}
-          rows={10}
-          onChange={(e) => onChange(field, e.target.value)}
-        />
-      ) : field.type === "image" ? (
-        <AssetSelectorButton
-          placeholder={field.placeholder}
-          name={field.name}
-          value={element.data?.[field.name] || ""}
-          className="w-full"
-          onChange={(value) => onChange(field, value)}
-        />
-      ) : (
-        <input
-          type={field.type}
-          placeholder={field.placeholder}
-          name={field.name}
-          value={element.data?.[field.name] || ""}
-          className="w-full p-2 border border-gray-400 rounded-md"
-          onChange={(e) => onChange(field, e.target.value)}
-        />
-      )}
-    </div>
+    <FormField
+      className={className}
+      type={field.type as FormFieldType}
+      label={field.label}
+      name={field.name}
+      value={element.data?.[field.name] || ""}
+      options={field.options}
+      onChange={(value) => onChange(field, value)}
+    />
   );
 };
 const DeleteElementButton = ({

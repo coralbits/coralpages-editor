@@ -29,4 +29,5 @@ export interface EditorField {
   label: string;
   name: string;
   placeholder: string;
+  options?: { label: string; value: string; icon?: string }[];
 }
