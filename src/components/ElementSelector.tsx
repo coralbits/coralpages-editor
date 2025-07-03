@@ -34,6 +34,7 @@ const ElementSelectorItem = (props: {
       onClick={() =>
         props.page_hooks.onAddElement(props.element, "root", 10000)
       }
+      title={props.element.description}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData(

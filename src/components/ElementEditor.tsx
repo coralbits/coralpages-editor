@@ -63,7 +63,7 @@ const ElementEditor = ({
   };
 
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto h-full">
+    <div className="flex flex-col gap-2 overflow-auto min-h-full">
       {editor?.map((field, idx) => (
         <EditorFieldEditor
           field={field}

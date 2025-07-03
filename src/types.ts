@@ -16,6 +16,7 @@ export interface ElementData {
 
 export interface ElementDefinition {
   name: string;
+  description?: string;
   store: string;
   data: Record<string, any>;
   style: Record<string, any>;
