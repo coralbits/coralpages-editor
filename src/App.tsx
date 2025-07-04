@@ -1,40 +1,19 @@
-import React, { useState } from "react";
-import TopBar from "./components/TopBar";
-import SideBarLeft from "./components/SideBarLeft";
-import MainContent from "./components/MainContent";
-import SideBarRight from "./components/SideBarRight";
-import BottomBar from "./components/BottomBar";
-import usePage from "./hooks/page";
-import { useEditor } from "./hooks/editor";
+import { Editor } from "./components/Editor";
+import { PageList } from "./components/PageList";
+import { usePath } from "./utils/history";
 
 interface AppProps {
   api_url: string;
-  page_name: string;
 }
 
-const App = ({ api_url, page_name }: AppProps) => {
-  const page_hooks = usePage(api_url, page_name);
-  const editor_hooks = useEditor(api_url);
-
-  if (!page_hooks?.page || !editor_hooks.elementDefinitions) {
-    return <div>Loading...</div>;
+const App = ({ api_url }: AppProps) => {
+  const path = usePath();
+  if (!path.includes("/edit/")) {
+    return <PageList api_url={api_url} />;
   }
+  const page_name = path.split("/edit/")[1];
 
-  return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
-      <TopBar page_hooks={page_hooks} />
-      <div className="flex flex-row flex-1 overflow-hidden">
-        <SideBarLeft page_hooks={page_hooks} editor_hooks={editor_hooks} />
-        <MainContent
-          page_hooks={page_hooks}
-          editor_hooks={editor_hooks}
-          api_url={api_url}
-        />
-        <SideBarRight page_hooks={page_hooks} editor_hooks={editor_hooks} />
-      </div>
-      <BottomBar />
-    </div>
-  );
+  return <Editor api_url={api_url} page_name={page_name} />;
 };
 
 export default App;

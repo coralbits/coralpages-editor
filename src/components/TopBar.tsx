@@ -11,7 +11,15 @@ interface TopBarProps {
 const TopBar = ({ page_hooks }: TopBarProps) => {
   return (
     <nav className="topbar">
-      <div className="flex items-center gap-2">
+      <button
+        className="topbar-icon-btn"
+        onClick={() => {
+          history.back();
+        }}
+      >
+        <Icon name="left" />
+      </button>
+      <div className="flex items-center gap-2 flex-1 px-4">
         <span className="topbar-title">
           {i18n("Coralbits Universe Page Editor")} - {page_hooks.page?.title}
         </span>
@@ -19,7 +27,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
 
       <div className="topbar-actions">
         <button
-          className="topbar-icon-btn cursor-pointer"
+          className="topbar-icon-btn"
           aria-label={i18n("Download")}
           title={i18n("Download")}
           onClick={() => {
@@ -32,7 +40,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
           <Icon name="download" />
         </button>
         <button
-          className="topbar-icon-btn cursor-pointer"
+          className="topbar-icon-btn"
           aria-label={i18n("Upload")}
           title={i18n("Upload")}
           onClick={() => upload_page(page_hooks.setPage)}
@@ -41,7 +49,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
         </button>
 
         <button
-          className="topbar-icon-btn cursor-pointer"
+          className="topbar-icon-btn"
           aria-label={i18n("Preview")}
           title={i18n("Preview")}
           onClick={() => {
@@ -55,7 +63,7 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
           <Icon name="eye" />
         </button>
         <button
-          className="topbar-icon-btn cursor-pointer"
+          className="topbar-icon-btn"
           aria-label={i18n("Save")}
           title={i18n("Save")}
           onClick={page_hooks.savePage}

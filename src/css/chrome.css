@@ -133,7 +133,7 @@
 @layer components {
   /* Topbar */
   .topbar {
-    @apply w-full flex items-center justify-between px-4 h-16;
+    @apply w-full flex items-center h-16;
     background: var(--bg-elevated);
     border-bottom: 1px solid var(--border-primary);
     box-shadow: var(--shadow-sm);
@@ -146,11 +146,11 @@
   }
 
   .topbar-actions {
-    @apply flex items-center gap-2;
+    @apply flex items-center;
   }
 
   .topbar-icon-btn {
-    @apply p-2 rounded-lg transition-all duration-200;
+    @apply h-16 w-16 transition-all duration-200 cursor-pointer;
     color: var(--text-secondary);
     background: transparent;
     border: 1px solid transparent;
@@ -313,5 +313,48 @@
   .card:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
+  }
+
+  .table {
+    @apply w-full overflow-auto rounded-md border;
+    border-color: var(--border-primary);
+  }
+
+  .table table {
+    @apply w-full;
+  }
+
+  .table table th {
+    @apply px-4 py-2;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+  }
+  .table tr.clickable {
+    @apply cursor-pointer;
+  }
+
+  .table table td {
+    @apply px-4 py-2;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-secondary);
+    color: var(--text-primary);
+  }
+
+  .table table tr.clickable:hover td {
+    @apply transition-all duration-200;
+    background: var(--bg-elevated);
+    border-color: var(--border-secondary);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+  .table table tr:first-child th {
+    border-top: none;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
   }
 }

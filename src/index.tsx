@@ -11,12 +11,4 @@ config.autoAddCss = false;
 const apiUrl = "http://localhost:8006";
 
 const root = createRoot(document.getElementById("root")!);
-// page name from pathname, like  `*/edit/{page_path}`
-let page_name = "index";
-let path = window.location.pathname;
-
-if (path.split("/edit/").length > 1) {
-  page_name = path.split("/edit/")[1];
-}
-
-root.render(<App api_url={apiUrl} page_name={page_name} />);
+root.render(<App api_url={apiUrl} />);
