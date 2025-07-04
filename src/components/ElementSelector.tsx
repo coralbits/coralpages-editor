@@ -1,4 +1,4 @@
-import { ElementDefinition } from "../types";
+import { BlockTemplate } from "../types";
 import { EditorHooks } from "../hooks/editor";
 import { PageHooks } from "../hooks/page";
 import Icon from "./Icon";
@@ -23,7 +23,7 @@ const ElementSelector = (props: ElementSelectorProps) => {
 };
 
 const ElementSelectorItem = (props: {
-  element: ElementDefinition;
+  element: BlockTemplate;
   page_hooks: PageHooks;
 }) => {
   return (

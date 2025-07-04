@@ -1,4 +1,4 @@
-import { ElementData, ElementDefinition } from "../types";
+import { Block, BlockTemplate } from "../types";
 import useElementDefinitions from "./element_definitions";
 import { useEffect, useState } from "react";
 import { PageHooks } from "./page";
@@ -8,8 +8,8 @@ export type EditorTab = "add" | "edit" | "style";
 export interface EditorHooks {
   selectedElementId: string | undefined;
   setSelectedElementId: (element_id: string | undefined) => void;
-  getSelectedElement: (page_hooks: PageHooks) => ElementData | undefined;
-  elementDefinitions: ElementDefinition[];
+  getSelectedElement: (page_hooks: PageHooks) => Block | undefined;
+  elementDefinitions: BlockTemplate[];
   selectedTab: EditorTab;
   setSelectedTab: (tab: EditorTab) => void;
   width: number;
@@ -45,7 +45,7 @@ export const useElementDefinition = (
   page_hooks: PageHooks
 ) => {
   const [element_definition, setElementDefinition] = useState<
-    ElementDefinition | undefined
+    BlockTemplate | undefined
   >(undefined);
 
   const element = editor_hooks.getSelectedElement(page_hooks);

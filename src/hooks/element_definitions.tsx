@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { ElementDefinition } from "../types";
+import { BlockTemplate } from "../types";
 
 const useElementDefinitions = (api_url: string) => {
   const [elementDefinitions, setElementDefinitions] = useState<
-    ElementDefinition[] | undefined
+    BlockTemplate[] | undefined
   >();
 
   useEffect(() => {

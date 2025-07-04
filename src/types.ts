@@ -3,18 +3,18 @@ export interface Page {
   url: string;
   title: string;
   template?: string;
-  data: ElementData[];
+  data: Block[];
 }
 
-export interface ElementData {
+export interface Block {
   id: string;
   type: string;
   data?: any;
   style?: Record<string, string>;
-  children?: ElementData[];
+  children?: Block[];
 }
 
-export interface ElementDefinition {
+export interface BlockTemplate {
   name: string;
   description?: string;
   store: string;

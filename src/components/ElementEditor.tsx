@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { EditorField, ElementData, ElementDefinition } from "../types";
+import { EditorField, Block, BlockTemplate } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { i18n } from "../utils/i18n";
@@ -15,7 +15,7 @@ const ElementEditor = ({
   page_hooks: PageHooks | undefined;
 }) => {
   const [element_definition, setElementDefinition] = useState<
-    ElementDefinition | undefined
+    BlockTemplate | undefined
   >(undefined);
 
   if (!page_hooks) {
@@ -58,7 +58,7 @@ const ElementEditor = ({
         [field.name]: value,
       },
     };
-    page_hooks.onChangeElement(new_element as ElementData);
+    page_hooks.onChangeElement(new_element as Block);
   };
 
   return (
@@ -96,7 +96,7 @@ const EditorFieldEditor = ({
   onChange,
 }: {
   field: EditorField;
-  element: ElementData;
+  element: Block;
   className?: string;
   onChange: (field: EditorField, value: string) => void;
 }) => {

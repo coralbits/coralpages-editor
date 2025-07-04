@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Page, ElementData, ElementDefinition } from "../types";
+import { Page, Block, BlockTemplate } from "../types";
 
 export interface PageHooks {
   page?: Page;
-  findElement: (element_id?: string) => ElementData | undefined;
-  onChangeElement: (element: ElementData) => void;
+  findElement: (element_id?: string) => Block | undefined;
+  onChangeElement: (element: Block) => void;
   onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
   onAddElement: (
-    element_definition: ElementDefinition,
+    element_definition: BlockTemplate,
     parent_id: string,
     idx: number
   ) => void;
@@ -19,9 +19,9 @@ export interface PageHooks {
 }
 
 const children_update_element_rec = (
-  elements: ElementData[],
-  element: ElementData
-): ElementData[] => {
+  elements: Block[],
+  element: Block
+): Block[] => {
   let found = false;
   const new_elements = elements.map((e) => {
     if (e.id === element.id) {
@@ -44,9 +44,9 @@ const children_update_element_rec = (
 };
 
 const find_element_rec = (
-  elements: ElementData[],
+  elements: Block[],
   element_id: string
-): ElementData | undefined => {
+): Block | undefined => {
   for (const element of elements) {
     if (element.id === element_id) {
       return element;
@@ -65,7 +65,7 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
   const [page, setPage] = useState<Page | undefined>(undefined);
   const [need_save, setNeedSave] = useState(false);
 
-  const onChangeElement = (element: ElementData) => {
+  const onChangeElement = (element: Block) => {
     setPage((page) => {
       if (!page) {
         return page;
@@ -79,7 +79,7 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
   };
 
   const onAddElement = (
-    element_definition: ElementDefinition,
+    element_definition: BlockTemplate,
     parent_id: string,
     index: number
   ) => {
@@ -104,7 +104,7 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     });
   };
 
-  const findElement = (element_id?: string): ElementData | undefined => {
+  const findElement = (element_id?: string): Block | undefined => {
     if (!page || !element_id) {
       return undefined;
     }
@@ -205,7 +205,7 @@ export function move_element({
 export function find_element_and_remove(
   page: Page,
   element_id: string
-): { element: ElementData | undefined; page: Page } {
+): { element: Block | undefined; page: Page } {
   const { element, elements } = find_element_and_remove_rec(
     page.data,
     element_id
@@ -223,9 +223,9 @@ export function find_element_and_remove(
 }
 
 function find_element_and_remove_rec(
-  elements: ElementData[],
+  elements: Block[],
   element_id: string
-): { element: ElementData | undefined; elements: ElementData[] } {
+): { element: Block | undefined; elements: Block[] } {
   for (const [idx, element] of elements.entries()) {
     if (element.id === element_id) {
       return {
@@ -254,7 +254,7 @@ function find_element_and_remove_rec(
 
 export function insert_element_at_idx(
   page: Page,
-  element: ElementData,
+  element: Block,
   parent_id: string,
   idx: number
 ): Page {
@@ -278,12 +278,12 @@ function insert_element_at_idx_rec({
   parent_id,
   idx,
 }: {
-  element: ElementData;
-  elements?: ElementData[];
+  element: Block;
+  elements?: Block[];
   current_id: string;
   parent_id: string;
   idx: number;
-}): ElementData[] | undefined {
+}): Block[] | undefined {
   if (!elements) {
     if (current_id === parent_id) {
       return [element];

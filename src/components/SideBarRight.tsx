@@ -1,4 +1,4 @@
-import { ElementData } from "../types";
+import { Block } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { useState, useEffect } from "react";
@@ -66,7 +66,7 @@ const DocumentLayout = ({
   page_hooks,
   parent_id,
 }: {
-  children: ElementData[];
+  children: Block[];
   editor_hooks: EditorHooks;
   is_dragging: boolean;
   page_hooks: PageHooks;
@@ -164,7 +164,7 @@ const DocumentItem = ({
   child,
   editor_hooks,
 }: {
-  child: ElementData;
+  child: Block;
   editor_hooks: EditorHooks;
 }) => {
   const is_selected =
@@ -203,7 +203,7 @@ const DocumentItem = ({
   );
 };
 
-const preview_text = (child: ElementData): string => {
+const preview_text = (child: Block): string => {
   let text = "";
   if (child.data?.text) {
     text = child.data?.text;
