@@ -9,8 +9,8 @@
     }
   },
   "scripts": {
-    "start": "parcel src/index.html",
-    "build": "parcel build src/index.html",
+    "start": "parcel src/index.html --port 8005",
+    "build": "parcel build src/index.html --dist-dir ./dist/",
     "test": "vitest"
   },
   "dependencies": {

@@ -1,19 +1,28 @@
-FROM ghcr.io/astral-sh/uv:bookworm-slim
+FROM node:20-slim AS frontend-builder
 
 WORKDIR /app
-
 
 # Copy dependency files
 COPY . .
 
-# Remove venv if it exists
-RUN rm -rf .venv
+# Install nodejs dependencies
+RUN npm install
 
-# Install Python dependencies
-RUN uv sync
+# Remove dist folder if it exists, to avoid dev modes
+RUN rm -rf dist
 
+# Build the frontend
+RUN npm run build
+RUN test -d dist
+
+FROM docker.io/library/caddy:latest
+
+RUN mkdir -p /var/www
+# Copy built CSS from frontend-builder
+COPY --from=frontend-builder /app/dist/ /var/www/
+COPY Caddyfile /etc/caddy/Caddyfile
 # Expose the port the app runs on
 EXPOSE 8000
 
 # Command to run the application
-CMD ["./run.sh"]
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
