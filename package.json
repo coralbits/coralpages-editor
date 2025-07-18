@@ -2,12 +2,6 @@
   "name": "parcel-react-static-starter",
   "private": true,
   "version": "0.0.0",
-  "targets": {
-    "react-static": {
-      "source": "src/pages/*",
-      "context": "react-server"
-    }
-  },
   "scripts": {
     "start": "parcel src/index.html --port 8005",
     "build": "parcel build src/index.html --dist-dir ./dist/",

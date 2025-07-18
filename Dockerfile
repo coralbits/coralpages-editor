@@ -13,6 +13,7 @@ RUN rm -rf dist
 
 # Build the frontend
 RUN npm run build
+RUN ls -al 
 RUN test -d dist
 
 FROM docker.io/library/caddy:latest
