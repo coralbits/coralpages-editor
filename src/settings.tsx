@@ -4,8 +4,8 @@ export interface Settings {
 }
 
 export const get_settings = () => {
-  const pv_url = localStorage.getItem("pv_url") || "/api/v1/";
-  const am_url = localStorage.getItem("am_url") || "/api/v1/";
+  const pv_url = localStorage.getItem("pv_url") || "/api/v1";
+  const am_url = localStorage.getItem("am_url") || "/api/v1";
 
   return {
     am_url,
