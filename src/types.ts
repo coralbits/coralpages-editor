@@ -3,28 +3,28 @@ export interface Page {
   url: string;
   title: string;
   template?: string;
-  data: Block[];
+  children: Element[];
 }
 
-export interface Block {
+export interface Element {
   id: string;
   type: string;
   data?: any;
   style?: Record<string, string>;
-  children?: Block[];
+  children?: Element[];
 }
 
-export interface BlockTemplate {
+export interface Widget {
   name: string;
   description?: string;
   store: string;
   data: Record<string, any>;
   style: Record<string, any>;
   icon: string;
-  editor: EditorField[] | string;
+  editor: FieldDefinition[] | string;
 }
 
-export interface EditorField {
+export interface FieldDefinition {
   type: string;
   label: string;
   name: string;

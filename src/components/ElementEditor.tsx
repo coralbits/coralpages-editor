@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { EditorField, Block, BlockTemplate } from "../types";
+import { FieldDefinition, Element, Widget } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { i18n } from "../utils/i18n";
@@ -15,7 +15,7 @@ const ElementEditor = ({
   page_hooks: PageHooks | undefined;
 }) => {
   const [element_definition, setElementDefinition] = useState<
-    BlockTemplate | undefined
+    Widget | undefined
   >(undefined);
 
   if (!page_hooks) {
@@ -47,7 +47,7 @@ const ElementEditor = ({
     return <div>No element found</div>;
   }
 
-  const handleChange = (field: EditorField, value: string) => {
+  const handleChange = (field: FieldDefinition, value: string) => {
     if (!page_hooks) {
       return;
     }
@@ -58,7 +58,7 @@ const ElementEditor = ({
         [field.name]: value,
       },
     };
-    page_hooks.onChangeElement(new_element as Block);
+    page_hooks.onChangeElement(new_element as Element);
   };
 
   return (
@@ -95,10 +95,10 @@ const EditorFieldEditor = ({
   className,
   onChange,
 }: {
-  field: EditorField;
-  element: Block;
+  field: FieldDefinition;
+  element: Element;
   className?: string;
-  onChange: (field: EditorField, value: string) => void;
+  onChange: (field: FieldDefinition, value: string) => void;
 }) => {
   return (
     <FormField

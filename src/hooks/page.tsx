@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Page, Block, BlockTemplate } from "../types";
+import { Page, Element, Widget } from "../types";
 
 export interface PageHooks {
   page?: Page;
-  findElement: (element_id?: string) => Block | undefined;
-  onChangeElement: (element: Block) => void;
+  findElement: (element_id?: string) => Element | undefined;
+  onChangeElement: (element: Element) => void;
   onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
   onAddElement: (
-    element_definition: BlockTemplate,
+    element_definition: Widget,
     parent_id: string,
     idx: number
   ) => void;
@@ -19,9 +19,9 @@ export interface PageHooks {
 }
 
 const children_update_element_rec = (
-  elements: Block[],
-  element: Block
-): Block[] => {
+  elements: Element[],
+  element: Element
+): Element[] => {
   let found = false;
   const new_elements = elements.map((e) => {
     if (e.id === element.id) {
@@ -44,9 +44,9 @@ const children_update_element_rec = (
 };
 
 const find_element_rec = (
-  elements: Block[],
+  elements: Element[],
   element_id: string
-): Block | undefined => {
+): Element | undefined => {
   for (const element of elements) {
     if (element.id === element_id) {
       return element;
@@ -65,7 +65,7 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
   const [page, setPage] = useState<Page | undefined>(undefined);
   const [need_save, setNeedSave] = useState(false);
 
-  const onChangeElement = (element: Block) => {
+  const onChangeElement = (element: Element) => {
     setPage((page) => {
       if (!page) {
         return page;
@@ -73,13 +73,13 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
       setNeedSave(true);
       return {
         ...page,
-        data: children_update_element_rec(page.data || [], element),
+        children: children_update_element_rec(page.children || [], element),
       };
     });
   };
 
   const onAddElement = (
-    element_definition: BlockTemplate,
+    element_definition: Widget,
     parent_id: string,
     index: number
   ) => {
@@ -104,11 +104,11 @@ const usePage = (api_url: string, page_name: string): PageHooks => {
     });
   };
 
-  const findElement = (element_id?: string): Block | undefined => {
+  const findElement = (element_id?: string): Element | undefined => {
     if (!page || !element_id) {
       return undefined;
     }
-    return find_element_rec(page.data, element_id);
+    return find_element_rec(page.children, element_id);
   };
 
   const onMoveElement = (
@@ -205,15 +205,15 @@ export function move_element({
 export function find_element_and_remove(
   page: Page,
   element_id: string
-): { element: Block | undefined; page: Page } {
+): { element: Element | undefined; page: Page } {
   const { element, elements } = find_element_and_remove_rec(
-    page.data,
+    page.children,
     element_id
   );
   if (element) {
     return {
       element,
-      page: { ...page, data: elements },
+      page: { ...page, children: elements },
     };
   }
   return {
@@ -223,9 +223,9 @@ export function find_element_and_remove(
 }
 
 function find_element_and_remove_rec(
-  elements: Block[],
+  elements: Element[],
   element_id: string
-): { element: Block | undefined; elements: Block[] } {
+): { element: Element | undefined; elements: Element[] } {
   for (const [idx, element] of elements.entries()) {
     if (element.id === element_id) {
       return {
@@ -254,12 +254,12 @@ function find_element_and_remove_rec(
 
 export function insert_element_at_idx(
   page: Page,
-  element: Block,
+  element: Element,
   parent_id: string,
   idx: number
 ): Page {
   const children = insert_element_at_idx_rec({
-    elements: page.data,
+    elements: page.children,
     current_id: "root",
     parent_id,
     idx,
@@ -267,7 +267,7 @@ export function insert_element_at_idx(
   });
   return {
     ...page,
-    data: children || [],
+    children: children || [],
   };
 }
 
@@ -278,12 +278,12 @@ function insert_element_at_idx_rec({
   parent_id,
   idx,
 }: {
-  element: Block;
-  elements?: Block[];
+  element: Element;
+  elements?: Element[];
   current_id: string;
   parent_id: string;
   idx: number;
-}): Block[] | undefined {
+}): Element[] | undefined {
   if (!elements) {
     if (current_id === parent_id) {
       return [element];

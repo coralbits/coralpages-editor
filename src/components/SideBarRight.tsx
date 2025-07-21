@@ -1,4 +1,4 @@
-import { Block } from "../types";
+import { Element } from "../types";
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { useState, useEffect } from "react";
@@ -48,7 +48,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
         }}
       >
         <DocumentLayout
-          children={page_hooks.page.data}
+          children={page_hooks.page.children}
           editor_hooks={editor_hooks}
           is_dragging={is_dragging}
           page_hooks={page_hooks}
@@ -66,7 +66,7 @@ const DocumentLayout = ({
   page_hooks,
   parent_id,
 }: {
-  children: Block[];
+  children?: Element[];
   editor_hooks: EditorHooks;
   is_dragging: boolean;
   page_hooks: PageHooks;
@@ -80,7 +80,7 @@ const DocumentLayout = ({
         idx={0}
         isVisible={is_dragging}
       />
-      {children.map((child, idx) =>
+      {children?.map((child, idx) =>
         child.children ? (
           <React.Fragment key={child.id || idx}>
             <details open={true} key={child.id || idx} className="w-full">
@@ -126,15 +126,13 @@ const DropItem = ({
   const [is_hovering, setIsHovering] = useState(false);
   return (
     <div
-      className={`min-h-2 border-1 border-solid rounded-md transition-all duration-300 ease-in-out transform ${
-        isVisible
-          ? "opacity-100 max-h-8 scale-y-100"
-          : "opacity-0 max-h-0 scale-y-0"
-      } ${
-        is_hovering
+      className={`min-h-2 border-1 border-solid rounded-md transition-all duration-300 ease-in-out transform ${isVisible
+        ? "opacity-100 max-h-8 scale-y-100"
+        : "opacity-0 max-h-0 scale-y-0"
+        } ${is_hovering
           ? "bg-green-500/50 border-green-500"
           : "bg-amber-500/25 border-amber-500"
-      }`}
+        }`}
       onDragEnter={() => setIsHovering(true)}
       onDragLeave={() => setIsHovering(false)}
       onDragOver={(e) => {
@@ -164,7 +162,7 @@ const DocumentItem = ({
   child,
   editor_hooks,
 }: {
-  child: Block;
+  child: Element;
   editor_hooks: EditorHooks;
 }) => {
   const is_selected =
@@ -193,9 +191,8 @@ const DocumentItem = ({
     >
       {child.type}
       <span
-        className={`sidebar-button-text line-clamp-1 ${
-          is_selected ? "sidebar-button-text-active" : ""
-        }`}
+        className={`sidebar-button-text line-clamp-1 ${is_selected ? "sidebar-button-text-active" : ""
+          }`}
       >
         {preview_text(child)}
       </span>
@@ -203,7 +200,7 @@ const DocumentItem = ({
   );
 };
 
-const preview_text = (child: Block): string => {
+const preview_text = (child: Element): string => {
   let text = "";
   if (child.data?.text) {
     text = child.data?.text;
