@@ -8,6 +8,7 @@ import { Page } from "../types";
 
 const EXAMPLE_PAGE: Page = {
   title: "test",
+  url: "",
   children: [
     {
       id: "1",
@@ -73,7 +74,7 @@ describe("insert_element_at_idx", () => {
     const element2 = { id: "2", type: "div" };
     const element3 = { id: "3", type: "div" };
     const element4 = { id: "4", type: "div" };
-    const page: Page = { children: [element1], title: "test" };
+    const page: Page = { children: [element1], url: "", title: "test" };
     const idx = 0;
     const new_page = insert_element_at_idx(page, element2, "root", idx);
     expect(new_page.children).toEqual([element2, element1]);
@@ -82,7 +83,12 @@ describe("insert_element_at_idx", () => {
     expect(new_page2.children).toEqual([element2, element1, element3]);
 
     const new_page3 = insert_element_at_idx(new_page2, element4, "root", 1);
-    expect(new_page3.children).toEqual([element2, element4, element1, element3]);
+    expect(new_page3.children).toEqual([
+      element2,
+      element4,
+      element1,
+      element3,
+    ]);
   });
 
   it("inserts elements in a first level child", () => {
@@ -90,7 +96,7 @@ describe("insert_element_at_idx", () => {
     const element2 = { id: "2", type: "div" };
     const element3 = { id: "3", type: "div" };
     const element4 = { id: "4", type: "div" };
-    const page: Page = { children: [element1], title: "test" };
+    const page: Page = { children: [element1], url: "", title: "test" };
 
     const new_page = insert_element_at_idx(page, element2, "1", 0);
     expect(new_page.children[0].id).toEqual("1");

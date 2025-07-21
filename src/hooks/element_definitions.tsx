@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Widget } from "../types";
+import settings from "../settings";
 
-const useElementDefinitions = (api_url: string) => {
+const useElementDefinitions = () => {
   const [elementDefinitions, setElementDefinitions] = useState<
     Widget[] | undefined
   >();
 
   useEffect(() => {
-    fetch(`${api_url}/api/v1/widget/`)
+    fetch(`${settings.pv_url}/api/v1/widget/`)
       .then((response) => response.json())
       .then((data) => setElementDefinitions(data));
   }, []);

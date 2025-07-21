@@ -7,13 +7,12 @@ import usePage from "../hooks/page";
 import { useEditor } from "../hooks/editor";
 
 interface EditorProps {
-  api_url: string;
   page_name: string;
 }
 
-export const Editor = ({ api_url, page_name }: EditorProps) => {
-  const page_hooks = usePage(api_url, page_name);
-  const editor_hooks = useEditor(api_url);
+export const Editor = ({ page_name }: EditorProps) => {
+  const page_hooks = usePage(page_name);
+  const editor_hooks = useEditor();
 
   if (!page_hooks?.page || !editor_hooks.elementDefinitions) {
     return <div>Loading...</div>;
@@ -24,11 +23,7 @@ export const Editor = ({ api_url, page_name }: EditorProps) => {
       <TopBar page_hooks={page_hooks} />
       <div className="flex flex-row flex-1 overflow-hidden">
         <SideBarLeft page_hooks={page_hooks} editor_hooks={editor_hooks} />
-        <MainContent
-          page_hooks={page_hooks}
-          editor_hooks={editor_hooks}
-          api_url={api_url}
-        />
+        <MainContent page_hooks={page_hooks} editor_hooks={editor_hooks} />
         <SideBarRight page_hooks={page_hooks} editor_hooks={editor_hooks} />
       </div>
       <BottomBar />

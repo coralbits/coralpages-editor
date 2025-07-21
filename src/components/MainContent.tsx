@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { EditorHooks } from "../hooks/editor";
 import { PageHooks } from "../hooks/page";
 import React from "react";
+import settings from "../settings";
 
 interface MainContentProps {
   page_hooks: PageHooks;
   editor_hooks: EditorHooks;
-  api_url: string;
 }
 
 const html_with_injected_js = () => {
@@ -34,14 +34,8 @@ console.log('injected js');
   return URL.createObjectURL(blob);
 };
 
-const MainContent = ({
-  page_hooks,
-  editor_hooks,
-  api_url,
-}: MainContentProps) => {
-  const url = `${api_url}/api/v1/render/`;
-
-  const blob_url = html_with_injected_js();
+const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
+  const url = `${settings.pv_url}/api/v1/render/`;
 
   useEffect(() => {
     fetch(url, {
@@ -92,7 +86,7 @@ const postHTML = (html: string) => {
 
   iframe.contentWindow?.postMessage(
     { type: "replace-body", html: body, head },
-    "*"
+    "*",
   );
 };
 

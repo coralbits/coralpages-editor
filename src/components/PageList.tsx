@@ -4,6 +4,7 @@ import { Container } from "./Container";
 import { ResultI, Table } from "./Table";
 import history from "../utils/history";
 import BottomBar from "./BottomBar";
+import settings from "../settings";
 
 interface PageInfo {
   store: string;
@@ -17,7 +18,7 @@ interface PageResult {
   results: PageInfo[];
 }
 
-export const PageList = ({ api_url }: { api_url: string }) => {
+export const PageList = () => {
   return (
     <div className="h-screen w-screen flex flex-col">
       <div className="topbar">
@@ -27,7 +28,7 @@ export const PageList = ({ api_url }: { api_url: string }) => {
         <Container className="flex-1 py-10 w-full">
           <Table
             columns={[i18n("Store"), i18n("Id"), i18n("Title")]}
-            data_hook={(page: number) => usePages(api_url, page)}
+            data_hook={(page: number) => usePages(page)}
             onClick={(row, idx) => {
               history.push(`/edit/${row.id}`);
             }}
@@ -39,22 +40,22 @@ export const PageList = ({ api_url }: { api_url: string }) => {
   );
 };
 
-const usePages = (api_url: string, page: number) => {
+const usePages = (page: number) => {
   const [pages, setPages] = useState<PageResult>({ count: 0, results: [] });
 
-  const fecth_pages = async (api_url: string, page: number) => {
+  const fecth_pages = async (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
-      `${api_url}/api/v1/page/?offset=${offset}&limit=${page_size}`
+      `${settings.pv_url}/api/v1/page/?offset=${offset}&limit=${page_size}`,
     );
     const data = await res.json();
     setPages(data);
   };
 
   useEffect(() => {
-    fecth_pages(api_url, page);
-  }, [api_url, page]);
+    fecth_pages(page);
+  }, [page]);
 
   const pagestr = {
     count: pages.count,

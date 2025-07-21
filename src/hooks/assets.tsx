@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const AM_URL = "http://localhost:8004";
+import settings from "../settings";
 
 export interface Bucket {
   name: string;
@@ -8,7 +7,7 @@ export interface Bucket {
 }
 
 const getBucketList = async (): Promise<Bucket[]> => {
-  const response = await fetch(`${AM_URL}/`);
+  const response = await fetch(`${settings.am_url}/`);
   const data = await response.json();
   return data.buckets;
 };
@@ -37,24 +36,24 @@ export interface Asset {
 const getAssetList = async (
   bucket: string,
   offset: number,
-  limit: number
+  limit: number,
 ): Promise<Asset[]> => {
   const response = await fetch(
-    `${AM_URL}/${bucket}/?offset=${offset}&limit=${limit}`
+    `${settings.am_url}/${bucket}/?offset=${offset}&limit=${limit}`,
   );
   const data = await response.json();
   return data.contents.map((content: any) => ({
     key: content.key,
     creation_date: content.creation_date,
     size: content.size,
-    url: `${AM_URL}/${bucket}/${content.key}`,
+    url: `${settings.am_url}/${bucket}/${content.key}`,
   }));
 };
 
 export const useAssetList = (
   bucket: string,
   offset: number,
-  limit: number
+  limit: number,
 ): [Asset[], () => Promise<void>] => {
   const [assetList, setAssetList] = useState<Asset[]>([]);
 
