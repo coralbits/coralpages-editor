@@ -1,4 +1,4 @@
-*:8005 {
+http://*:8005 {
     root /var/www
     file_server
 }
