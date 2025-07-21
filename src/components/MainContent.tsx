@@ -35,7 +35,7 @@ console.log('injected js');
 };
 
 const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
-  const url = `${settings.pv_url}/api/v1/render/`;
+  const url = `${settings.pv_url}/render/`;
 
   useEffect(() => {
     fetch(url, {

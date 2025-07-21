@@ -150,7 +150,7 @@ const usePage = (page_name: string): PageHooks => {
   };
 
   useEffect(() => {
-    fetch(`${settings.pv_url}/api/v1/page/${page_name}/json`)
+    fetch(`${settings.pv_url}/page/${page_name}/json`)
       .then((res) => res.json())
       .then((page) => {
         setPage(page as Page);
@@ -162,7 +162,7 @@ const usePage = (page_name: string): PageHooks => {
     if (!page) {
       return;
     }
-    await fetch(`${settings.pv_url}/api/v1/page/${page_name}/json`, {
+    await fetch(`${settings.pv_url}/page/${page_name}/json`, {
       method: "POST",
       body: JSON.stringify(page),
     });

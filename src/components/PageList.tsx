@@ -47,7 +47,7 @@ const usePages = (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
-      `${settings.pv_url}/api/v1/page/?offset=${offset}&limit=${page_size}`,
+      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`,
     );
     const data = await res.json();
     setPages(data);
