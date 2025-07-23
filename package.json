@@ -7,6 +7,11 @@
     "build": "parcel build src/index.html --dist-dir ./dist/",
     "test": "vitest"
   },
+  "targets": {
+    "default": {
+      "publicUrl": "./"
+    }
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",

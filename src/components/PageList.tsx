@@ -30,7 +30,7 @@ export const PageList = () => {
             columns={[i18n("Store"), i18n("Id"), i18n("Title")]}
             data_hook={(page: number) => usePages(page)}
             onClick={(row, idx) => {
-              history.push(`/edit/${row.id}`);
+              history.push(`./${row.id}`);
             }}
           />
         </Container>

@@ -7,8 +7,5 @@ import App from "./App";
 // Prevent FontAwesome from adding its CSS since we did it manually above
 config.autoAddCss = false;
 
-// Use environment variable for API URL, fallback to proxy
-const apiUrl = "http://localhost:8006";
-
 const root = createRoot(document.getElementById("root")!);
-root.render(<App api_url={apiUrl} />);
+root.render(<App />);

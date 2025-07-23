@@ -28,4 +28,9 @@ export const usePath = () => {
   return path;
 };
 
+export const get_qs = (key: string) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(key);
+};
+
 export default { push, usePath };
