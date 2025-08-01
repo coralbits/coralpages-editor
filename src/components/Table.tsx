@@ -9,11 +9,19 @@ export interface TableProps<T = any> {
   columns: string[];
   data_hook: (page: number) => ResultI<{ data: T; row: string[] }>;
   onClick?: (data: T, idx: number) => void;
+  paginator?: (props: PaginationProps) => React.ReactNode;
 }
 
-export const Table = <T,>({ columns, data_hook, onClick }: TableProps<T>) => {
+export const Table = <T,>({
+  columns,
+  data_hook,
+  onClick,
+  paginator,
+}: TableProps<T>) => {
   const [page, setPage] = useState(1);
   const data = data_hook(page);
+
+  const MyPaginator = paginator ?? Pagination;
 
   return (
     <div>
@@ -24,7 +32,7 @@ export const Table = <T,>({ columns, data_hook, onClick }: TableProps<T>) => {
           onClick?.(data.results[idx].data, idx);
         }}
       />
-      <Pagination
+      <MyPaginator
         total={data?.count ?? 0}
         page={page}
         setPage={setPage}

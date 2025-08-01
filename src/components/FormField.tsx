@@ -27,6 +27,8 @@ export interface FormFieldProps {
   options?: { label: string; value: string; icon?: string }[];
   onChange: (value: string) => void;
   label_props?: Partial<FormLabelProps>;
+  onEnter?: () => void; // called when enter is pressed
+  onEscape?: () => void; // called when escape is pressed
 }
 
 interface FormLabelProps {
@@ -63,6 +65,8 @@ export const FormFieldDefault = ({
   value,
   onChange,
   label_props,
+  onEnter,
+  onEscape,
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} {...label_props}>
@@ -72,6 +76,14 @@ export const FormFieldDefault = ({
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onEnter?.();
+          }
+          if (e.key === "Escape") {
+            onEscape?.();
+          }
+        }}
       />
     </FormLabel>
   );

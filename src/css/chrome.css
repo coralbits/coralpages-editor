@@ -358,4 +358,34 @@
     background: var(--bg-primary);
     color: var(--text-primary);
   }
+
+  .dialog {
+    @apply flex items-center justify-center m-auto rounded-lg overflow-hidden shadow-lg;
+    z-index: 1000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-400%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  .dialog[open] {
+    opacity: 1;
+    transform: translate(-200%, -50%);
+  }
+
+  .dialog-title {
+    @apply text-2xl font-bold bg-amber-500 p-4 text-white;
+  }
+  .dialog-body {
+    @apply p-4;
+  }
+  .dialog-buttons {
+    @apply flex justify-end gap-2 p-4;
+  }
+}
+::backdrop {
+  @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-1000;
+  z-index: 1000;
 }

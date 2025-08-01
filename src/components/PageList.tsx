@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { i18n } from "../utils/i18n";
 import { Container } from "./Container";
-import { ResultI, Table } from "./Table";
+import { Pagination, ResultI, Table } from "./Table";
 import history from "../utils/history";
 import BottomBar from "./BottomBar";
 import settings from "../settings";
+import { dialog } from "./dialog";
+import { FormField } from "./FormField";
 
 interface PageInfo {
   store: string;
@@ -32,6 +34,17 @@ export const PageList = () => {
             onClick={(row, idx) => {
               history.push(`./${row.id}`);
             }}
+            paginator={(props) => (
+              <div className="flex justify-between items-center">
+                <Pagination {...props} />
+                <button
+                  className="btn btn-primary h-10 px-4 cursor-pointer"
+                  onClick={addPage}
+                >
+                  {i18n("Create Page")}
+                </button>
+              </div>
+            )}
           />
         </Container>
       </div>
@@ -68,4 +81,48 @@ const usePages = (page: number) => {
   };
 
   return pagestr;
+};
+
+const addPage = async () => {
+  const { name } = await dialog({
+    title: i18n("Create Page"),
+    state: {
+      name: "",
+    },
+    content: ({ state, setState, accept, close }) => (
+      <div className="flex flex-col gap-2">
+        <FormField
+          type="text"
+          label={i18n("Page Name")}
+          name="name"
+          value={state.name}
+          onChange={(value) => {
+            setState({ name: value });
+          }}
+          onEnter={() => {
+            accept();
+          }}
+          onEscape={() => {
+            close();
+          }}
+        />
+      </div>
+    ),
+    buttons: [
+      {
+        label: i18n("Create"),
+        onClick: (dprops) => {
+          dprops.accept();
+        },
+      },
+      {
+        label: i18n("Cancel"),
+        onClick: (dprops) => {
+          dprops.close();
+        },
+      },
+    ],
+  });
+
+  console.log({ name });
 };

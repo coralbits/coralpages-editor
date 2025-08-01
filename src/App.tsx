@@ -1,3 +1,4 @@
+import { DialogStack } from "./components/dialog";
 import { Editor } from "./components/Editor";
 import { PageList } from "./components/PageList";
 import { usePath } from "./utils/history";
@@ -16,13 +17,21 @@ const App = ({}: AppProps) => {
     page_name = page_name.slice(1);
   }
 
-  console.log({ page_name });
-
   if (page_name === "" || page_name === undefined) {
-    return <PageList />;
+    return (
+      <>
+        <PageList />
+        <DialogStack />
+      </>
+    );
   }
 
-  return <Editor page_name={page_name} />;
+  return (
+    <>
+      <Editor page_name={page_name} />
+      <DialogStack />
+    </>
+  );
 };
 
 export default App;
