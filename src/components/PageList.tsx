@@ -20,7 +20,7 @@ interface PageResult {
 
 export const PageList = () => {
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div className="h-screen w-screen flex flex-col bg-gray-900">
       <div className="topbar">
         <div className="topbar-title px-4">{i18n("Page List")}</div>
       </div>
@@ -47,7 +47,7 @@ const usePages = (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
-      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`,
+      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`
     );
     const data = await res.json();
     setPages(data);
