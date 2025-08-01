@@ -15,7 +15,13 @@ serve:
 build:
 	npm run build
 
+clean:
+	rm -rf dist
+	rm -rf node_modules
+	rm -rf .parcel-cache
 
+setup:
+	npm install
 
 
 

@@ -6,7 +6,17 @@ interface AppProps {}
 
 const App = ({}: AppProps) => {
   const path = usePath();
-  const page_name = path.split("/edit/")[1];
+
+  let page_name = path;
+  if (path.includes("/edit/")) {
+    page_name = path.split("/edit/")[1];
+  }
+
+  if (page_name.startsWith("/")) {
+    page_name = page_name.slice(1);
+  }
+
+  console.log({ page_name });
 
   if (page_name === "" || page_name === undefined) {
     return <PageList />;
