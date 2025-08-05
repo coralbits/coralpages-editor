@@ -362,7 +362,7 @@ export const useTemplateList = () => {
       const data: ResultI<IdName> = await response.json();
       setTemplates(
         data.results.map((template: any) => ({
-          id: `${template.store}://${template.id}`,
+          id: `${template.store}/${template.id}`,
           name: template.title,
         })),
       );

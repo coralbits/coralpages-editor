@@ -41,7 +41,7 @@ const ElementSelectorItem = (props: {
           JSON.stringify({
             action: "create",
             element_definition: props.element,
-          })
+          }),
         );
       }}
     >
@@ -54,8 +54,8 @@ const ElementSelectorItem = (props: {
 };
 
 const getBasicName = (name: string) => {
-  if (name.includes("://")) {
-    return name.split("://")[1];
+  if (name.includes("/")) {
+    return name.split("/")[1];
   }
   return name;
 };
