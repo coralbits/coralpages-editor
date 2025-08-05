@@ -75,13 +75,13 @@ const postHTML = (html: string) => {
   }
 
   // extract body from html
-  const body = html.match(/<body>(.*?)<\/body>/s)?.[1];
+  let body = html.match(/<body>(.*?)<\/body>/s)?.[1];
   if (!body) {
-    return;
+    body = html;
   }
-  const head = html.match(/<head>(.*?)<\/head>/s)?.[1];
+  let head = html.match(/<head>(.*?)<\/head>/s)?.[1];
   if (!head) {
-    return;
+    head = "";
   }
 
   iframe.contentWindow?.postMessage(
