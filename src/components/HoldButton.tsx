@@ -42,7 +42,7 @@ const HoldButton = ({
   }, [isHolding, pressPercentage, pressProgressIncrease, pressInterval]);
 
   useEffect(() => {
-    if (pressPercentage >= 100) {
+    if (pressPercentage >= 100 && isHolding) {
       onClick();
       setPressPercentage(0);
       setIsHolding(false);

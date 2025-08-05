@@ -3,6 +3,8 @@ import { EditorHooks } from "../hooks/editor";
 import { PageHooks, useTemplateList } from "../hooks/page";
 import { i18n } from "../utils/i18n";
 import { Page } from "../types";
+import HoldButton from "./HoldButton";
+import { showMessage } from "./messages";
 
 const DocumentSettings = ({
   editor_hooks,
@@ -14,7 +16,7 @@ const DocumentSettings = ({
   const [templates] = useTemplateList();
 
   return (
-    <div className="p-6 flex flex-col gap-6">
+    <div className="p-6 flex flex-col gap-6 h-full">
       <FormField
         type="text"
         label={i18n("Document Title")}
@@ -36,6 +38,19 @@ const DocumentSettings = ({
           })),
         ]}
       />
+      <div className="flex-1" />
+
+      <HoldButton
+        onClick={async () => {
+          if (await page_hooks?.onDeletePage()) {
+            window.location.href = "./";
+            showMessage(i18n("Document deleted successfully"));
+          }
+        }}
+        className="bg-red-500 hover:bg-red-600"
+      >
+        {i18n("Delete document")}
+      </HoldButton>
     </div>
   );
 };

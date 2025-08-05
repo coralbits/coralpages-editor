@@ -48,7 +48,7 @@ const add_to_stack = (message: MessageState) => {
   });
 };
 
-export const showMessage = (content: string, props: MessageProps) => {
+export const showMessage = (content: string, props: MessageProps = {}) => {
   const id = props.id || next_message_id();
   const duration = props.duration || MESSAGE_TIMEOUT;
   const message: MessageState = {

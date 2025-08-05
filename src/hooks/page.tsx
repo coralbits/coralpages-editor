@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Page, Element, Widget, IdName } from "../types";
 import settings from "../settings";
 import { ResultI } from "../components/Table";
+import { showMessage } from "../components/messages";
+import { i18n } from "../utils/i18n";
 
 export interface PageHooks {
   page?: Page;
@@ -15,6 +17,7 @@ export interface PageHooks {
   ) => void;
   onDeleteElement: (element_id: string) => void;
   onUpdatePage: (page: Partial<Page>) => void;
+  onDeletePage: () => Promise<boolean>;
   setPage: (page: Page) => void;
 
   need_save: boolean;
@@ -184,6 +187,28 @@ const usePage = (page_name: string): PageHooks => {
     setNeedSave(false);
   };
 
+  const onDeletePage = async () => {
+    if (!page) {
+      return false;
+    }
+    const deleted = await fetch(`${settings.pv_url}/page/${page_name}/json`, {
+      method: "DELETE",
+    });
+    if (deleted.status === 400) {
+      showMessage(
+        i18n("Failed to delete page - {error}", {
+          error: (await deleted.json()).details,
+        }),
+        { level: "error" },
+      );
+      return false;
+    }
+    if (deleted.status !== 200) {
+      return false;
+    }
+    return true;
+  };
+
   return {
     page,
     findElement,
@@ -192,6 +217,7 @@ const usePage = (page_name: string): PageHooks => {
     onAddElement,
     onMoveElement,
     onDeleteElement,
+    onDeletePage,
     setPage,
 
     savePage,
