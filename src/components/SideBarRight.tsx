@@ -3,6 +3,7 @@ import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { useState, useEffect } from "react";
 import React from "react";
+import { i18n } from "../utils/i18n";
 
 interface SideBarRightProps {
   page_hooks: PageHooks;
@@ -47,6 +48,15 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
           setIsDragging(false);
         }}
       >
+        <DocumentItem
+          editor_hooks={editor_hooks}
+          child={{
+            id: "root",
+            type: i18n("Document Settings"),
+            children: [],
+          }}
+          className="ml-6 my-6 h-12"
+        />
         <DocumentLayout
           children={page_hooks.page.children}
           editor_hooks={editor_hooks}
@@ -106,7 +116,7 @@ const DocumentLayout = ({
           <div key={child.id || idx}>
             <DocumentItem child={child} editor_hooks={editor_hooks} />
           </div>
-        )
+        ),
       )}
     </div>
   );
@@ -126,13 +136,15 @@ const DropItem = ({
   const [is_hovering, setIsHovering] = useState(false);
   return (
     <div
-      className={`min-h-2 border-1 border-solid rounded-md transition-all duration-300 ease-in-out transform ${isVisible
-        ? "opacity-100 max-h-8 scale-y-100"
-        : "opacity-0 max-h-0 scale-y-0"
-        } ${is_hovering
+      className={`min-h-2 border-1 border-solid rounded-md transition-all duration-300 ease-in-out transform ${
+        isVisible
+          ? "opacity-100 max-h-8 scale-y-100"
+          : "opacity-0 max-h-0 scale-y-0"
+      } ${
+        is_hovering
           ? "bg-green-500/50 border-green-500"
           : "bg-amber-500/25 border-amber-500"
-        }`}
+      }`}
       onDragEnter={() => setIsHovering(true)}
       onDragLeave={() => setIsHovering(false)}
       onDragOver={(e) => {
@@ -161,9 +173,11 @@ const DropItem = ({
 const DocumentItem = ({
   child,
   editor_hooks,
+  className,
 }: {
   child: Element;
   editor_hooks: EditorHooks;
+  className?: string;
 }) => {
   const is_selected =
     editor_hooks.selectedElementId &&
@@ -171,7 +185,7 @@ const DocumentItem = ({
 
   return (
     <button
-      className={`sidebar-button ${is_selected ? "sidebar-button-active" : ""}`}
+      className={`sidebar-button ${is_selected ? "sidebar-button-active" : ""} ${className || ""}`}
       style={{ width: "calc(100% - 2rem )" }}
       onClick={() => {
         editor_hooks.setSelectedElementId(child.id);
@@ -182,7 +196,7 @@ const DocumentItem = ({
         editor_hooks.setSelectedElementId(child.id);
         e.dataTransfer.setData(
           "application/json",
-          JSON.stringify({ action: "move", element_id: child.id })
+          JSON.stringify({ action: "move", element_id: child.id }),
         );
       }}
       onDragOver={(e) => {
@@ -191,8 +205,9 @@ const DocumentItem = ({
     >
       {child.type}
       <span
-        className={`sidebar-button-text line-clamp-1 ${is_selected ? "sidebar-button-text-active" : ""
-          }`}
+        className={`sidebar-button-text line-clamp-1 ${
+          is_selected ? "sidebar-button-text-active" : ""
+        }`}
       >
         {preview_text(child)}
       </span>

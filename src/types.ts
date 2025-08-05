@@ -31,3 +31,8 @@ export interface FieldDefinition {
   placeholder: string;
   options?: { label: string; value: string; icon?: string }[];
 }
+
+export interface IdName {
+  id: string;
+  name: string;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Page, Element, Widget } from "../types";
+import { Page, Element, Widget, IdName } from "../types";
 import settings from "../settings";
+import { ResultI } from "../components/Table";
 
 export interface PageHooks {
   page?: Page;
@@ -13,6 +14,7 @@ export interface PageHooks {
     idx: number,
   ) => void;
   onDeleteElement: (element_id: string) => void;
+  onUpdatePage: (page: Partial<Page>) => void;
   setPage: (page: Page) => void;
 
   need_save: boolean;
@@ -65,6 +67,19 @@ const find_element_rec = (
 const usePage = (page_name: string): PageHooks => {
   const [page, setPage] = useState<Page | undefined>(undefined);
   const [need_save, setNeedSave] = useState(false);
+
+  const onUpdatePage = (update: Partial<Page>) => {
+    setPage((page) => {
+      if (!page) {
+        return page;
+      }
+      setNeedSave(true);
+      return {
+        ...page,
+        ...update,
+      };
+    });
+  };
 
   const onChangeElement = (element: Element) => {
     setPage((page) => {
@@ -172,6 +187,7 @@ const usePage = (page_name: string): PageHooks => {
   return {
     page,
     findElement,
+    onUpdatePage,
     onChangeElement,
     onAddElement,
     onMoveElement,
@@ -308,5 +324,28 @@ function insert_element_at_idx_rec({
   }));
   return new_elements;
 }
+
+export const useTemplateList = () => {
+  const [templates, setTemplates] = useState<IdName[]>([]);
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      const url = `${settings.pv_url}/page/?limit=100&type=template`;
+
+      const response = await fetch(url);
+      const data: ResultI<IdName> = await response.json();
+      setTemplates(
+        data.results.map((template: any) => ({
+          id: `${template.store}://${template.id}`,
+          name: template.title,
+        })),
+      );
+    };
+
+    fetchTemplates();
+  }, []);
+
+  return [templates];
+};
 
 export default usePage;

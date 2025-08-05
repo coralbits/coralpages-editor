@@ -107,8 +107,8 @@ export const FormFieldSelect = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >
-        {options?.map((option) => (
-          <option key={option.value} value={option.value}>
+        {options?.map((option, idx) => (
+          <option key={idx} value={option.value}>
             {option.label}
           </option>
         ))}
