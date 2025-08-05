@@ -42,9 +42,9 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
       method: "POST",
       body: JSON.stringify(page_hooks.page),
     })
-      .then((response) => response.text())
-      .then((html) => {
-        postHTML(html);
+      .then((response) => response.json())
+      .then((page_json) => {
+        postHTML(page_json);
       });
   }, [url, page_hooks.page]);
 
@@ -68,24 +68,34 @@ const MyIframeNoCache = () => (
 
 const MyIframe = React.memo(MyIframeNoCache);
 
-const postHTML = (html: string) => {
+interface PageJson {
+  title: string;
+  body: string;
+  head: {
+    css: string;
+    js: string;
+    meta: string[];
+  };
+  http: {
+    headers: Record<string, string>;
+    response_code: number;
+  };
+}
+
+const postHTML = (page: PageJson) => {
   const iframe = document.getElementById("pe-preview-content");
   if (!iframe) {
     return;
   }
 
-  // extract body from html
-  let body = html.match(/<body>(.*?)<\/body>/s)?.[1];
-  if (!body) {
-    body = html;
-  }
-  let head = html.match(/<head>(.*?)<\/head>/s)?.[1];
-  if (!head) {
-    head = "";
-  }
+  const head_html = `
+    <style>${page.head.css}</style>
+    <script>${page.head.js}</script>
+    ${page.head.meta.map((meta) => `<meta ${meta} />`).join("\n")}
+  `;
 
   iframe.contentWindow?.postMessage(
-    { type: "replace-body", html: body, head },
+    { type: "replace-body", html: page.body, head: head_html },
     "*",
   );
 };

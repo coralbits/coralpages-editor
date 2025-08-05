@@ -37,7 +37,7 @@ export const PageList = () => {
             columns={[i18n("Store"), i18n("Id"), i18n("Title")]}
             data_hook={(page: number) => usePages(page)}
             onClick={(row, idx) => {
-              history.push(`./${row.id}`);
+              history.push(`#${row.store}/${row.id}`);
             }}
             paginator={(props) => (
               <div className="flex justify-between items-center">

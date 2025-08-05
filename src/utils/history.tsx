@@ -8,14 +8,14 @@ const push = (path: string) => {
 };
 
 export const usePath = () => {
-  const [path, setPath] = useState(window.location.pathname);
+  const [path, setPath] = useState(window.location.hash.slice(1));
   useEffect(() => {
-    setPath(window.location.pathname);
-  }, [window.location.pathname]);
+    setPath(window.location.hash.slice(1));
+  }, [window.location.hash]);
 
   useEffect(() => {
     const listener = () => {
-      setPath(window.location.pathname);
+      setPath(window.location.hash.slice(1));
     };
     window.addEventListener("popstate", listener);
     return () => {

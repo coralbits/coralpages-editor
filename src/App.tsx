@@ -9,16 +9,7 @@ interface AppProps {}
 const App = ({}: AppProps) => {
   const path = usePath();
 
-  let page_name = path;
-  if (path.includes("/edit/")) {
-    page_name = path.split("/edit/")[1];
-  }
-
-  if (page_name.startsWith("/")) {
-    page_name = page_name.slice(1);
-  }
-
-  if (page_name === "" || page_name === undefined) {
+  if (!path) {
     return (
       <>
         <PageList />
@@ -30,7 +21,7 @@ const App = ({}: AppProps) => {
 
   return (
     <>
-      <Editor page_name={page_name} />
+      <Editor path={path} />
       <DialogStack />
       <MessageStack />
     </>

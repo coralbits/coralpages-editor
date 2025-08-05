@@ -7,11 +7,11 @@ import usePage from "../hooks/page";
 import { useEditor } from "../hooks/editor";
 
 interface EditorProps {
-  page_name: string;
+  path: string;
 }
 
-export const Editor = ({ page_name }: EditorProps) => {
-  const page_hooks = usePage(page_name);
+export const Editor = ({ path }: EditorProps) => {
+  const page_hooks = usePage(path);
   const editor_hooks = useEditor();
 
   if (!page_hooks?.page || !editor_hooks.elementDefinitions) {

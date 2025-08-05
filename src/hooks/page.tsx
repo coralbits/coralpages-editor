@@ -67,7 +67,7 @@ const find_element_rec = (
   return undefined;
 };
 
-const usePage = (page_name: string): PageHooks => {
+const usePage = (path: string): PageHooks => {
   const [page, setPage] = useState<Page | undefined>(undefined);
   const [need_save, setNeedSave] = useState(false);
 
@@ -168,19 +168,19 @@ const usePage = (page_name: string): PageHooks => {
   };
 
   useEffect(() => {
-    fetch(`${settings.pv_url}/page/${page_name}/json`)
+    fetch(`${settings.pv_url}/page/${path}`)
       .then((res) => res.json())
       .then((page) => {
         setPage(page as Page);
         setNeedSave(false);
       });
-  }, [page_name]);
+  }, [path]);
 
   const savePage = async () => {
     if (!page) {
       return;
     }
-    await fetch(`${settings.pv_url}/page/${page_name}/json`, {
+    await fetch(`${settings.pv_url}/page/${path}`, {
       method: "POST",
       body: JSON.stringify(page),
     });
@@ -191,7 +191,7 @@ const usePage = (page_name: string): PageHooks => {
     if (!page) {
       return false;
     }
-    const deleted = await fetch(`${settings.pv_url}/page/${page_name}/json`, {
+    const deleted = await fetch(`${settings.pv_url}/page/${path}`, {
       method: "DELETE",
     });
     if (deleted.status === 400) {
