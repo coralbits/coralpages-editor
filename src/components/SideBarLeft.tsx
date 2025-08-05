@@ -34,7 +34,7 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           <Icon name="plus" />
         </button>
         <button
-          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none border border-y-0 border-gray-600 ${
+          className={`flex-1 cursor-pointer sidebar-button items-center justify-center rounded-none border border-y-0 border-gray-600 ${
             props.editor_hooks.selectedTab === "edit"
               ? "sidebar-button-active"
               : ""
