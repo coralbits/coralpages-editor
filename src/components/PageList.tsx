@@ -8,6 +8,7 @@ import settings from "../settings";
 import { dialog } from "./dialog";
 import { FormField } from "./FormField";
 import { showMessage } from "./messages";
+import { P } from "vitest/dist/chunks/reporters.d.BFLkQcL6.js";
 
 interface PageInfo {
   store: string;
@@ -22,6 +23,8 @@ interface PageResult {
 }
 
 export const PageList = () => {
+  const [gen, setGen] = useState(0);
+
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-900">
       <div className="topbar">
@@ -30,6 +33,7 @@ export const PageList = () => {
       <div className="flex-1">
         <Container className="flex-1 py-10 w-full">
           <Table
+            key={gen}
             columns={[i18n("Store"), i18n("Id"), i18n("Title")]}
             data_hook={(page: number) => usePages(page)}
             onClick={(row, idx) => {
@@ -40,7 +44,12 @@ export const PageList = () => {
                 <Pagination {...props} />
                 <button
                   className="btn btn-primary h-10 px-4 cursor-pointer"
-                  onClick={addPage}
+                  onClick={async () => {
+                    const success = await addPage();
+                    if (success) {
+                      setGen((gen) => gen + 1);
+                    }
+                  }}
                 >
                   {i18n("Create Page")}
                 </button>
@@ -84,7 +93,7 @@ const usePages = (page: number) => {
   return pagestr;
 };
 
-const addPage = async () => {
+const addPage = async (): Promise<boolean> => {
   const { name } = await dialog({
     title: i18n("Create Page"),
     state: {
@@ -130,19 +139,25 @@ const addPage = async () => {
   return res;
 };
 
-const create_page = async (name: string) => {
+const create_page = async (name: string): Promise<boolean> => {
   // first check it does not exist yet
-  const res_check = await fetch(`${settings.pv_url}/page/${name}/json`);
+  let res_check;
+  try {
+    res_check = await fetch(`${settings.pv_url}/page/${name}/json`);
+  } catch (error) {
+    showMessage(i18n("Unexpected error"), { level: "error" });
+    return false;
+  }
   // check estatus code, if 200 already exists, 404 does not exist, so create
   if (res_check.status === 200) {
     showMessage(i18n("Page {name} already exists", { name }), {
       level: "warning",
     });
-    return;
+    return false;
   }
   if (res_check.status !== 404) {
     showMessage(i18n("Unexpected error"), { level: "error" });
-    return;
+    return false;
   }
 
   // create it
@@ -152,5 +167,9 @@ const create_page = async (name: string) => {
       name,
     }),
   });
-  return res_create.json();
+  showMessage(i18n("Page {name} created", { name }), {
+    level: "info",
+    duration: 3000,
+  });
+  return true;
 };
