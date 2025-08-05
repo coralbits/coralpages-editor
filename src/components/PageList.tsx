@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { i18n } from "../utils/i18n";
-import { Container } from "./Container";
-import { Pagination, ResultI, Table } from "./Table";
-import history from "../utils/history";
-import BottomBar from "./BottomBar";
 import settings from "../settings";
+import { IdName } from "../types";
+import history from "../utils/history";
+import { i18n } from "../utils/i18n";
+import BottomBar from "./BottomBar";
+import { Container } from "./Container";
 import { dialog } from "./dialog";
 import { FormField } from "./FormField";
 import { showMessage } from "./messages";
-import { P } from "vitest/dist/chunks/reporters.d.BFLkQcL6.js";
+import { Pagination, ResultI, Table } from "./Table";
 
 interface PageInfo {
   store: string;
@@ -94,29 +94,19 @@ const usePages = (page: number) => {
 };
 
 const addPage = async (): Promise<boolean> => {
-  const { name } = await dialog({
+  const { store, name } = await dialog({
     title: i18n("Create Page"),
     state: {
+      store: "default",
       name: "",
     },
     content: ({ state, setState, accept, close }) => (
-      <div className="flex flex-col gap-2">
-        <FormField
-          type="text"
-          label={i18n("Page Name")}
-          name="name"
-          value={state.name}
-          onChange={(value) => {
-            setState({ name: value });
-          }}
-          onEnter={() => {
-            accept();
-          }}
-          onEscape={() => {
-            close();
-          }}
-        />
-      </div>
+      <CreatePageForm
+        state={state}
+        setState={setState}
+        onAccept={accept}
+        onClose={close}
+      />
     ),
     buttons: [
       {
@@ -134,23 +124,80 @@ const addPage = async (): Promise<boolean> => {
     ],
   });
 
-  const res = await create_page(name);
+  const res = await create_page(store, name);
 
   return res;
 };
 
-const create_page = async (name: string): Promise<boolean> => {
+interface CreatePageFormState {
+  store: string;
+  name: string;
+}
+
+const CreatePageForm = ({
+  state,
+  setState,
+  onAccept,
+  onClose,
+}: {
+  state: CreatePageFormState;
+  setState: React.Dispatch<React.SetStateAction<CreatePageFormState>>;
+  onAccept: (data?: CreatePageFormState) => void;
+  onClose: () => void;
+}) => {
+  {
+    const [stores] = useStoresList();
+
+    return (
+      <div className="flex flex-col gap-2">
+        <FormField
+          type="select"
+          label={i18n("Store")}
+          name="store"
+          value={state.store}
+          onChange={(value) => {
+            console.log("Set value", value, "prev", state.store);
+            setState({ ...state, store: value });
+          }}
+          options={stores.map((store) => ({
+            label: store.name,
+            value: store.id,
+          }))}
+        />
+        <FormField
+          type="text"
+          label={i18n("Page Name")}
+          name="name"
+          value={state.name}
+          onChange={(value) => {
+            setState({ ...state, name: value });
+          }}
+          onEnter={() => {
+            onAccept();
+          }}
+          onEscape={() => {
+            onClose();
+          }}
+        />
+      </div>
+    );
+  }
+};
+
+const create_page = async (store: string, path: string): Promise<boolean> => {
+  console.log("Creating page", store, path);
+
   // first check it does not exist yet
   let res_check;
   try {
-    res_check = await fetch(`${settings.pv_url}/page/${name}/json`);
+    res_check = await fetch(`${settings.pv_url}/page/${store}/${path}`);
   } catch (error) {
     showMessage(i18n("Unexpected error"), { level: "error" });
     return false;
   }
   // check estatus code, if 200 already exists, 404 does not exist, so create
   if (res_check.status === 200) {
-    showMessage(i18n("Page {name} already exists", { name }), {
+    showMessage(i18n("Page {name} already exists", { name: path }), {
       level: "warning",
     });
     return false;
@@ -161,15 +208,37 @@ const create_page = async (name: string): Promise<boolean> => {
   }
 
   // create it
-  const res_create = await fetch(`${settings.pv_url}/page/${name}/json`, {
+  const res_create = await fetch(`${settings.pv_url}/page/${store}/${path}`, {
     method: "POST",
     body: JSON.stringify({
-      name,
+      name: path,
     }),
   });
-  showMessage(i18n("Page {name} created", { name }), {
+  showMessage(i18n("Page {name} created", { name: path }), {
     level: "info",
     duration: 3000,
   });
   return true;
+};
+
+const useStoresList = () => {
+  const [stores, setStores] = useState<IdName[]>([]);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const response = await fetch(
+          `${settings.pv_url}/store?tags=writable,pages`,
+        );
+        const data: ResultI<IdName> = await response.json();
+        setStores(data.results);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      }
+    };
+
+    fetchStores();
+  }, []);
+
+  return [stores];
 };
