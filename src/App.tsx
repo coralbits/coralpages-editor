@@ -1,5 +1,6 @@
 import { DialogStack } from "./components/dialog";
 import { Editor } from "./components/Editor";
+import { MessageStack } from "./components/messages";
 import { PageList } from "./components/PageList";
 import { usePath } from "./utils/history";
 
@@ -22,6 +23,7 @@ const App = ({}: AppProps) => {
       <>
         <PageList />
         <DialogStack />
+        <MessageStack />
       </>
     );
   }
@@ -30,6 +32,7 @@ const App = ({}: AppProps) => {
     <>
       <Editor page_name={page_name} />
       <DialogStack />
+      <MessageStack />
     </>
   );
 };

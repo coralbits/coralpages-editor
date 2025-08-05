@@ -7,6 +7,7 @@ import BottomBar from "./BottomBar";
 import settings from "../settings";
 import { dialog } from "./dialog";
 import { FormField } from "./FormField";
+import { showMessage } from "./messages";
 
 interface PageInfo {
   store: string;
@@ -60,7 +61,7 @@ const usePages = (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
-      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`
+      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`,
     );
     const data = await res.json();
     setPages(data);
@@ -124,5 +125,32 @@ const addPage = async () => {
     ],
   });
 
-  console.log({ name });
+  const res = await create_page(name);
+
+  return res;
+};
+
+const create_page = async (name: string) => {
+  // first check it does not exist yet
+  const res_check = await fetch(`${settings.pv_url}/page/${name}/json`);
+  // check estatus code, if 200 already exists, 404 does not exist, so create
+  if (res_check.status === 200) {
+    showMessage(i18n("Page {name} already exists", { name }), {
+      level: "warning",
+    });
+    return;
+  }
+  if (res_check.status !== 404) {
+    showMessage(i18n("Unexpected error"), { level: "error" });
+    return;
+  }
+
+  // create it
+  const res_create = await fetch(`${settings.pv_url}/page/${name}/json`, {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+    }),
+  });
+  return res_create.json();
 };
