@@ -3,6 +3,7 @@ import { i18n } from "../utils/i18n";
 import { Bucket, useBucketList, useAssetList, Asset } from "../hooks/assets";
 import { selectFile } from "../utils/file";
 import Icon from "./Icon";
+import settings from "../settings";
 
 export interface AssetSelectorButtonProps {
   placeholder: string;
@@ -164,8 +165,6 @@ const Thumbnail = ({
   );
 };
 
-const AM_URL = "http://localhost:8004";
-
 const addAsset = async (bucket: string) => {
   const file: File | undefined = await selectFile("image/*");
 
@@ -174,7 +173,7 @@ const addAsset = async (bucket: string) => {
   }
 
   const file_name = file.name;
-  const response = await fetch(`${AM_URL}/${bucket}/${file_name}`, {
+  const response = await fetch(`${settings.am_url}/${bucket}/${file_name}`, {
     method: "PUT",
     body: file,
   });
