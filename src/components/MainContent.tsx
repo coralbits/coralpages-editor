@@ -10,21 +10,22 @@ interface MainContentProps {
 }
 
 const html_with_injected_js = () => {
+  const current_base_url = window.location.origin;
   const html = `
   <!DOCTYPE html>
   <html>
   <head>
+  <base href="${current_base_url}">
   <script>
-window.addEventListener('message', function(event) {
-  // Optionally, check event.origin for security
-  if (event.data && event.data.type === 'replace-body') {
-    document.body.innerHTML = event.data.html;
-    document.head.innerHTML = event.data.head;
-    console.log('injected html body_size=', event.data.html.length, 'head_size=', event.data.head.length);
-  }
-});
-console.log('injected js');
-</script>
+  window.addEventListener('message', function(event) {
+    // Optionally, check event.origin for security
+    if (event.data && event.data.type === 'replace-body') {
+      document.body.innerHTML = event.data.html;
+      document.head.innerHTML = event.data.head;
+      console.log('injected html body_size=', event.data.html.length, 'head_size=', event.data.head.length);
+    }
+  });
+  </script>
 
   </head>
   </html>

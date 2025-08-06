@@ -1,0 +1,23 @@
+FROM node:20-slim
+
+WORKDIR /app
+
+# Copy dependency files
+COPY . .
+
+# Install nodejs dependencies
+RUN npm install
+
+# Remove dist folder if it exists, to avoid dev modes
+RUN rm -rf dist
+
+# Build the frontend
+RUN npm run build
+RUN ls -al
+RUN test -d dist
+
+# Expose the port the app runs on
+EXPOSE 8006
+
+# Command to run the application
+CMD ["npm", "start"]
