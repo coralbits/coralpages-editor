@@ -7,6 +7,7 @@ interface Style {
   label: string;
   type: FormFieldType;
   options?: { label: string; value: string; icon?: string }[];
+  placeholder?: string;
 }
 
 const styles: Record<string, Style> = {
@@ -67,43 +68,47 @@ const styles: Record<string, Style> = {
   },
   width: {
     label: "Width",
-    type: "number",
+    type: "text",
   },
   "min-width": {
     label: "Min Width",
-    type: "number",
+    type: "text",
   },
   "max-width": {
     label: "Max Width",
-    type: "number",
+    type: "text",
   },
   height: {
     label: "Height",
-    type: "number",
+    type: "text",
   },
   "min-height": {
     label: "Min Height",
-    type: "number",
+    type: "text",
   },
   "max-height": {
     label: "Max Height",
-    type: "number",
+    type: "text",
   },
   "font-weight": {
     label: "Font Weight",
-    type: "number",
+    type: "text",
   },
   padding: {
     label: "Padding",
-    type: "number",
+    type: "text",
+  },
+  margin: {
+    label: "Margin",
+    type: "text",
   },
   border: {
     label: "Border",
-    type: "number",
+    type: "text",
   },
   "border-radius": {
     label: "Border Radius",
-    type: "number",
+    type: "text",
   },
   "border-color": {
     label: "Border Color",
@@ -123,6 +128,11 @@ const styles: Record<string, Style> = {
       { label: "Outset", value: "outset" },
     ],
   },
+  "box-shadow": {
+    label: "Shadow",
+    type: "text",
+    placeholder: "0 0 5px rgba(0, 0, 0, 0.5)",
+  },
 };
 
 interface ElementStyleEditorProps {
@@ -141,7 +151,7 @@ const ElementStyleEditor = ({
   }
 
   const selected_element = page_hooks.findElement(
-    editor_hooks.selectedElementId
+    editor_hooks.selectedElementId,
   );
 
   if (!selected_element) {
@@ -156,6 +166,7 @@ const ElementStyleEditor = ({
           style={style}
           className="p-2"
           value={selected_element.style?.[css_key] || ""}
+          placeholder={style.placeholder}
           setValue={(value) => {
             page_hooks.onChangeElement({
               ...selected_element,
@@ -176,11 +187,13 @@ const EditStyleField = ({
   className,
   value,
   setValue,
+  placeholder,
 }: {
   style: Style;
   className?: string;
   value: string;
   setValue: (value: string) => void;
+  placeholder?: string;
 }) => {
   return (
     <FormField
@@ -191,6 +204,7 @@ const EditStyleField = ({
       value={value}
       options={style.options}
       onChange={(value) => setValue(value)}
+      placeholder={placeholder}
     />
   );
 };

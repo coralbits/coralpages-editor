@@ -24,6 +24,7 @@ export interface FormFieldProps {
   label: string;
   name: string;
   value: string;
+  placeholder?: string;
   options?: { label: string; value: string; icon?: string }[];
   onChange: (value: string) => void;
   label_props?: Partial<FormLabelProps>;
@@ -67,6 +68,7 @@ export const FormFieldDefault = ({
   label_props,
   onEnter,
   onEscape,
+  placeholder,
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} {...label_props}>
@@ -84,6 +86,7 @@ export const FormFieldDefault = ({
             onEscape?.();
           }
         }}
+        placeholder={placeholder}
       />
     </FormLabel>
   );
