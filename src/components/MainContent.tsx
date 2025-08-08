@@ -36,7 +36,8 @@ const html_with_injected_js = () => {
 };
 
 const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
-  const url = `${settings.pv_url}/render/`;
+  const current_base_url = window.location.origin;
+  const url = `${settings.pv_url}/render/?base_url=${current_base_url}`;
 
   useEffect(() => {
     fetch(url, {
