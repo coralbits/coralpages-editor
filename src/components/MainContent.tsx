@@ -40,15 +40,20 @@ const html_with_injected_js = () => {
 const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   const current_base_url = window.location.origin;
   const url = `${settings.pv_url}/render/?base_url=${current_base_url}`;
+  const sequence_id = useRef(0);
 
   useEffect(() => {
+    const this_sequence_id = sequence_id.current + 1;
+    sequence_id.current = this_sequence_id;
     fetch(url, {
       method: "POST",
       body: JSON.stringify(page_hooks.page),
     })
       .then((response) => response.json())
       .then((page_json) => {
-        postHTML(page_json);
+        if (sequence_id.current === this_sequence_id) {
+          postHTML(page_json);
+        }
       })
       .catch((error) => {
         console.error("Error fetching page:", error);
