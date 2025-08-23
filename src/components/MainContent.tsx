@@ -3,6 +3,8 @@ import { EditorHooks } from "../hooks/editor";
 import { PageHooks } from "../hooks/page";
 import React from "react";
 import settings from "../settings";
+import { showMessage } from "./messages";
+import { i18n } from "../utils/i18n";
 
 interface MainContentProps {
   page_hooks: PageHooks;
@@ -47,6 +49,12 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
       .then((response) => response.json())
       .then((page_json) => {
         postHTML(page_json);
+      })
+      .catch((error) => {
+        console.error("Error fetching page:", error);
+        showMessage(i18n("Error rendering page: {error}", { error }), {
+          level: "error",
+        });
       });
   }, [url, page_hooks.page]);
 
@@ -98,7 +106,7 @@ const postHTML = (page: PageJson) => {
 
   iframe.contentWindow?.postMessage(
     { type: "replace-body", html: page.body, head: head_html },
-    "*",
+    "*"
   );
 };
 
