@@ -8,10 +8,12 @@ const push = (path: string) => {
 };
 
 export const usePath = () => {
-  const [path, setPath] = useState(window.location.hash.slice(1));
-  useEffect(() => {
-    setPath(window.location.hash.slice(1));
-  }, [window.location.hash]);
+  const [path, setPath] = useState(
+    get_qs("path") || window.location.hash.slice(1)
+  );
+  // useEffect(() => {
+  //   setPath(window.location.hash.slice(1));
+  // }, [window.location.hash]);
 
   useEffect(() => {
     const listener = () => {
