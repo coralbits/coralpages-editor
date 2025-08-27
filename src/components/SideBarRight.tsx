@@ -116,7 +116,7 @@ const DocumentLayout = ({
           <div key={child.id || idx}>
             <DocumentItem child={child} editor_hooks={editor_hooks} />
           </div>
-        ),
+        )
       )}
     </div>
   );
@@ -185,7 +185,9 @@ const DocumentItem = ({
 
   return (
     <button
-      className={`sidebar-button ${is_selected ? "sidebar-button-active" : ""} ${className || ""}`}
+      className={`sidebar-button ${
+        is_selected ? "sidebar-button-active" : ""
+      } ${className || ""}`}
       style={{ width: "calc(100% - 2rem )" }}
       onClick={() => {
         editor_hooks.setSelectedElementId(child.id);
@@ -196,7 +198,7 @@ const DocumentItem = ({
         editor_hooks.setSelectedElementId(child.id);
         e.dataTransfer.setData(
           "application/json",
-          JSON.stringify({ action: "move", element_id: child.id }),
+          JSON.stringify({ action: "move", element_id: child.id })
         );
       }}
       onDragOver={(e) => {

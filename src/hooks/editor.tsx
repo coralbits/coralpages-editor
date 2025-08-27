@@ -42,7 +42,7 @@ export const useEditor = (): EditorHooks => {
 
 export const useElementDefinition = (
   editor_hooks: EditorHooks,
-  page_hooks: PageHooks,
+  page_hooks: PageHooks
 ) => {
   const [element_definition, setElementDefinition] = useState<
     Widget | undefined
@@ -56,7 +56,7 @@ export const useElementDefinition = (
 
   useEffect(() => {
     const definition = editor_hooks.elementDefinitions.find(
-      (definition) => definition.name === element?.type,
+      (definition) => definition.name === element?.type
     );
     setElementDefinition(definition);
   }, [element, editor_hooks.elementDefinitions, page_hooks.page]);

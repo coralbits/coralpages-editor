@@ -1,4 +1,4 @@
-import { get_qs } from "./utils/history";
+import { get_qs } from "./hooks/history";
 
 export interface Settings {
   am_url: string;

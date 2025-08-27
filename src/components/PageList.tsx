@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import settings from "../settings";
 import { IdName } from "../types";
-import history from "../utils/history";
+import history from "../hooks/history";
 import { i18n } from "../utils/i18n";
 import BottomBar from "./BottomBar";
 import { Container } from "./Container";
@@ -70,7 +70,7 @@ const usePages = (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
-      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`,
+      `${settings.pv_url}/page/?offset=${offset}&limit=${page_size}`
     );
     const data = await res.json();
     setPages(data);
@@ -228,7 +228,7 @@ const useStoresList = () => {
     const fetchStores = async () => {
       try {
         const response = await fetch(
-          `${settings.pv_url}/store?tags=writable,pages`,
+          `${settings.pv_url}/store?tags=writable,pages`
         );
         const data: ResultI<IdName> = await response.json();
         setStores(data.results);

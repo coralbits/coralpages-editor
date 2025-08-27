@@ -10,7 +10,7 @@ const useElementDefinitions = () => {
   useEffect(() => {
     fetch(`${settings.pv_url}/widget/`)
       .then((response) => response.json())
-      .then((data) => setElementDefinitions(data));
+      .then((data) => setElementDefinitions(data.results));
   }, []);
 
   return [elementDefinitions];

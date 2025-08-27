@@ -151,7 +151,7 @@ const ElementStyleEditor = ({
   }
 
   const selected_element = page_hooks.findElement(
-    editor_hooks.selectedElementId,
+    editor_hooks.selectedElementId
   );
 
   if (!selected_element) {

@@ -26,7 +26,7 @@ const ElementEditor = ({
     const definition = editor_hooks.elementDefinitions.find(
       (definition) =>
         definition.name ===
-        page_hooks?.findElement(editor_hooks.selectedElementId)?.type,
+        page_hooks?.findElement(editor_hooks.selectedElementId)?.type
     );
     setElementDefinition(definition);
   }, [editor_hooks.selectedElementId, page_hooks?.page]);
@@ -50,7 +50,7 @@ const ElementEditor = ({
     return <div>{editor}</div>;
   }
   const selected_element = page_hooks?.findElement(
-    editor_hooks.selectedElementId,
+    editor_hooks.selectedElementId
   );
   if (!selected_element) {
     return <div>No element found</div>;

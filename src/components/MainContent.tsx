@@ -48,6 +48,9 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
     fetch(url, {
       method: "POST",
       body: JSON.stringify(page_hooks.page),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
       .then((response) => response.json())
       .then((page_json) => {
