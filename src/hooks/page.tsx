@@ -202,8 +202,10 @@ const usePage = (path: string): PageHooks => {
         }),
         { level: "error" }
       );
+    } else {
+      showMessage(i18n("Page saved"), { level: "info" });
+      setNeedSave(false);
     }
-    setNeedSave(false);
   };
 
   const onDeletePage = async () => {
