@@ -13,7 +13,7 @@ export interface PageHooks {
   onAddElement: (
     element_definition: Widget,
     parent_id: string,
-    idx: number,
+    idx: number
   ) => void;
   onDeleteElement: (element_id: string) => void;
   onUpdatePage: (page: Partial<Page>) => void;
@@ -26,7 +26,7 @@ export interface PageHooks {
 
 const children_update_element_rec = (
   elements: Element[],
-  element: Element,
+  element: Element
 ): Element[] => {
   let found = false;
   const new_elements = elements.map((e) => {
@@ -51,7 +51,7 @@ const children_update_element_rec = (
 
 const find_element_rec = (
   elements: Element[],
-  element_id: string,
+  element_id: string
 ): Element | undefined => {
   for (const element of elements) {
     if (element.id === element_id) {
@@ -100,7 +100,7 @@ const usePage = (path: string): PageHooks => {
   const onAddElement = (
     element_definition: Widget,
     parent_id: string,
-    index: number,
+    index: number
   ) => {
     const element = {
       id: crypto.randomUUID(),
@@ -133,7 +133,7 @@ const usePage = (path: string): PageHooks => {
   const onMoveElement = (
     element_id: string,
     parent_id: string,
-    idx: number,
+    idx: number
   ) => {
     setPage((page) => {
       if (!page) {
@@ -157,7 +157,7 @@ const usePage = (path: string): PageHooks => {
       }
       const { element, page: new_page } = find_element_and_remove(
         page,
-        element_id,
+        element_id
       );
       if (!element) {
         return page;
@@ -180,10 +180,29 @@ const usePage = (path: string): PageHooks => {
     if (!page) {
       return;
     }
-    await fetch(`${settings.pv_url}/page/${path}`, {
+    const ret = await fetch(`${settings.pv_url}/page/${path}`, {
       method: "POST",
       body: JSON.stringify(page),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
+
+    if (ret.status !== 200) {
+      let error = await ret.text();
+      try {
+        error = JSON.parse(error);
+      } catch (e) {
+        // cant parse as json, so just use the text
+      }
+
+      showMessage(
+        i18n("Failed to save page - {error}", {
+          error,
+        }),
+        { level: "error" }
+      );
+    }
     setNeedSave(false);
   };
 
@@ -199,7 +218,7 @@ const usePage = (path: string): PageHooks => {
         i18n("Failed to delete page - {error}", {
           error: (await deleted.json()).details,
         }),
-        { level: "error" },
+        { level: "error" }
       );
       return false;
     }
@@ -247,11 +266,11 @@ export function move_element({
 
 export function find_element_and_remove(
   page: Page,
-  element_id: string,
+  element_id: string
 ): { element: Element | undefined; page: Page } {
   const { element, elements } = find_element_and_remove_rec(
     page.children,
-    element_id,
+    element_id
   );
   if (element) {
     return {
@@ -267,7 +286,7 @@ export function find_element_and_remove(
 
 function find_element_and_remove_rec(
   elements: Element[],
-  element_id: string,
+  element_id: string
 ): { element: Element | undefined; elements: Element[] } {
   for (const [idx, element] of elements.entries()) {
     if (element.id === element_id) {
@@ -299,7 +318,7 @@ export function insert_element_at_idx(
   page: Page,
   element: Element,
   parent_id: string,
-  idx: number,
+  idx: number
 ): Page {
   const children = insert_element_at_idx_rec({
     elements: page.children,
@@ -364,7 +383,7 @@ export const useTemplateList = () => {
         data.results.map((template: any) => ({
           id: `${template.store}/${template.id}`,
           name: template.title,
-        })),
+        }))
       );
     };
 
