@@ -209,11 +209,19 @@ const create_page = async (store: string, path: string): Promise<boolean> => {
 
   // create it
   const res_create = await fetch(`${settings.pv_url}/page/${store}/${path}`, {
-    method: "POST",
+    method: "PUT",
     body: JSON.stringify({
-      name: path,
+      title: path,
     }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
+  if (!res_create.ok) {
+    showMessage(i18n("Unexpected error"), { level: "error" });
+    return false;
+  }
+
   showMessage(i18n("Page {name} created", { name: path }), {
     level: "info",
     duration: 3000,
