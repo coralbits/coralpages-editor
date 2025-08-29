@@ -42,29 +42,37 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   const url = `${settings.pv_url}/render/?base_url=${current_base_url}`;
   const sequence_id = useRef(0);
 
-  useEffect(() => {
-    const this_sequence_id = sequence_id.current + 1;
-    sequence_id.current = this_sequence_id;
-    fetch(url, {
+  const fetch_page = async () => {
+    let response = await fetch(url, {
       method: "POST",
       body: JSON.stringify(page_hooks.page),
       headers: {
         "Content-Type": "application/json",
       },
-    })
-      .then((response) => response.json())
-      .then((page_json) => {
-        if (sequence_id.current === this_sequence_id) {
-          postHTML(page_json);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching page:", error);
-        showMessage(i18n("Error rendering page: {error}", { error }), {
-          level: "error",
-        });
+    });
+    if (!response.ok) {
+      let error = response.statusText;
+      try {
+        const error_json = await response.json();
+        error = error_json.details;
+      } catch (_e) {
+        // ignore
+      }
+      showMessage(i18n("Error fetching page: {error}", { error }), {
+        level: "error",
       });
-  }, [url, page_hooks.page]);
+      return;
+    }
+
+    const page_json = await response.json();
+    postHTML(page_json);
+  };
+
+  useEffect(() => {
+    const this_sequence_id = sequence_id.current + 1;
+    sequence_id.current = this_sequence_id;
+    fetch_page();
+  }, [url, page_hooks.page, fetch_page]);
 
   return (
     <div className="flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center">
