@@ -9,6 +9,11 @@ export interface EditorHooks {
   selectedElementId: string | undefined;
   setSelectedElementId: (element_id: string | undefined) => void;
   getSelectedElement: (page_hooks: PageHooks) => Element | undefined;
+
+  hoveredElementId: string | undefined;
+  setHoveredElementId: (element_id: string | undefined) => void;
+  getHoveredElement: (page_hooks: PageHooks) => Element | undefined;
+
   elementDefinitions: Widget[];
   selectedTab: EditorTab;
   setSelectedTab: (tab: EditorTab) => void;
@@ -20,6 +25,9 @@ export const useEditor = (): EditorHooks => {
   const [selectedElementId, setSelectedElementId] = useState<
     string | undefined
   >(undefined);
+  const [hoveredElementId, setHoveredElementId] = useState<string | undefined>(
+    undefined
+  );
   const [elementDefinitions] = useElementDefinitions();
   const [selectedTab, setSelectedTab] = useState<EditorTab>("add");
   const [width, setWidth] = useState(640);
@@ -28,10 +36,17 @@ export const useEditor = (): EditorHooks => {
     return page_hooks.findElement(selectedElementId);
   };
 
+  const getHoveredElement = (page_hooks: PageHooks) => {
+    return page_hooks.findElement(hoveredElementId);
+  };
+
   return {
     selectedElementId,
     setSelectedElementId,
     getSelectedElement,
+    hoveredElementId,
+    setHoveredElementId,
+    getHoveredElement,
     elementDefinitions: elementDefinitions || [],
     selectedTab,
     setSelectedTab,

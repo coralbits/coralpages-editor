@@ -5,8 +5,14 @@ import { ResultI } from "../components/Table";
 import { showMessage } from "../components/messages";
 import { i18n } from "../utils/i18n";
 
+type setPageFn =
+  | ((prev_state: Page | undefined) => Page | undefined)
+  | Page
+  | undefined;
+
 export interface PageHooks {
   page?: Page;
+  page_gen: number;
   findElement: (element_id?: string) => Element | undefined;
   onChangeElement: (element: Element) => void;
   onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
@@ -18,7 +24,7 @@ export interface PageHooks {
   onDeleteElement: (element_id: string) => void;
   onUpdatePage: (page: Partial<Page>) => void;
   onDeletePage: () => Promise<boolean>;
-  setPage: (page: Page) => void;
+  setPage: (setPageFn: setPageFn) => void;
 
   need_save: boolean;
   savePage: () => Promise<void>;
@@ -68,8 +74,14 @@ const find_element_rec = (
 };
 
 const usePage = (path: string): PageHooks => {
-  const [page, setPage] = useState<Page | undefined>(undefined);
+  const [page, setPageReal] = useState<Page | undefined>(undefined);
+  const [page_gen, setPageGen] = useState(0);
   const [need_save, setNeedSave] = useState(false);
+
+  const setPage = (pf: setPageFn) => {
+    setPageReal(pf);
+    setPageGen(page_gen + 1);
+  };
 
   const onUpdatePage = (update: Partial<Page>) => {
     setPage((page) => {
@@ -232,6 +244,7 @@ const usePage = (path: string): PageHooks => {
 
   return {
     page,
+    page_gen,
     findElement,
     onUpdatePage,
     onChangeElement,
@@ -240,7 +253,6 @@ const usePage = (path: string): PageHooks => {
     onDeleteElement,
     onDeletePage,
     setPage,
-
     savePage,
     need_save,
   };

@@ -204,6 +204,12 @@ const DocumentItem = ({
       onDragOver={(e) => {
         e.preventDefault();
       }}
+      onMouseEnter={() => {
+        editor_hooks.setHoveredElementId(child.id);
+      }}
+      onMouseLeave={() => {
+        editor_hooks.setHoveredElementId(undefined);
+      }}
     >
       {child.type}
       <span
