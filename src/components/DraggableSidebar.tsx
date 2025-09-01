@@ -68,7 +68,7 @@ const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
     <div
       className={`${className} ${
         isFloating
-          ? "absolute max-h-[50vh] max-w-[400px] shadow-xl rounded-md border-gray-500 border"
+          ? "absolute max-h-[50vh] max-w-[400px] shadow-md/30 rounded-md border-gray-500 border"
           : "min-w-[400px] max-w-[400px] h-full"
       }`}
       style={isFloating ? { top: position.top, left: position.left } : {}}
