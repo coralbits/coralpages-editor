@@ -18,6 +18,7 @@ import {
   faSave,
   faSearch,
   faSection,
+  faExpand,
   faServer,
   faSquare,
   faTag,
@@ -66,6 +67,7 @@ const iconMap: Record<string, any> = {
   up: faArrowUp,
   upload: faUpload,
   user: faUser,
+  full_screen: faExpand,
 };
 
 // Helper function to get icon with fallback

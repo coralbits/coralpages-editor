@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { EditorHooks } from "../hooks/editor";
+import { DEFAULT_WIDTH, EditorHooks } from "../hooks/editor";
 import { PageHooks } from "../hooks/page";
 import React from "react";
 import settings from "../settings";
 import { showMessage } from "./messages";
 import { i18n } from "../utils/i18n";
 import { Page } from "../types";
+import Icon from "./Icon";
 
 interface MainContentProps {
   page_hooks: PageHooks;
@@ -134,7 +135,26 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   }, [fetch_page]);
 
   return (
-    <div className="flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center">
+    <div
+      className="relative flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center"
+      id="main-content"
+    >
+      <div className="absolute top-3 right-3">
+        <button
+          className="bg-gray-700 border-amber-300 p-2 rounded-md hover:bg-amber-600 hover:cursor-pointer"
+          onClick={() => {
+            let max_width =
+              document.getElementById("main-content")?.clientWidth;
+            if (max_width !== editor_hooks.width) {
+              editor_hooks.setWidth(max_width ?? 800);
+            } else {
+              editor_hooks.setWidth(DEFAULT_WIDTH);
+            }
+          }}
+        >
+          <Icon name="full_screen" />
+        </button>
+      </div>
       <div style={{ width: editor_hooks.width }} className="bg-white h-full">
         <MyIframe />
       </div>

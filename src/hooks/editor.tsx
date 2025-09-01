@@ -5,6 +5,8 @@ import { PageHooks } from "./page";
 
 export type EditorTab = "add" | "edit" | "style";
 
+export const DEFAULT_WIDTH = 640;
+
 export interface EditorHooks {
   selectedElementId: string | undefined;
   setSelectedElementId: (element_id: string | undefined) => void;
@@ -30,7 +32,7 @@ export const useEditor = (): EditorHooks => {
   );
   const [elementDefinitions] = useElementDefinitions();
   const [selectedTab, setSelectedTab] = useState<EditorTab>("add");
-  const [width, setWidth] = useState(640);
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
 
   const getSelectedElement = (page_hooks: PageHooks) => {
     return page_hooks.findElement(selectedElementId);
