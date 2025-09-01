@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { EditorHooks } from "../hooks/editor";
 import { PageHooks } from "../hooks/page";
 import React from "react";
 import settings from "../settings";
 import { showMessage } from "./messages";
 import { i18n } from "../utils/i18n";
+import { Page } from "../types";
 
 interface MainContentProps {
   page_hooks: PageHooks;
@@ -69,6 +70,8 @@ const html_with_injected_js = () => {
       do_hover(event.data.hover_id);
     }
   });
+  console.log('injected html ready');
+  window.parent.postMessage({"type": "ready"}, "*")
   }
   </script>
 
@@ -85,59 +88,50 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   const url = `${settings.pv_url}/render/?base_url=${current_base_url}`;
   const sequence_id = useRef(0);
 
-  const fetch_page = useCallback(async () => {
-    let response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify(page_hooks.page),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      let error = response.statusText;
-      try {
-        const error_json = await response.json();
-        error = error_json.details;
-      } catch (_e) {
-        // ignore
+  const fetch_page = useCallback(
+    async (page: Page, this_sequence_id: number) => {
+      const page_json = await render_page(url, page);
+      if (!page_json) {
+        return;
       }
-      showMessage(i18n("Error fetching page: {error}", { error }), {
-        level: "error",
-      });
-      return;
-    }
 
-    const page_json = await response.json();
-    postHTML(page_json);
-  }, [url, page_hooks.page_gen]);
+      // ensure ordering is preserved
+      if (this_sequence_id !== sequence_id.current) {
+        return;
+      }
+      postHTML(page_json);
+    },
+    [url]
+  );
 
   useEffect(() => {
-    const this_sequence_id = sequence_id.current + 1;
-    sequence_id.current = this_sequence_id;
-    fetch_page();
-    console.log("fetch_page", page_hooks.page_gen);
+    sequence_id.current += 1;
+    fetch_page(page_hooks.page!, sequence_id.current);
   }, [url, page_hooks.page_gen, fetch_page]);
 
   useEffect(() => {
-    const iframe = document.getElementById("pe-preview-content");
-    if (!iframe) {
-      return;
-    }
-    iframe.contentWindow?.postMessage(
-      { type: "highlight", highlight_id: editor_hooks.selectedElementId },
-      "*"
-    );
+    sendMessageToIframe({
+      type: "highlight",
+      highlight_id: editor_hooks.selectedElementId,
+    });
   }, [editor_hooks.selectedElementId]);
   useEffect(() => {
-    const iframe = document.getElementById("pe-preview-content");
-    if (!iframe) {
-      return;
-    }
-    iframe.contentWindow?.postMessage(
-      { type: "hover", hover_id: editor_hooks.hoveredElementId },
-      "*"
-    );
+    sendMessageToIframe({
+      type: "hover",
+      hover_id: editor_hooks.hoveredElementId,
+    });
   }, [editor_hooks.hoveredElementId]);
+
+  useEffect(() => {
+    const handle_ready = () => {
+      console.log("injected html ready at parent");
+      fetch_page(page_hooks.page!, sequence_id.current);
+    };
+    window.addEventListener("message", handle_ready);
+    return () => {
+      window.removeEventListener("message", handle_ready);
+    };
+  }, [fetch_page]);
 
   return (
     <div className="flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center">
@@ -174,21 +168,77 @@ interface PageJson {
 }
 
 const postHTML = (page: PageJson) => {
-  const iframe = document.getElementById("pe-preview-content");
-  if (!iframe) {
+  if (!page) {
     return;
   }
-
   const head_html = `
     <style>${page.head.css}</style>
     <script>${page.head.js}</script>
     ${page.head.meta.map((meta) => `<meta ${meta} />`).join("\n")}
   `;
 
-  iframe.contentWindow?.postMessage(
-    { type: "replace-body", html: page.body, head: head_html },
-    "*"
-  );
+  sendMessageToIframe({
+    type: "replace-body",
+    html: page.body,
+    head: head_html,
+  });
+};
+
+const sendMessageToIframe = (message: any) => {
+  const iframe = document.getElementById("pe-preview-content");
+  if (!iframe) {
+    return;
+  }
+  (iframe as HTMLIFrameElement).contentWindow?.postMessage(message, "*");
+};
+
+let last_body_sha1: string | null = null; // a one item cache, as normally one instance only, no problem.
+let last_page_response: string | null = null;
+
+const render_page = async (url: string, page: Page) => {
+  const body = JSON.stringify(page);
+
+  const body_sha1 = await get_sha1_string(body);
+  if (last_body_sha1 === body_sha1) {
+    return last_page_response;
+  }
+  last_body_sha1 = body_sha1;
+
+  let response = await fetch(url, {
+    method: "POST",
+    body,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    let error = response.statusText;
+    try {
+      const error_json = await response.json();
+      error = error_json.details;
+    } catch (_e) {
+      // ignore
+    }
+    showMessage(i18n("Error fetching page: {error}", { error }), {
+      level: "error",
+    });
+    return null;
+  }
+
+  const page_json = await response.json();
+  last_page_response = page_json;
+  return page_json;
+};
+
+const get_sha1_string = async (body: string) => {
+  const body_buffer = new TextEncoder().encode(body);
+  const body_sha1 = Array.from(
+    new Uint8Array(await crypto.subtle.digest("SHA-1", body_buffer))
+  )
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  return body_sha1;
 };
 
 export default MainContent;
