@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 
 let _setPath: (path: string) => void | undefined;
 
-const push = (path: string) => {
-  window.history.pushState({}, "", path);
+export const setPath = (path: string) => {
+  // window.history.pushState({}, "", path);
+  window.location.hash = path;
   _setPath?.(path);
 };
 
@@ -17,6 +18,7 @@ export const usePath = () => {
 
   useEffect(() => {
     const listener = () => {
+      console.log("popstate", window.location.hash.slice(1));
       setPath(window.location.hash.slice(1));
     };
     window.addEventListener("popstate", listener);
@@ -35,4 +37,4 @@ export const get_qs = (key: string) => {
   return urlParams.get(key);
 };
 
-export default { push, usePath };
+export default { setPath, usePath };

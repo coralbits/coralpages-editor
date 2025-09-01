@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import settings from "../settings";
 import { IdName } from "../types";
-import history from "../hooks/history";
+import { setPath } from "../hooks/history";
 import { i18n } from "../utils/i18n";
 import BottomBar from "./BottomBar";
 import { Container } from "./Container";
@@ -37,7 +37,7 @@ export const PageList = () => {
             columns={[i18n("Store"), i18n("Id"), i18n("Title")]}
             data_hook={(page: number) => usePages(page)}
             onClick={(row, idx) => {
-              history.push(`#${row.store}/${row.id}`);
+              setPath(`${row.store}/${row.id}`);
             }}
             paginator={(props) => (
               <div className="flex justify-between items-center">
@@ -66,7 +66,7 @@ export const PageList = () => {
 const usePages = (page: number) => {
   const [pages, setPages] = useState<PageResult>({ count: 0, results: [] });
 
-  const fecth_pages = async (page: number) => {
+  const fetch_pages = async (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
@@ -77,7 +77,7 @@ const usePages = (page: number) => {
   };
 
   useEffect(() => {
-    fecth_pages(page);
+    fetch_pages(page);
   }, [page]);
 
   const pagestr = {
