@@ -25,6 +25,8 @@ import {
   faTrash,
   faUpload,
   faUser,
+  faThumbTack,
+  faThumbTackSlash,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -68,6 +70,8 @@ const iconMap: Record<string, any> = {
   upload: faUpload,
   user: faUser,
   full_screen: faExpand,
+  pin: faThumbTack,
+  pin_open: faThumbTackSlash,
 };
 
 // Helper function to get icon with fallback

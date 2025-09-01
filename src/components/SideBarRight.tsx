@@ -4,6 +4,7 @@ import { EditorHooks } from "../hooks/editor";
 import { useState, useEffect } from "react";
 import React from "react";
 import { i18n } from "../utils/i18n";
+import DraggableSidebar from "./DraggableSidebar";
 
 interface SideBarRightProps {
   page_hooks: PageHooks;
@@ -12,6 +13,8 @@ interface SideBarRightProps {
 
 const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
   const [is_dragging, setIsDragging] = useState(false);
+  const [is_floating, setIsFloating] = useState(false);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const handleDragStart = () => {
@@ -37,10 +40,20 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
   }
 
   return (
-    <div className="sidebar sidebar-right min-w-[400px] max-w-[400px] h-full">
-      <div className="sidebar-title">{page_hooks.page.title}</div>
+    <DraggableSidebar
+      title={page_hooks.page.title}
+      isFloating={is_floating}
+      onToggleFloating={() => {
+        setIsFloating(!is_floating);
+        setPosition({ top: 0, left: 0 });
+      }}
+      position={position}
+      onPositionChange={setPosition}
+      className="sidebar sidebar-right"
+      contentClassName="sidebar-content"
+      headerClassName="sidebar-title"
+    >
       <div
-        className="sidebar-content overflow-x-hidden max-w-full overflow-y-auto"
         onDragOver={(e) => {
           e.preventDefault();
         }}
@@ -65,7 +78,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
           parent_id={"root"}
         />
       </div>
-    </div>
+    </DraggableSidebar>
   );
 };
 
