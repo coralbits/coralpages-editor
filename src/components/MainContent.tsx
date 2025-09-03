@@ -60,7 +60,7 @@ const html_with_injected_js = () => {
     if (event.data && event.data.type === 'replace-body') {
       document.body.innerHTML = event.data.html;
       document.head.innerHTML = event.data.head;
-      console.log('injected html body_size=', event.data.html.length, 'head_size=', event.data.head.length);
+      // console.log('injected html body_size=', event.data.html.length, 'head_size=', event.data.head.length);
       do_highlight(highlight_id);
       do_hover(hover_id);
     }
@@ -71,7 +71,7 @@ const html_with_injected_js = () => {
       do_hover(event.data.hover_id);
     }
   });
-  console.log('injected html ready');
+  // console.log('injected html ready');
   window.parent.postMessage({"type": "ready"}, "*")
   }
   </script>
@@ -124,8 +124,10 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   }, [editor_hooks.hoveredElementId]);
 
   useEffect(() => {
-    const handle_ready = () => {
-      console.log("injected html ready at parent");
+    const handle_ready = (event: MessageEvent) => {
+      if (event.data.type !== "ready") {
+        return;
+      }
       fetch_page(page_hooks.page!, sequence_id.current);
     };
     window.addEventListener("message", handle_ready);
