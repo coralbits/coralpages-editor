@@ -25,7 +25,7 @@ export const AssetSelectorButton = ({
   return (
     <>
       <button
-        className={`p-2 rounded-md bg-blue-500 hover:bg-blue-600 cursor-pointer flex flex-row gap-2 text-white items-center ${className} `}
+        className={`p-2 rounded-md bg-focus hover:bg-focus cursor-pointer flex flex-row gap-2 text-white items-center ${className} `}
         onClick={() => setIsOpen((open) => !open)}
       >
         <div className="flex flex-row gap-2 items-center justify-center min-w-16 min-h-16">
@@ -59,13 +59,13 @@ const AssetSelector = ({ onChange, value }: AssetSelectorProps) => {
   const [bucketList] = useBucketList();
 
   return (
-    <div className="border-2 rounded-md p-2 border-blue-500 border-t-0">
+    <div className="border-2 rounded-md p-2 border-focus border-t-0">
       <div className="flex flex-col gap-2">
         {bucketList.map((bucket) => (
           <div key={bucket.name}>
             <h3
               key={bucket.name}
-              className="font-bold border-b-2 border-b-blue-500"
+              className="font-bold border-b-2 border-b-focus"
             >
               {bucket.name}
             </h3>
@@ -78,7 +78,7 @@ const AssetSelector = ({ onChange, value }: AssetSelectorProps) => {
         ))}
       </div>
       <div className="flex flex-row gap-2 justify-center m-4">
-        <button className="p-2 rounded-md bg-blue-500 hover:bg-blue-600 cursor-pointer text-white">
+        <button className="p-2 rounded-md bg-focus hover:bg-focus cursor-pointer text-white">
           {i18n("Create Bucket")}
         </button>
       </div>
@@ -112,7 +112,7 @@ const BucketThumbnailList = ({
         />
       ))}
       <button
-        className="p-2 rounded-md bg-gray-500 hover:bg-blue-600 cursor-pointer text-white w-20 h-20 m-2"
+        className="p-2 rounded-md bg-gray-500 hover:bg-focus cursor-pointer text-white w-20 h-20 m-2"
         onClick={async () => {
           await addAsset(bucket.name);
           await refreshThumbnailList();
@@ -143,9 +143,9 @@ const Thumbnail = ({
 }) => {
   return (
     <div
-      className={`flex flex-col gap-2 justify-between w-20 h-20 border-1 border-blue-500 rounded-md p-2 overflow-hidden  hover:bg-blue-600 transition-all duration-300 cursor-pointer ${
+      className={`flex flex-col gap-2 justify-between w-20 h-20 border-1 border-focus rounded-md p-2 overflow-hidden  hover:bg-focus transition-all duration-300 cursor-pointer ${
         value === thumbnail.url
-          ? "bg-blue-600 border-blue-600 border-2"
+          ? "bg-focus border-focus border-2"
           : "border-1 bg-gray-700"
       } ${className}`}
       style={{

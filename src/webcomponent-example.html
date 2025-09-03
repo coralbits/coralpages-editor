@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Editor Web Component Example</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .controls {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 8px;
+      }
+
+      .controls label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .controls input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      page-editor {
+        display: block;
+        width: 100%;
+        height: 600px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Page Editor Web Component</h1>
+
+      <div class="controls">
+        <label for="pathInput">Page Path:</label>
+        <input
+          type="text"
+          id="pathInput"
+          placeholder="Enter page path (e.g., /my-page)"
+          value="/example-page"
+        />
+
+        <label for="cssInput" style="margin-top: 15px"
+          >CSS URL (optional):</label
+        >
+        <input
+          type="text"
+          id="cssInput"
+          placeholder="Enter CSS file URL (e.g., ./styles.css)"
+          value=""
+        />
+      </div>
+
+      <page-editor path="/example-page"></page-editor>
+    </div>
+
+    <script type="module">
+      // Import the web component
+      import "./webcomponent.tsx";
+
+      // Handle input changes
+      const pathInput = document.getElementById("pathInput");
+      const cssInput = document.getElementById("cssInput");
+      const pageEditor = document.querySelector("page-editor");
+
+      pathInput.addEventListener("input", (e) => {
+        const newPath = e.target.value;
+        pageEditor.setAttribute("path", newPath);
+      });
+
+      cssInput.addEventListener("input", (e) => {
+        const newCss = e.target.value;
+        if (newCss.trim()) {
+          pageEditor.setAttribute("css", newCss);
+        } else {
+          pageEditor.removeAttribute("css");
+        }
+      });
+
+      // You can also programmatically change the attributes
+      // pageEditor.path = '/new-path';
+      // pageEditor.css = './styles.css';
+    </script>
+  </body>
+</html>

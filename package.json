@@ -5,6 +5,7 @@
   "scripts": {
     "start": "parcel src/index.html --port 8005",
     "build": "parcel build src/index.html --dist-dir ./dist/",
+    "build:webcomponent": "parcel build src/webcomponent.tsx --dist-dir ./dist/ ",
     "test": "vitest"
   },
   "targets": {

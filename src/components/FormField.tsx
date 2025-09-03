@@ -73,7 +73,7 @@ export const FormFieldDefault = ({
   return (
     <FormLabel label={label} className={className} {...label_props}>
       <input
-        className="border border-gray-300 rounded-md p-2"
+        className="border border-primary rounded-md p-2"
         type={type}
         name={name}
         value={value}
@@ -105,7 +105,7 @@ export const FormFieldSelect = ({
   return (
     <FormLabel label={label} className={className} {...label_props}>
       <select
-        className="border border-gray-300 rounded-md p-2"
+        className="border border-primary rounded-md p-2"
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -172,7 +172,7 @@ export const FormFieldTextarea = ({
   return (
     <FormLabel label={label} className={className} {...label_props}>
       <textarea
-        className="border border-gray-300 rounded-md p-2"
+        className="border border-primary rounded-md p-2"
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -194,14 +194,14 @@ export const FormFieldSelectButtons = ({
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} direction="row">
-      <div className="flex flex-row bg-gray-700 rounded-md shadow-2xs border-gray-500 border-1 shadow-gray-400/25 overflow-hidden">
+      <div className="flex flex-row bg-gray-700 rounded-md shadow-2xs border-primary border-1 shadow-gray-400/25 overflow-hidden">
         {options?.map((option, idx) => (
           <button
             key={option.value}
             value={option.value}
-            className={`px-2 cursor-pointer hover:bg-blue-500 hover:text-white ${
-              idx !== 0 ? "border-l border-gray-500" : ""
-            } ${value === option.value ? "bg-blue-500 text-white" : ""}`}
+            className={`px-2 cursor-pointer hover:bg-focus hover:text-focus ${
+              idx !== 0 ? "border-l border-primary" : ""
+            } ${value === option.value ? "bg-focus text-focus" : ""}`}
             onClick={() => onChange(option.value)}
             title={option.label}
           >
