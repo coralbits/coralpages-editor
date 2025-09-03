@@ -87,7 +87,7 @@ const html_with_injected_js = () => {
 
 const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   const current_base_url = window.location.origin;
-  const url = `${settings.pv_url}/render/?base_url=${current_base_url}`;
+  const url = `${settings.pv_url}/render/?base_url=${current_base_url}&debug=true`;
   const sequence_id = useRef(0);
 
   const fetch_page = useCallback(
