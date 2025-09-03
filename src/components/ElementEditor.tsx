@@ -117,6 +117,7 @@ const EditorFieldEditor = ({
       name={field.name}
       value={element.data?.[field.name] || ""}
       options={field.options}
+      placeholder={field.placeholder}
       onChange={(value) => onChange(field, value)}
     />
   );

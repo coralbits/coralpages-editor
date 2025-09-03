@@ -9,7 +9,6 @@ interface ElementSelectorProps {
 }
 
 const ElementSelector = (props: ElementSelectorProps) => {
-  console.log({ props });
   return (
     <div className="flex flex-row gap-4 p-2 flex-wrap w-full margin-auto">
       {props.editor_hooks.elementDefinitions?.map((element) => (

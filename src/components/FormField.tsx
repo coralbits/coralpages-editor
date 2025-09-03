@@ -16,7 +16,8 @@ export type FormFieldType =
   | "image"
   | "hidden"
   | "boolean"
-  | "select-buttons";
+  | "select-buttons"
+  | "description";
 
 export interface FormFieldProps {
   className?: string;
@@ -213,6 +214,19 @@ export const FormFieldSelectButtons = ({
   );
 };
 
+export const FormFieldDescription = ({
+  label,
+  className,
+  label_props,
+  placeholder,
+}: FormFieldProps) => {
+  return (
+    <FormLabel label={label} className={className} {...label_props}>
+      <div className="text-gray-400 text-sm">{placeholder}</div>
+    </FormLabel>
+  );
+};
+
 export const FormField = (props: FormFieldProps) => {
   switch (props.type) {
     case "text":
@@ -229,6 +243,8 @@ export const FormField = (props: FormFieldProps) => {
       return <FormFieldBoolean {...props} />;
     case "select-buttons":
       return <FormFieldSelectButtons {...props} />;
+    case "description":
+      return <FormFieldDescription {...props} />;
     default:
       return <FormFieldDefault {...props} />;
   }
