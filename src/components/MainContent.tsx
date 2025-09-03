@@ -37,6 +37,7 @@ const html_with_injected_js = () => {
       return;
     }
     element.style.outline = '2px solid green';
+    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
   }
 
   function do_hover(new_hover_id) {
