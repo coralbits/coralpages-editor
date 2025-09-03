@@ -109,15 +109,26 @@ const usePage = (path: string): PageHooks => {
     });
   };
 
+  const getRandomId = () => {
+    let id = crypto.randomUUID();
+    // if starts with a number, change it for 'a' + id
+    if (/^\d/.test(id)) {
+      id = "a" + id;
+    }
+    // keep it to 32 characters
+    return id.slice(0, 32);
+  };
+
   const onAddElement = (
     element_definition: Widget,
     parent_id: string,
     index: number
   ) => {
     const element = {
-      id: crypto.randomUUID(),
+      id: getRandomId(),
       type: element_definition.name,
       data: {},
+      children: [],
     };
 
     if (!page) {
@@ -183,6 +194,7 @@ const usePage = (path: string): PageHooks => {
     fetch(`${settings.pv_url}/page/${path}`)
       .then((res) => res.json())
       .then((page) => {
+        page = fix_page(page);
         setPage(page as Page);
         setNeedSave(false);
       });
@@ -408,3 +420,24 @@ export const useTemplateList = () => {
 };
 
 export default usePage;
+
+export function fix_page(page: Page): Page {
+  return {
+    ...page,
+    children: page.children.map((child) => fix_element(child)),
+  };
+}
+
+export function fix_element(element: Element): Element {
+  let id = element.id;
+  if (/^\d/.test(id)) {
+    id = "a" + id;
+  }
+  if (id.length > 32) {
+    id = id.slice(0, 32);
+  }
+  return {
+    ...element,
+    id,
+  };
+}
