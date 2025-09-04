@@ -44,6 +44,10 @@ const styles: Record<string, Style> = {
       { label: "Column", value: "column", icon: "down" },
     ],
   },
+  "flex-grow": {
+    label: "Flex Grow",
+    type: "number",
+  },
   "align-items": {
     label: "Align Items",
     type: "select-buttons",
