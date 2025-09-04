@@ -27,6 +27,13 @@ import {
   faUser,
   faThumbTack,
   faThumbTackSlash,
+  faColumns,
+  faTableList,
+  faBorderNone,
+  faSquareCheck,
+  faNetworkWired,
+  faGem,
+  faChartPie,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -72,6 +79,13 @@ const iconMap: Record<string, any> = {
   full_screen: faExpand,
   pin: faThumbTack,
   pin_open: faThumbTackSlash,
+  columns: faColumns,
+  tableList: faTableList,
+  borderNone: faBorderNone,
+  squareCheck: faSquareCheck,
+  networkWired: faNetworkWired,
+  gem: faGem,
+  chartPie: faChartPie,
 };
 
 // Helper function to get icon with fallback
