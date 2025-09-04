@@ -29,7 +29,7 @@ const ElementSelectorItem = (props: {
   return (
     <button
       key={props.element.name}
-      className="flex flex-col gap-2 items-center justify-center h-24 w-24 sidebar-button shadow-md"
+      className="flex flex-col gap-2 items-center justify-center w-[calc(33%-1rem)] aspect-square sidebar-button shadow-md m-auto"
       onClick={() =>
         props.page_hooks.onAddElement(props.element, "root", 10000)
       }
