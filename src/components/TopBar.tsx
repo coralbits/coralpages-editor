@@ -6,9 +6,10 @@ import Icon from "./Icon";
 
 interface TopBarProps {
   page_hooks: PageHooks;
+  preview_url?: string;
 }
 
-const TopBar = ({ page_hooks }: TopBarProps) => {
+const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
   return (
     <nav className="topbar">
       <button
@@ -48,20 +49,18 @@ const TopBar = ({ page_hooks }: TopBarProps) => {
           <Icon name="upload" />
         </button>
 
-        <button
-          className="topbar-icon-btn"
-          aria-label={i18n("Preview")}
-          title={i18n("Preview")}
-          onClick={() => {
-            window.open(
-              page_hooks.page?.url,
-              `preview-${page_hooks.page?.id}`,
-              "noopener,noreferrer"
-            );
-          }}
-        >
-          <Icon name="eye" />
-        </button>
+        {preview_url && (
+          <a
+            className="topbar-icon-btn flex items-center justify-center"
+            aria-label={i18n("View page")}
+            title={i18n("View page")}
+            href={preview_url}
+            target={`preview-${page_hooks.page?.id}`}
+            rel="noopener noreferrer"
+          >
+            <Icon name="eye" />
+          </a>
+        )}
         <button
           className="topbar-icon-btn"
           aria-label={i18n("Save")}

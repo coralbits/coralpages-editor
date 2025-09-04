@@ -3,6 +3,7 @@ import { Editor } from "./components/Editor";
 import { MessageStack } from "./components/messages";
 import { PageList } from "./components/PageList";
 import { usePath } from "./hooks/history";
+import settings from "./settings";
 
 interface AppProps {}
 
@@ -21,7 +22,10 @@ const App = ({}: AppProps) => {
 
   return (
     <>
-      <Editor path={path} />
+      <Editor
+        path={path}
+        preview_url={`${settings.pv_url}/render/${path}.html`}
+      />
       <DialogStack />
       <MessageStack />
     </>

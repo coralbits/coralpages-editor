@@ -8,9 +8,10 @@ import { useEditor } from "../hooks/editor";
 
 interface EditorProps {
   path: string;
+  preview_url?: string;
 }
 
-export const Editor = ({ path }: EditorProps) => {
+export const Editor = ({ path, preview_url }: EditorProps) => {
   const page_hooks = usePage(path);
   const editor_hooks = useEditor();
 
@@ -20,7 +21,7 @@ export const Editor = ({ path }: EditorProps) => {
 
   return (
     <div className="flex flex-col h-screen max-h-screen overflow-hidden">
-      <TopBar page_hooks={page_hooks} />
+      <TopBar page_hooks={page_hooks} preview_url={preview_url} />
       <div className="flex flex-row flex-1 overflow-hidden">
         <SideBarLeft page_hooks={page_hooks} editor_hooks={editor_hooks} />
         <MainContent page_hooks={page_hooks} editor_hooks={editor_hooks} />
