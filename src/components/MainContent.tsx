@@ -55,15 +55,18 @@ const html_with_injected_js = () => {
     }
     hover_id = new_hover_id;
   }
+  function do_replace_document(data) {
+    document.head.innerHTML = data.head;
+    document.body.innerHTML = data.html;
+    console.log('injected html body_size=', data.html.length, 'head_size=', data.head.length);
+    do_highlight(highlight_id);
+    do_hover(hover_id);
+  }
 
   window.addEventListener('message', function(event) {
     // Optionally, check event.origin for security
     if (event.data && event.data.type === 'replace-body') {
-      document.body.innerHTML = event.data.html;
-      document.head.innerHTML = event.data.head;
-      // console.log('injected html body_size=', event.data.html.length, 'head_size=', event.data.head.length);
-      do_highlight(highlight_id);
-      do_hover(hover_id);
+      do_replace_document(event.data);
     }
     if (event.data && event.data.type === 'highlight') {
       do_highlight(event.data.highlight_id);
@@ -72,16 +75,19 @@ const html_with_injected_js = () => {
       do_hover(event.data.hover_id);
     }
   });
-  // console.log('injected html ready');
+  console.log('injected html ready');
   window.parent.postMessage({"type": "ready"}, "*")
   }
   </script>
 
   </head>
+  <body>
+  Loading...
+  </body>
   </html>
   `;
 
-  const blob = new Blob([html], { type: "text/html" });
+  const blob = new Blob([html], { type: "text/html;charset=UTF-8" });
   return URL.createObjectURL(blob);
 };
 

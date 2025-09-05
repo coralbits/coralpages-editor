@@ -2,10 +2,10 @@ import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import { Editor } from "./components/Editor";
-import { DialogStack } from "./components/dialog";
-import { MessageStack } from "./components/messages";
-import "./index.css";
+import { Editor } from "../components/Editor";
+import { DialogStack } from "../components/dialog";
+import { MessageStack } from "../components/messages";
+import "../index.css";
 
 // Prevent FontAwesome from adding its CSS since we did it manually above
 config.autoAddCss = false;

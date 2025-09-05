@@ -1,4 +1,4 @@
-.PHONY: help serve build
+.PHONY: help serve build build_server build_editor
 
 
 help: 
@@ -12,8 +12,13 @@ serve:
 	npm start
 
 
-build:
+build: build_full build_editor
+
+build_server:
 	npm run build
+
+build_editor:
+	npm run build:webcomponent_editor
 
 clean:
 	rm -rf dist
