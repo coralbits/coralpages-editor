@@ -244,6 +244,9 @@ const preview_text = (child: Element): string => {
   if (child.data?.caption) {
     text = child.data?.caption;
   }
+  if (child.data?.alt) {
+    text = child.data?.alt;
+  }
   text = text.split("\n")[0].slice(0, 100);
 
   return text;
