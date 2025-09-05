@@ -12,7 +12,7 @@ serve:
 	npm start
 
 
-build: build_full build_editor
+build: build_server build_editor
 
 build_server:
 	npm run build

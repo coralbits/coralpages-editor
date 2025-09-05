@@ -7,94 +7,37 @@ import { showMessage } from "./messages";
 import { i18n } from "../utils/i18n";
 import { Page } from "../types";
 import Icon from "./Icon";
+import "../webcomponent/page-preview";
+
+// TypeScript declaration for custom web component
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "page-preview": {
+        data?: string;
+        "highlight-id"?: string;
+        "hover-id"?: string;
+      };
+    }
+  }
+}
 
 interface MainContentProps {
   page_hooks: PageHooks;
   editor_hooks: EditorHooks;
 }
 
-const html_with_injected_js = () => {
-  const current_base_url = window.location.origin;
-  const html = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-  <base href="${current_base_url}">
-  <script>
-  {
-  let highlight_id = undefined;
-  let hover_id = undefined;
-  function do_highlight(new_highlight_id) {
-    if (highlight_id) {
-      const element = document.querySelector("#" + highlight_id);
-      if (element){
-        element.style.outline = 'none';
-      }
-    }
-    highlight_id = new_highlight_id;
-    const element = document.querySelector("#" + new_highlight_id);
-    if (!element) {
-      return;
-    }
-    element.style.outline = '2px solid green';
-    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-  }
-
-  function do_hover(new_hover_id) {
-    if (hover_id) {
-      const element = document.querySelector("#" + hover_id);
-      if (element){
-        element.style.backgroundColor = '';
-      }
-    }
-    if (new_hover_id) {
-      const element = document.querySelector("#" + new_hover_id);
-      if (element){
-        element.style.backgroundColor = '#11ee4430';
-      }
-    }
-    hover_id = new_hover_id;
-  }
-  function do_replace_document(data) {
-    document.head.innerHTML = data.head;
-    document.body.innerHTML = data.html;
-    console.log('injected html body_size=', data.html.length, 'head_size=', data.head.length);
-    do_highlight(highlight_id);
-    do_hover(hover_id);
-  }
-
-  window.addEventListener('message', function(event) {
-    // Optionally, check event.origin for security
-    if (event.data && event.data.type === 'replace-body') {
-      do_replace_document(event.data);
-    }
-    if (event.data && event.data.type === 'highlight') {
-      do_highlight(event.data.highlight_id);
-    }
-    if (event.data && event.data.type === 'hover') {
-      do_hover(event.data.hover_id);
-    }
-  });
-  console.log('injected html ready');
-  window.parent.postMessage({"type": "ready"}, "*")
-  }
-  </script>
-
-  </head>
-  <body>
-  Loading...
-  </body>
-  </html>
-  `;
-
-  const blob = new Blob([html], { type: "text/html;charset=UTF-8" });
-  return URL.createObjectURL(blob);
-};
+interface PagePreviewData {
+  head: string;
+  html: string;
+}
 
 const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   const current_base_url = window.location.origin;
   const url = `${settings.pv_url}/render/?base_url=${current_base_url}&debug=true`;
   const sequence_id = useRef(0);
+  const [previewData, setPreviewData] = useState<PagePreviewData | null>(null);
+  const [updateTimeout, setUpdateTimeout] = useState<any>(null);
 
   const fetch_page = useCallback(
     async (page: Page, this_sequence_id: number) => {
@@ -107,41 +50,34 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
       if (this_sequence_id !== sequence_id.current) {
         return;
       }
-      postHTML(page_json);
+
+      const head_html = `
+        <style>${page_json.head.css}</style>
+        <script>${page_json.head.js}</script>
+        ${page_json.head.meta
+          .map((meta: string) => `<meta ${meta} />`)
+          .join("\n")}
+      `;
+
+      setPreviewData({
+        head: head_html,
+        html: page_json.body,
+      });
     },
     [url]
   );
 
   useEffect(() => {
     sequence_id.current += 1;
-    fetch_page(page_hooks.page!, sequence_id.current);
+    if (updateTimeout) {
+      clearTimeout(updateTimeout);
+    }
+    setUpdateTimeout(
+      setTimeout(() => {
+        fetch_page(page_hooks.page!, sequence_id.current);
+      }, 100)
+    );
   }, [url, page_hooks.page_gen, fetch_page]);
-
-  useEffect(() => {
-    sendMessageToIframe({
-      type: "highlight",
-      highlight_id: editor_hooks.selectedElementId,
-    });
-  }, [editor_hooks.selectedElementId]);
-  useEffect(() => {
-    sendMessageToIframe({
-      type: "hover",
-      hover_id: editor_hooks.hoveredElementId,
-    });
-  }, [editor_hooks.hoveredElementId]);
-
-  useEffect(() => {
-    const handle_ready = (event: MessageEvent) => {
-      if (event.data.type !== "ready") {
-        return;
-      }
-      fetch_page(page_hooks.page!, sequence_id.current);
-    };
-    window.addEventListener("message", handle_ready);
-    return () => {
-      window.removeEventListener("message", handle_ready);
-    };
-  }, [fetch_page]);
 
   return (
     <div
@@ -164,23 +100,19 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
           <Icon name="full_screen" />
         </button>
       </div>
-      <div style={{ width: editor_hooks.width }} className="bg-white h-full">
-        <MyIframe />
+      <div
+        style={{ width: editor_hooks.width }}
+        className="bg-white h-full overflow-scroll @container"
+      >
+        {React.createElement("page-preview", {
+          data: previewData ? JSON.stringify(previewData) : "",
+          "highlight-id": editor_hooks.selectedElementId || "",
+          "hover-id": editor_hooks.hoveredElementId || "",
+        })}
       </div>
     </div>
   );
 };
-
-const MyIframeNoCache = () => (
-  <iframe
-    key="pe-preview-content"
-    id="pe-preview-content"
-    className="h-full w-full bg-white"
-    src={html_with_injected_js()}
-  />
-);
-
-const MyIframe = React.memo(MyIframeNoCache);
 
 interface PageJson {
   title: string;
@@ -195,31 +127,6 @@ interface PageJson {
     response_code: number;
   };
 }
-
-const postHTML = (page: PageJson) => {
-  if (!page) {
-    return;
-  }
-  const head_html = `
-    <style>${page.head.css}</style>
-    <script>${page.head.js}</script>
-    ${page.head.meta.map((meta) => `<meta ${meta} />`).join("\n")}
-  `;
-
-  sendMessageToIframe({
-    type: "replace-body",
-    html: page.body,
-    head: head_html,
-  });
-};
-
-const sendMessageToIframe = (message: any) => {
-  const iframe = document.getElementById("pe-preview-content");
-  if (!iframe) {
-    return;
-  }
-  (iframe as HTMLIFrameElement).contentWindow?.postMessage(message, "*");
-};
 
 let last_body_sha1: string | null = null; // a one item cache, as normally one instance only, no problem.
 let last_page_response: string | null = null;
