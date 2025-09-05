@@ -6,7 +6,7 @@ export const Container = ({
   className?: string;
 }) => {
   return (
-    <div className="max-w-[1200px] mx-auto w-[1200px] overflow-auto">
+    <div className="mx-auto w-full max-w-[1200px] overflow-auto p-4">
       <div className={className}>{children}</div>
     </div>
   );
