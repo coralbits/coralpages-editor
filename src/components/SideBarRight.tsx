@@ -41,7 +41,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
 
   return (
     <DraggableSidebar
-      title={page_hooks.page.title}
+      title={i18n("Page layout")}
       isFloating={is_floating}
       onToggleFloating={() => {
         setIsFloating(!is_floating);
@@ -52,6 +52,17 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
       className="sidebar sidebar-right"
       contentClassName="sidebar-content"
       headerClassName="sidebar-title"
+      buttons={[
+        {
+          label: i18n("Show highlighted elements"),
+          icon: "highlight",
+          className: editor_hooks.showHighlightedElements ? "bg-focus" : "",
+          onClick: () =>
+            editor_hooks.setShowHighlightedElements(
+              !editor_hooks.showHighlightedElements
+            ),
+        },
+      ]}
     >
       <div
         onDragOver={(e) => {
@@ -65,7 +76,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
           editor_hooks={editor_hooks}
           child={{
             id: "root",
-            type: i18n("Document Settings"),
+            type: i18n("Document settings"),
             children: [],
           }}
           className="ml-6 my-6 h-12"

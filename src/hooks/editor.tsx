@@ -21,6 +21,9 @@ export interface EditorHooks {
   setSelectedTab: (tab: EditorTab) => void;
   width: number;
   setWidth: (width: number) => void;
+
+  setShowHighlightedElements: (show: boolean) => void;
+  showHighlightedElements: boolean;
 }
 
 export const useEditor = (): EditorHooks => {
@@ -33,7 +36,7 @@ export const useEditor = (): EditorHooks => {
   const [elementDefinitions] = useElementDefinitions();
   const [selectedTab, setSelectedTab] = useState<EditorTab>("add");
   const [width, setWidth] = useState(DEFAULT_WIDTH);
-
+  const [showHighlightedElements, setShowHighlightedElements] = useState(false);
   const getSelectedElement = (page_hooks: PageHooks) => {
     return page_hooks.findElement(selectedElementId);
   };
@@ -54,6 +57,8 @@ export const useEditor = (): EditorHooks => {
     setSelectedTab,
     width,
     setWidth,
+    showHighlightedElements,
+    setShowHighlightedElements,
   };
 };
 

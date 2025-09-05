@@ -34,6 +34,7 @@ import {
   faNetworkWired,
   faGem,
   faChartPie,
+  faObjectUngroup,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -86,6 +87,7 @@ const iconMap: Record<string, any> = {
   networkWired: faNetworkWired,
   gem: faGem,
   chartPie: faChartPie,
+  highlight: faObjectUngroup,
 };
 
 // Helper function to get icon with fallback

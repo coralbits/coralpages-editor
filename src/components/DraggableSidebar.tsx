@@ -11,6 +11,12 @@ interface DraggableSidebarProps {
   className?: string;
   headerClassName?: string;
   contentClassName?: string;
+  buttons?: {
+    label: string;
+    icon: string;
+    onClick: () => void;
+    className?: string;
+  }[];
 }
 
 const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
@@ -23,6 +29,7 @@ const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
   className = "",
   headerClassName = "",
   contentClassName = "",
+  buttons = [],
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -80,8 +87,19 @@ const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
         onMouseDown={handleHeaderMouseDown}
       >
         <div className="flex-1">{title}</div>
+        {buttons.map((button, idx) => (
+          <button
+            key={idx}
+            className={`bg-gray-700 border-focus p-2 rounded-md hover:bg-focus hover:cursor-pointer ${
+              button.className || ""
+            }`}
+            onClick={button.onClick}
+          >
+            <Icon name={button.icon} />
+          </button>
+        ))}
         <button
-          className="bg-gray-700 border-amber-300 p-2 rounded-md hover:bg-amber-600 hover:cursor-pointer"
+          className="bg-gray-700 border-focus p-2 rounded-md hover:bg-focus hover:cursor-pointer"
           onClick={onToggleFloating}
         >
           {isFloating ? <Icon name="pin_open" /> : <Icon name="pin" />}
