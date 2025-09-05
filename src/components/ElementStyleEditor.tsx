@@ -32,6 +32,7 @@ const styles: Record<string, Style> = {
     label: "Display",
     type: "select",
     options: [
+      { label: "Inherit", value: "" },
       { label: "Flex", value: "flex" },
       { label: "Inline-Flex", value: "inline-flex" },
     ],
