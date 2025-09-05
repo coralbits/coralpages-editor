@@ -227,6 +227,38 @@ export const FormFieldDescription = ({
   );
 };
 
+export const FormFieldColor = ({
+  className,
+  type,
+  label,
+  name,
+  value,
+  onChange,
+  label_props,
+  placeholder,
+}: FormFieldProps) => {
+  return (
+    <FormLabel label={label} className={className} {...label_props}>
+      <div className="flex flex-row">
+        <input
+          className="border border-primary rounded-md p-2 flex-1 h-10"
+          type={type}
+          name={name}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+        />
+        <button
+          className="border border-primary rounded-md p-2 max-w-10 max-h-10 pointer-cursor ml-2"
+          onClick={() => onChange("")}
+        >
+          <Icon name="trash" />
+        </button>
+      </div>
+    </FormLabel>
+  );
+};
+
 export const FormField = (props: FormFieldProps) => {
   switch (props.type) {
     case "text":
@@ -238,7 +270,7 @@ export const FormField = (props: FormFieldProps) => {
     case "textarea":
       return <FormFieldTextarea {...props} />;
     case "color":
-      return <FormFieldDefault {...props} label_props={{ direction: "row" }} />;
+      return <FormFieldColor {...props} />;
     case "boolean":
       return <FormFieldBoolean {...props} />;
     case "select-buttons":
