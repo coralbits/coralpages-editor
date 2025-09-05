@@ -1,7 +1,10 @@
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { useElementDefinition } from "../hooks/editor";
-import { FormField, FormFieldType } from "./FormField";
+import { FormField, FormFieldSelect, FormFieldType } from "./FormField";
+import { i18n } from "../utils/i18n";
+import { Class, useClassesDefinitions } from "../hooks/classes";
+import Icon from "./Icon";
 
 interface Style {
   label: string;
@@ -150,6 +153,7 @@ const ElementStyleEditor = ({
   editor_hooks,
 }: ElementStyleEditorProps) => {
   const element_definition = useElementDefinition(editor_hooks, page_hooks);
+  const classes = useClassesDefinitions();
 
   if (!element_definition) {
     return <div>No element definition found</div>;
@@ -164,25 +168,59 @@ const ElementStyleEditor = ({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {Object.entries(styles).map(([css_key, style]) => (
-        <EditStyleField
-          key={css_key}
-          style={style}
-          className="p-2"
-          value={selected_element.style?.[css_key] || ""}
-          placeholder={style.placeholder}
-          setValue={(value) => {
-            page_hooks.onChangeElement({
-              ...selected_element,
-              style: {
-                ...selected_element.style,
-                [css_key]: value,
-              },
-            });
-          }}
-        />
-      ))}
+    <div>
+      <h3 className="p-2 font-bold">{i18n("Preset classes")}</h3>
+      <div className="p-2">
+        <div className="border border-primary rounded-md w-full">
+          {classes.map((clss: Class) => (
+            <label className="flex flex-row gap-2" key={clss.name}>
+              <input
+                type="checkbox"
+                checked={selected_element.classes?.includes(clss.name) || false}
+                onChange={(e) => {
+                  let classes = selected_element.classes || [];
+                  if (e.target.checked) {
+                    classes.push(clss.name);
+                  } else {
+                    classes = classes.filter((c) => c !== clss.name);
+                  }
+
+                  page_hooks.onChangeElement({
+                    ...selected_element,
+                    classes,
+                  });
+                }}
+              />
+              <span className="grow">{clss.description}</span>
+              <Icon name="gem" />
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <hr />
+
+      <h3 className="p-2 font-bold">{i18n("Custom Style")}</h3>
+      <div className="flex flex-col gap-2">
+        {Object.entries(styles).map(([css_key, style]) => (
+          <EditStyleField
+            key={css_key}
+            style={style}
+            className="p-2"
+            value={selected_element.style?.[css_key] || ""}
+            placeholder={style.placeholder}
+            setValue={(value) => {
+              page_hooks.onChangeElement({
+                ...selected_element,
+                style: {
+                  ...selected_element.style,
+                  [css_key]: value,
+                },
+              });
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };

@@ -11,6 +11,7 @@ export interface Element {
   type: string;
   data?: any;
   style?: Record<string, string>;
+  classes?: string[];
   children?: Element[];
 }
 
