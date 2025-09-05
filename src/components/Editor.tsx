@@ -8,6 +8,7 @@ import { useEditor } from "../hooks/editor";
 
 interface EditorProps {
   path: string;
+  topbar?: boolean;
   preview_url?: string;
 }
 
@@ -20,7 +21,7 @@ export const Editor = ({ path, preview_url }: EditorProps) => {
   }
 
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
+    <div className="flex flex-col bg-primary h-full w-full">
       <TopBar page_hooks={page_hooks} preview_url={preview_url} />
       <div className="flex flex-row flex-1 overflow-hidden">
         <SideBarLeft page_hooks={page_hooks} editor_hooks={editor_hooks} />
