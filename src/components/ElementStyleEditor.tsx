@@ -169,7 +169,21 @@ const ElementStyleEditor = ({
 
   return (
     <div>
-      <h3 className="p-2 font-bold">{i18n("Preset classes")}</h3>
+      <div className="flex flex-row gap-2">
+        <h3 className="p-2 font-bold flex-1">{i18n("Preset classes")}</h3>
+        <button
+          className="p-2 btn-tertiary rounded-md border-primary border-1"
+          onClick={() => {
+            page_hooks.onChangeElement({
+              ...selected_element,
+              classes: [],
+            });
+          }}
+        >
+          {i18n("Reset")}
+        </button>
+      </div>
+
       <div className="p-2">
         <div className="border border-primary rounded-md w-full">
           {classes.map((clss: Class) => (
