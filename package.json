@@ -3,9 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "start": "parcel src/index.html --port 8005",
-    "build": "parcel build src/index.html --dist-dir ./dist/",
-    "build:webcomponent_editor": "parcel build src/webcomponent/editor.tsx --dist-dir ./dist/ ",
+    "start": "parcel src/index.html src/webcomponent/editor.tsx --port 8005",
+    "build": "parcel build src/index.html src/webcomponent/editor.tsx --dist-dir ./dist/",
     "test": "vitest"
   },
   "targets": {

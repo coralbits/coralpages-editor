@@ -17,9 +17,6 @@ build: build_server build_editor
 build_server:
 	npm run build
 
-build_editor:
-	npm run build:webcomponent_editor
-
 clean:
 	rm -rf dist
 	rm -rf node_modules
@@ -27,6 +24,4 @@ clean:
 
 setup:
 	npm install
-
-
 
