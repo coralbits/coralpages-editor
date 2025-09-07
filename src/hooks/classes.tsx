@@ -4,6 +4,7 @@ import settings from "../settings";
 export interface Class {
   name: string;
   description: string;
+  tags: string[];
 }
 
 // cache the classes

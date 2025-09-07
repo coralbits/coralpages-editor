@@ -1,10 +1,9 @@
 import { PageHooks } from "../hooks/page";
 import { EditorHooks } from "../hooks/editor";
 import { useElementDefinition } from "../hooks/editor";
-import { FormField, FormFieldSelect, FormFieldType } from "./FormField";
+import { FormField, FormFieldType } from "./FormField";
 import { i18n } from "../utils/i18n";
-import { Class, useClassesDefinitions } from "../hooks/classes";
-import Icon from "./Icon";
+import ClassSelector from "./ClassSelector";
 
 interface Style {
   label: string;
@@ -153,7 +152,6 @@ const ElementStyleEditor = ({
   editor_hooks,
 }: ElementStyleEditorProps) => {
   const element_definition = useElementDefinition(editor_hooks, page_hooks);
-  const classes = useClassesDefinitions();
 
   if (!element_definition) {
     return <div>No element definition found</div>;
@@ -169,48 +167,10 @@ const ElementStyleEditor = ({
 
   return (
     <div>
-      <div className="flex flex-row gap-2">
-        <h3 className="p-2 font-bold flex-1">{i18n("Preset classes")}</h3>
-        <button
-          className="p-2 btn-tertiary rounded-md border-primary border-1"
-          onClick={() => {
-            page_hooks.onChangeElement({
-              ...selected_element,
-              classes: [],
-            });
-          }}
-        >
-          {i18n("Reset")}
-        </button>
-      </div>
-
-      <div className="p-2">
-        <div className="border border-primary rounded-md w-full">
-          {classes.map((clss: Class) => (
-            <label className="flex flex-row gap-2" key={clss.name}>
-              <input
-                type="checkbox"
-                checked={selected_element.classes?.includes(clss.name) || false}
-                onChange={(e) => {
-                  let classes = selected_element.classes || [];
-                  if (e.target.checked) {
-                    classes.push(clss.name);
-                  } else {
-                    classes = classes.filter((c) => c !== clss.name);
-                  }
-
-                  page_hooks.onChangeElement({
-                    ...selected_element,
-                    classes,
-                  });
-                }}
-              />
-              <span className="grow">{clss.description}</span>
-              <Icon name="gem" />
-            </label>
-          ))}
-        </div>
-      </div>
+      <ClassSelector
+        selected_element={selected_element}
+        page_hooks={page_hooks}
+      />
 
       <hr />
 
