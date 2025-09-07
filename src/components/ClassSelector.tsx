@@ -19,6 +19,11 @@ const ClassSelector = ({
 }: ClassSelectorProps) => {
   const classes = useClassesDefinitions();
   const [search, setSearch] = useState("");
+  const [show_popover, setShowPopover] = useState(false);
+  const [popover_position, setPopoverPosition] = useState({
+    top: 0,
+    left: 0,
+  });
 
   const filtered_classes = classes.filter(
     (c: Class) =>
@@ -41,7 +46,15 @@ const ClassSelector = ({
         <h3 className="p-2 font-bold flex-1">{i18n("Preset classes")}</h3>
         <button
           className="p-2 btn-secondary rounded-md border-primary border-1 hover:bg-focus px-2 m-2 text-xs cursor-pointer"
-          popoverTarget="class-selector-popover"
+          onClick={(el) => {
+            setShowPopover(!show_popover);
+            document.getElementById("class-selector-search")?.focus();
+
+            setPopoverPosition({
+              top: el.clientY + 10,
+              left: 10,
+            });
+          }}
           id="add-class-button"
         >
           <Icon name="plus" />
@@ -77,60 +90,78 @@ const ClassSelector = ({
           ))}
         </div>
 
-        <div className="relative">
-          <div
-            className="border border-primary rounded-md w-full absolute bg-primary top-[30px] max-w-[600px] text-white shadow-md overflow-hidden m-auto"
-            id="class-selector-popover"
-            popover="auto"
-          >
-            <input
-              type="text"
-              placeholder={i18n("Search classes")}
-              className="border border-primary rounded-md p-2 w-full"
-              autoFocus={true}
-              onChange={(e) => {
-                setSearch(e.target.value);
+        {show_popover && (
+          <>
+            <div
+              className="absolute bg-black/50 z-10 w-full h-full top-0 left-0"
+              onClick={() => {
+                setShowPopover(false);
               }}
-            />
-            <div className="flex flex-col overflow-y-auto max-h-[300px] ">
-              {filtered_classes.map((clss: Class) => (
-                <button
-                  className={`flex justify-between flex-row gap-2 items-center hover:bg-focus rounded-md p-2 w-full cursor-pointer ${
-                    selected_element.classes?.includes(clss.name)
-                      ? "bg-focus"
-                      : ""
-                  }`}
-                  key={clss.name}
-                  onClick={() => {
-                    if (selected_element.classes?.includes(clss.name)) {
-                      page_hooks.onChangeElement({
-                        ...selected_element,
-                        classes: selected_element.classes?.filter(
-                          (c) => c !== clss.name
-                        ),
-                      });
-                    } else {
-                      page_hooks.onChangeElement({
-                        ...selected_element,
-                        classes: [
-                          ...(selected_element.classes || []),
-                          clss.name,
-                        ],
-                      });
-                    }
-                  }}
-                >
-                  <div className="grow text-start">{clss.description}</div>
-                  <div className="flex flex-wrap gap-2 justify-end">
-                    {clss.tags?.map((tag: string) => (
-                      <Tag key={tag} tag={tag} />
-                    ))}
-                  </div>
-                </button>
-              ))}
+            ></div>
+            <div
+              className="border border-primary rounded-md w-full absolute bg-primary margin-top-[30px] max-w-[600px] text-white shadow-md overflow-hidden m-auto z-10 shadow"
+              style={{
+                top: popover_position.top,
+                left: popover_position.left,
+              }}
+              id="class-selector-popover"
+            >
+              <input
+                type="text"
+                id="class-selector-search"
+                placeholder={i18n("Search classes")}
+                className="border border-primary rounded-md p-2 w-full"
+                autoFocus={true}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                // esc closes
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setShowPopover(false);
+                  }
+                }}
+              />
+              <div className="flex flex-col overflow-y-auto max-h-[300px] ">
+                {filtered_classes.map((clss: Class) => (
+                  <button
+                    className={`flex justify-between flex-row gap-2 items-center hover:bg-focus rounded-md p-2 w-full cursor-pointer ${
+                      selected_element.classes?.includes(clss.name)
+                        ? "bg-focus"
+                        : ""
+                    }`}
+                    key={clss.name}
+                    onClick={() => {
+                      if (selected_element.classes?.includes(clss.name)) {
+                        page_hooks.onChangeElement({
+                          ...selected_element,
+                          classes: selected_element.classes?.filter(
+                            (c) => c !== clss.name
+                          ),
+                        });
+                      } else {
+                        page_hooks.onChangeElement({
+                          ...selected_element,
+                          classes: [
+                            ...(selected_element.classes || []),
+                            clss.name,
+                          ],
+                        });
+                      }
+                    }}
+                  >
+                    <div className="grow text-start">{clss.description}</div>
+                    <div className="flex flex-wrap gap-2 justify-end">
+                      {clss.tags?.map((tag: string) => (
+                        <Tag key={tag} tag={tag} />
+                      ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
