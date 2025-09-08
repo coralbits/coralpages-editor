@@ -8,7 +8,7 @@ const useElementDefinitions = () => {
   >();
 
   useEffect(() => {
-    fetch(`${settings.pv_url}/widget/`)
+    fetch(`${settings.coralpages_url}/widget/`)
       .then((response) => response.json())
       .then((data) => setElementDefinitions(data.results));
   }, []);

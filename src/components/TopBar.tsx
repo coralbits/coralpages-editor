@@ -22,7 +22,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
       </button>
       <div className="flex items-center gap-2 flex-1 px-4">
         <span className="topbar-title">
-          {i18n("Coralbits Universe Page Editor")} - {page_hooks.page?.title}
+          {i18n("Coralpages Editor")} - {page_hooks.page?.title}
         </span>
       </div>
 

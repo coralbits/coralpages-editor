@@ -24,7 +24,7 @@ const App = ({}: AppProps) => {
     <div className="h-full w-full">
       <Editor
         path={path}
-        preview_url={`${settings.pv_url}/render/${path}.html`}
+        preview_url={`${settings.coralpages_url}/render/${path}.html`}
       />
       <DialogStack />
       <MessageStack />

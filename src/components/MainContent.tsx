@@ -34,7 +34,7 @@ interface PagePreviewData {
 
 const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
   const current_base_url = window.location.origin;
-  const url = `${settings.pv_url}/render/?base_url=${current_base_url}&debug=true`;
+  const url = `${settings.coralpages_url}/render/?base_url=${current_base_url}&debug=true`;
   const sequence_id = useRef(0);
   const [previewData, setPreviewData] = useState<PagePreviewData | null>(null);
   const [updateTimeout, setUpdateTimeout] = useState<any>(null);

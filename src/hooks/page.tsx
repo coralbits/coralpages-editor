@@ -191,7 +191,7 @@ const usePage = (path: string): PageHooks => {
   };
 
   useEffect(() => {
-    fetch(`${settings.pv_url}/page/${path}`)
+    fetch(`${settings.coralpages_url}/page/${path}`)
       .then((res) => res.json())
       .then((page) => {
         page = fix_page(page);
@@ -204,7 +204,7 @@ const usePage = (path: string): PageHooks => {
     if (!page) {
       return;
     }
-    const ret = await fetch(`${settings.pv_url}/page/${path}`, {
+    const ret = await fetch(`${settings.coralpages_url}/page/${path}`, {
       method: "POST",
       body: JSON.stringify(page),
       headers: {
@@ -236,7 +236,7 @@ const usePage = (path: string): PageHooks => {
     if (!page) {
       return false;
     }
-    const deleted = await fetch(`${settings.pv_url}/page/${path}`, {
+    const deleted = await fetch(`${settings.coralpages_url}/page/${path}`, {
       method: "DELETE",
     });
     if (deleted.status === 400) {
@@ -401,7 +401,7 @@ export const useTemplateList = () => {
 
   useEffect(() => {
     const fetchTemplates = async () => {
-      const url = `${settings.pv_url}/page/?limit=100&type=template`;
+      const url = `${settings.coralpages_url}/page/?limit=100&type=template`;
 
       const response = await fetch(url);
       const data: ResultI<IdName> = await response.json();
