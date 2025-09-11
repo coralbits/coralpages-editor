@@ -1,3 +1,13 @@
+/**
+ * (C) Coralbits SL 2025
+ * This file is part of Coralpages Editor and is licensed under the
+ * GNU Affero General Public License v3.0.
+ * A commercial license on request is also available;
+ * contact info@coralbits.com for details.
+ *
+ * https://www.coralbits.com/coralpages/
+ */
+
 import { useEffect, useState } from "react";
 
 let message_id = 0;
@@ -25,13 +35,13 @@ export interface MessageState {
 }
 
 let setMessageStack = (
-  setter: (old_messages: MessageState[]) => MessageState[],
+  setter: (old_messages: MessageState[]) => MessageState[]
 ) => {};
 
 export const set_setMessageStack = (
   new_setMessageStack: (
-    setter: (old_messages: MessageState[]) => MessageState[],
-  ) => void,
+    setter: (old_messages: MessageState[]) => MessageState[]
+  ) => void
 ) => {
   setMessageStack = new_setMessageStack;
 };

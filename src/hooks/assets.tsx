@@ -1,3 +1,13 @@
+/**
+ * (C) Coralbits SL 2025
+ * This file is part of Coralpages Editor and is licensed under the
+ * GNU Affero General Public License v3.0.
+ * A commercial license on request is also available;
+ * contact info@coralbits.com for details.
+ *
+ * https://www.coralbits.com/coralpages/
+ */
+
 import { useEffect, useState } from "react";
 import settings from "../settings";
 
@@ -36,10 +46,10 @@ export interface Asset {
 const getAssetList = async (
   bucket: string,
   offset: number,
-  limit: number,
+  limit: number
 ): Promise<Asset[]> => {
   const response = await fetch(
-    `${settings.am_url}/${bucket}/?offset=${offset}&limit=${limit}`,
+    `${settings.am_url}/${bucket}/?offset=${offset}&limit=${limit}`
   );
   const data = await response.json();
   return data.contents.map((content: any) => ({
@@ -53,7 +63,7 @@ const getAssetList = async (
 export const useAssetList = (
   bucket: string,
   offset: number,
-  limit: number,
+  limit: number
 ): [Asset[], () => Promise<void>] => {
   const [assetList, setAssetList] = useState<Asset[]>([]);
 

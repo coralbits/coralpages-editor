@@ -2,6 +2,22 @@
 
 The Page Editor is a React-based web application for editing and managing pages in the Coralbits Universe platform. It provides a user-friendly interface for listing, editing, and previewing pages, with support for custom elements and live updates.
 
+## License
+
+Page Viewer is licensed under the AGPLv3 license.
+
+This basically means that any of your users, even on netowrk enviroments, have the
+right to get the source code of the software and any modification.
+
+If for any reason this is not acceptable to you or your company, it's possible to
+purchase a commercial license from Coralbits, with a fixed closed price of 100€ per
+release. This basically means that you can use the software with the only limitation
+is that relicensing, redistribution nor resale are allowed.
+
+If you need a commercial license, please contact us at info@coralbits.com.
+
+More details at https://www.coralbits.com/coralpages/
+
 ## Features
 
 - **Page Listing:** Browse and search all available pages.

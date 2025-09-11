@@ -1,3 +1,13 @@
+/**
+ * (C) Coralbits SL 2025
+ * This file is part of Coralpages Editor and is licensed under the
+ * GNU Affero General Public License v3.0.
+ * A commercial license on request is also available;
+ * contact info@coralbits.com for details.
+ *
+ * https://www.coralbits.com/coralpages/
+ */
+
 interface PagePreviewData {
   head: string;
   html: string;
@@ -11,7 +21,12 @@ class PagePreviewWebComponent extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    console.log("PagePreviewWebComponent constructor");
+    console.log(
+      "Coralpages Editor Web Component by Coralbits SL. Under AGPLv3 License. https://www.coralbits.com/coralpages/"
+    );
+    console.log(
+      "Beware of embdding this component in non AGPLv3 pages as thay may be a breach of license."
+    );
   }
 
   static get observedAttributes() {
