@@ -80,7 +80,7 @@ const usePages = (page: number) => {
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
-      `${settings.coralpages_url}/page/?offset=${offset}&limit=${page_size}`
+      `${settings.cp_url}/page/?offset=${offset}&limit=${page_size}`
     );
     const data = await res.json();
     setPages(data);
@@ -200,7 +200,7 @@ const create_page = async (store: string, path: string): Promise<boolean> => {
   // first check it does not exist yet
   let res_check;
   try {
-    res_check = await fetch(`${settings.coralpages_url}/page/${store}/${path}`);
+    res_check = await fetch(`${settings.cp_url}/page/${store}/${path}`);
   } catch (error) {
     showMessage(i18n("Unexpected error"), { level: "error" });
     return false;
@@ -218,18 +218,15 @@ const create_page = async (store: string, path: string): Promise<boolean> => {
   }
 
   // create it
-  const res_create = await fetch(
-    `${settings.coralpages_url}/page/${store}/${path}`,
-    {
-      method: "PUT",
-      body: JSON.stringify({
-        title: path,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res_create = await fetch(`${settings.cp_url}/page/${store}/${path}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      title: path,
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   if (!res_create.ok) {
     showMessage(i18n("Unexpected error"), { level: "error" });
     return false;
@@ -249,7 +246,7 @@ const useStoresList = () => {
     const fetchStores = async () => {
       try {
         const response = await fetch(
-          `${settings.coralpages_url}/store?tags=writable,pages`
+          `${settings.cp_url}/store?tags=writable,pages`
         );
         const data: ResultI<IdName> = await response.json();
         setStores(data.results);

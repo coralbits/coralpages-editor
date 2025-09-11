@@ -28,7 +28,7 @@ export const useClassesDefinitions = (): Class[] => {
       setClasses(classes_cache.value);
       return;
     }
-    fetch(`${settings.coralpages_url}/classes/`)
+    fetch(`${settings.cp_url}/classes/`)
       .then((response) => response.json())
       .then((data) => {
         classes_cache = { value: data.results };

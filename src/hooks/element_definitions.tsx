@@ -18,7 +18,7 @@ const useElementDefinitions = () => {
   >();
 
   useEffect(() => {
-    fetch(`${settings.coralpages_url}/widget/`)
+    fetch(`${settings.cp_url}/widget/`)
       .then((response) => response.json())
       .then((data) => setElementDefinitions(data.results));
   }, []);
