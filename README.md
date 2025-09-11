@@ -11,7 +11,13 @@ You need to run the three servers:
 - Coralpages Assets Manager (https://github.com/coralbits/coralpages-asset-manager) (this one is
   optional, but it's recommended to run it)
 
-Then connect to the editor at http://localhost:8005/
+Then open the editor in your browser at http://localhost:8005/
+
+<div style="text-align: center;">
+  <a href="./.github/screenshot-01.png" target="_blank">
+    <img src="./.github/screenshot-01.png" width="500" alt="Screenshot of the page editor">
+  </a>
+</div>
 
 ## How to use in your own program
 
