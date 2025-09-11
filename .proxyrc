@@ -1,0 +1,18 @@
+{
+  "/cp/api": {
+    "target": "http://localhost:8006",
+    "changeOrigin": true,
+    "secure": false,
+    "pathRewrite": {
+      "^/cp/api": "/api"
+    }
+  },
+  "/am/api": {
+    "target": "http://localhost:8004",
+    "changeOrigin": true,
+    "secure": false,
+    "pathRewrite": {
+      "^/am/api": "/api"
+    }
+  }
+}

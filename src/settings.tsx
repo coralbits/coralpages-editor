@@ -19,9 +19,9 @@ export const get_settings = () => {
   const coralpages_url =
     get_qs("coralpages_url") ||
     localStorage.getItem("coralpages_url") ||
-    "/api/v1";
+    "/cp/api/v1";
   const am_url =
-    get_qs("am_url") || localStorage.getItem("am_url") || "/api/v1";
+    get_qs("am_url") || localStorage.getItem("am_url") || "/am/api/v1";
 
   if (localStorage.getItem("am_url") != am_url) {
     localStorage.setItem("am_url", am_url);
