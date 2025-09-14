@@ -11,11 +11,11 @@
 import ElementEditor from "./ElementEditor";
 import ElementSelector from "./ElementSelector";
 import DocumentSettings from "./DocumentSettings";
-import { PageHooks } from "../hooks/page";
-import { EditorHooks } from "../hooks/editor";
+import { PageHooks } from "app/hooks/page";
+import { EditorHooks } from "app/hooks/editor";
 import ElementStyleEditor from "./ElementStyleEditor";
-import Icon from "./Icon";
-import { i18n } from "../utils/i18n";
+import Icon from "app/components/Icon";
+import { i18n } from "app/utils/i18n";
 
 interface SideBarLeftProps {
   page_hooks: PageHooks;

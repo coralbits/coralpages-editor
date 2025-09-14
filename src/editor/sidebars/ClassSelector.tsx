@@ -8,16 +8,14 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { useState } from "react";
-import { useClassesDefinitions } from "../hooks/classes";
-import { Class } from "../hooks/classes";
-import { PageHooks } from "../hooks/page";
-import { Element } from "../types";
-import { i18n } from "../utils/i18n";
-import { FormFieldSelect } from "./FormField";
-import Icon from "./Icon";
-import Tag from "./Tag";
-import SearchSelect, { SearchSelectButton } from "./SearchSelect";
+import { useClassesDefinitions } from "app/hooks/classes";
+import { Class } from "app/hooks/classes";
+import { PageHooks } from "app/hooks/page";
+import { Element } from "app/types";
+import { i18n } from "app/utils/i18n";
+import Icon from "app/components/Icon";
+import Tag from "app/components/Tag";
+import { SearchSelectButton } from "app/components/SearchSelect";
 
 interface ClassSelectorProps {
   selected_element: Element;

@@ -8,10 +8,10 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { Widget } from "../types";
-import { EditorHooks } from "../hooks/editor";
-import { PageHooks } from "../hooks/page";
-import Icon from "./Icon";
+import { Widget } from "app/types";
+import { EditorHooks } from "app/hooks/editor";
+import { PageHooks } from "app/hooks/page";
+import Icon from "app/components/Icon";
 
 interface ElementSelectorProps {
   page_hooks: PageHooks;

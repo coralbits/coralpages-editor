@@ -9,7 +9,7 @@
  */
 
 import { DialogStack } from "./components/dialog";
-import { Editor } from "./components/Editor";
+import { Editor } from "./editor/Editor";
 import { MessageStack } from "./components/messages";
 import { PageList } from "./components/PageList";
 import { usePath } from "./hooks/history";

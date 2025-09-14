@@ -9,13 +9,13 @@
  */
 
 import { useEffect, useState } from "react";
-import { FieldDefinition, Element, Widget } from "../types";
-import { PageHooks } from "../hooks/page";
-import { EditorHooks } from "../hooks/editor";
-import { i18n } from "../utils/i18n";
-import HoldButton from "./HoldButton";
-import { FormField, FormFieldType } from "./FormField";
-import Icon from "./Icon";
+import { FieldDefinition, Element, Widget } from "app/types";
+import { PageHooks } from "app/hooks/page";
+import { EditorHooks } from "app/hooks/editor";
+import { i18n } from "app/utils/i18n";
+import HoldButton from "app/components/HoldButton";
+import { FormField, FormFieldType } from "app/components/FormField";
+import Icon from "app/components/Icon";
 
 const ElementEditor = ({
   editor_hooks,

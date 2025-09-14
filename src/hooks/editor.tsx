@@ -8,7 +8,7 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { Element, Widget } from "../types";
+import { Element, Widget } from "app/types";
 import useElementDefinitions from "./element_definitions";
 import { useEffect, useState } from "react";
 import { PageHooks } from "./page";

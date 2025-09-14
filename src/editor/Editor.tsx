@@ -9,12 +9,12 @@
  */
 
 import TopBar from "./TopBar";
-import SideBarLeft from "./SideBarLeft";
+import SideBarLeft from "./sidebars/SideBarLeft";
 import MainContent from "./MainContent";
-import SideBarRight from "./SideBarRight";
-import BottomBar from "./BottomBar";
-import usePage from "../hooks/page";
-import { useEditor } from "../hooks/editor";
+import SideBarRight from "./sidebars/SideBarRight";
+import BottomBar from "app/components/BottomBar";
+import usePage from "app/hooks/page";
+import { useEditor } from "app/hooks/editor";
 
 interface EditorProps {
   path: string;

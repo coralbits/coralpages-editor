@@ -9,10 +9,10 @@
  */
 
 import { useState } from "react";
-import { PageHooks } from "../hooks/page";
-import { Element } from "../types";
-import { i18n } from "../utils/i18n";
-import { FormField, FormFieldType } from "./FormField";
+import { PageHooks } from "app/hooks/page";
+import { Element } from "app/types";
+import { i18n } from "app/utils/i18n";
+import { FormField, FormFieldType } from "app/components/FormField";
 
 interface Style {
   label: string;

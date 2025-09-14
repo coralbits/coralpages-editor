@@ -8,13 +8,13 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { Element } from "../types";
-import { PageHooks } from "../hooks/page";
-import { EditorHooks } from "../hooks/editor";
+import { Element } from "app/types";
+import { PageHooks } from "app/hooks/page";
+import { EditorHooks } from "app/hooks/editor";
 import { useState, useEffect } from "react";
 import React from "react";
-import { i18n } from "../utils/i18n";
-import DraggableSidebar from "./DraggableSidebar";
+import { i18n } from "app/utils/i18n";
+import DraggableSidebar from "app/components/DraggableSidebar";
 
 interface SideBarRightProps {
   page_hooks: PageHooks;
@@ -69,7 +69,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
           className: editor_hooks.showHighlightedElements ? "bg-focus" : "",
           onClick: () =>
             editor_hooks.setShowHighlightedElements(
-              !editor_hooks.showHighlightedElements,
+              !editor_hooks.showHighlightedElements
             ),
         },
       ]}
@@ -150,7 +150,7 @@ const DocumentLayout = ({
           <div key={child.id || idx}>
             <DocumentItem child={child} editor_hooks={editor_hooks} />
           </div>
-        ),
+        )
       )}
     </div>
   );
@@ -233,7 +233,7 @@ const DocumentItem = ({
         editor_hooks.setSelectedElementId(child.id);
         e.dataTransfer.setData(
           "application/json",
-          JSON.stringify({ action: "move", element_id: child.id }),
+          JSON.stringify({ action: "move", element_id: child.id })
         );
       }}
       onDragOver={(e) => {

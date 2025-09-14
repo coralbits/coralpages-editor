@@ -9,15 +9,15 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DEFAULT_WIDTH, EditorHooks } from "../hooks/editor";
-import { PageHooks } from "../hooks/page";
+import { DEFAULT_WIDTH, EditorHooks } from "app/hooks/editor";
+import { PageHooks } from "app/hooks/page";
 import React from "react";
-import settings from "../settings";
-import { showMessage } from "./messages";
-import { i18n } from "../utils/i18n";
-import { Page } from "../types";
-import Icon from "./Icon";
-import "../webcomponent/page-preview";
+import settings from "app/settings";
+import { showMessage } from "app/components/messages";
+import { i18n } from "app/utils/i18n";
+import { Page } from "app/types";
+import Icon from "app/components/Icon";
+import "app/webcomponent/page-preview";
 
 // TypeScript declaration for custom web component
 declare global {

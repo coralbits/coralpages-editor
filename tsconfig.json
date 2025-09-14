@@ -9,6 +9,10 @@
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "app/*": ["src/*"]
+    },
 
     /* Emit */
     "noEmit": true,

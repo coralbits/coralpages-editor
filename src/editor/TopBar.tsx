@@ -8,11 +8,11 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { i18n } from "../utils/i18n";
-import { PageHooks } from "../hooks/page";
-import { Page } from "../types";
-import { selectFile } from "../utils/file";
-import Icon from "./Icon";
+import { i18n } from "app/utils/i18n";
+import { PageHooks } from "app/hooks/page";
+import { Page } from "app/types";
+import { selectFile } from "app/utils/file";
+import Icon from "app/components/Icon";
 
 interface TopBarProps {
   page_hooks: PageHooks;

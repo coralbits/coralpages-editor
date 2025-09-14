@@ -8,9 +8,9 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { PageHooks } from "../hooks/page";
-import { EditorHooks } from "../hooks/editor";
-import { useElementDefinition } from "../hooks/editor";
+import { PageHooks } from "app/hooks/page";
+import { EditorHooks } from "app/hooks/editor";
+import { useElementDefinition } from "app/hooks/editor";
 import ClassSelector from "./ClassSelector";
 import { ElementCssEditor } from "./ElementCssEditor";
 

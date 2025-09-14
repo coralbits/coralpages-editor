@@ -8,13 +8,12 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { FormField } from "./FormField";
-import { EditorHooks } from "../hooks/editor";
-import { PageHooks, useTemplateList } from "../hooks/page";
-import { i18n } from "../utils/i18n";
-import { Page } from "../types";
-import HoldButton from "./HoldButton";
-import { showMessage } from "./messages";
+import { FormField } from "app/components/FormField";
+import { EditorHooks } from "app/hooks/editor";
+import { PageHooks, useTemplateList } from "app/hooks/page";
+import { i18n } from "app/utils/i18n";
+import HoldButton from "app/components/HoldButton";
+import { showMessage } from "app/components/messages";
 
 const DocumentSettings = ({
   editor_hooks,
