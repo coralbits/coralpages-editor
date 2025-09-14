@@ -31,6 +31,10 @@ export interface PageHooks {
     parent_id: string,
     idx: number
   ) => void;
+  onAddElementAfter: (
+    element_definition: Widget,
+    after_element_id: string
+  ) => string | undefined;
   onDeleteElement: (element_id: string) => void;
   onUpdatePage: (page: Partial<Page>) => void;
   onDeletePage: () => Promise<boolean>;
@@ -75,6 +79,33 @@ const find_element_rec = (
     }
     if (element.children) {
       const result = find_element_rec(element.children, element_id);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return undefined;
+};
+
+/**
+ * Finds the parent and index of an element in the page structure
+ */
+const find_element_parent_and_index = (
+  elements: Element[],
+  element_id: string,
+  parent_id: string = "root"
+): { parent_id: string; index: number } | undefined => {
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    if (element.id === element_id) {
+      return { parent_id, index: i + 1 }; // Insert after the current element
+    }
+    if (element.children) {
+      const result = find_element_parent_and_index(
+        element.children,
+        element_id,
+        element.id
+      );
       if (result) {
         return result;
       }
@@ -133,7 +164,7 @@ const usePage = (path: string): PageHooks => {
     element_definition: Widget,
     parent_id: string,
     index: number
-  ) => {
+  ): string | undefined => {
     const element = {
       id: getRandomId(),
       type: element_definition.name,
@@ -142,7 +173,7 @@ const usePage = (path: string): PageHooks => {
     };
 
     if (!page) {
-      return;
+      return undefined;
     }
 
     setPage((page) => {
@@ -154,6 +185,53 @@ const usePage = (path: string): PageHooks => {
       setNeedSave(true);
       return new_page;
     });
+    return element.id;
+  };
+
+  const onAddElementAfter = (
+    element_definition: Widget,
+    after_element_id: string
+  ): string | undefined => {
+    if (!page) {
+      return undefined;
+    }
+
+    // Find the parent and index of the element to insert after
+    const parentInfo = find_element_parent_and_index(
+      page.children,
+      after_element_id
+    );
+
+    if (!parentInfo) {
+      // If element not found, fall back to adding at the end of root
+      onAddElement(element_definition, "root", 10000);
+      return undefined;
+    }
+
+    // Create the new element
+    const element = {
+      id: getRandomId(),
+      type: element_definition.name,
+      data: {},
+      children: [],
+    };
+
+    setPage((page) => {
+      if (!page) {
+        return page;
+      }
+
+      const new_page = insert_element_at_idx(
+        page,
+        element,
+        parentInfo.parent_id,
+        parentInfo.index
+      );
+      setNeedSave(true);
+      return new_page;
+    });
+
+    return element.id;
   };
 
   const findElement = (element_id?: string): Element | undefined => {
@@ -271,6 +349,7 @@ const usePage = (path: string): PageHooks => {
     onUpdatePage,
     onChangeElement,
     onAddElement,
+    onAddElementAfter,
     onMoveElement,
     onDeleteElement,
     onDeletePage,

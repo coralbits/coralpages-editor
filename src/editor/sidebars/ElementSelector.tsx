@@ -26,6 +26,7 @@ const ElementSelector = (props: ElementSelectorProps) => {
           key={element.name}
           element={element}
           page_hooks={props.page_hooks}
+          editor_hooks={props.editor_hooks}
         />
       ))}
     </div>
@@ -35,14 +36,35 @@ const ElementSelector = (props: ElementSelectorProps) => {
 const ElementSelectorItem = (props: {
   element: Widget;
   page_hooks: PageHooks;
+  editor_hooks: EditorHooks;
 }) => {
+  const handleAddElement = () => {
+    // If there's a selected element, add after it; otherwise add at the end
+    let newElementId;
+    if (props.editor_hooks.selectedElementId) {
+      newElementId = props.page_hooks.onAddElementAfter(
+        props.element,
+        props.editor_hooks.selectedElementId
+      );
+    } else {
+      newElementId = props.page_hooks.onAddElement(
+        props.element,
+        "root",
+        10000
+      );
+    }
+    // Select the newly added element
+    if (newElementId) {
+      props.editor_hooks.setSelectedElementId(newElementId);
+      props.editor_hooks.setSelectedTab("edit");
+    }
+  };
+
   return (
     <button
       key={props.element.name}
       className="flex flex-col gap-2 items-center justify-center w-[calc(33%-1rem)] aspect-square sidebar-button shadow-md m-auto"
-      onClick={() =>
-        props.page_hooks.onAddElement(props.element, "root", 10000)
-      }
+      onClick={handleAddElement}
       title={props.element.description}
       draggable
       onDragStart={(e) => {
