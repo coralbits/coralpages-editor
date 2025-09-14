@@ -42,7 +42,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
       <div className="topbar-actions">
         <button
           className={`topbar-icon-btn ${
-            llm_hooks.isAIModeEnabled ? "text-blue-500" : ""
+            llm_hooks.isAIModeEnabled ? "ai-button-active" : ""
           }`}
           aria-label={i18n("AI Assistant")}
           title={i18n("AI Assistant")}
@@ -53,7 +53,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
             }
           }}
         >
-          <Icon name="ai" />
+          <Icon name="ai" className="ai-icon" />
         </button>
         <button
           className="topbar-icon-btn"
