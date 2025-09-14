@@ -11,7 +11,7 @@
 import { PageHooks } from "app/hooks/page";
 import { EditorHooks } from "app/hooks/editor";
 import { useElementDefinition } from "app/hooks/editor";
-import ClassSelector from "./ClassSelector";
+import PresetClassSelector from "./PresetClassSelector";
 import { ElementCssEditor } from "./ElementCssEditor";
 
 interface ElementStyleEditorProps {
@@ -39,7 +39,7 @@ const ElementStyleEditor = ({
 
   return (
     <div>
-      <ClassSelector
+      <PresetClassSelector
         selected_element={selected_element}
         page_hooks={page_hooks}
       />
