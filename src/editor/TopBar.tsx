@@ -21,7 +21,7 @@ interface TopBarProps {
 }
 
 const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
-  const llm_hooks = useLLM();
+  const llm_hooks = useLLM(page_hooks);
 
   return (
     <nav className="topbar">
