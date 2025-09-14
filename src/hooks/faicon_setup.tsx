@@ -46,6 +46,7 @@ import {
   faGem,
   faChartPie,
   faObjectUngroup,
+  faArrowUpRightFromSquare,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -99,6 +100,7 @@ const iconMap: Record<string, any> = {
   gem: faGem,
   chartPie: faChartPie,
   highlight: faObjectUngroup,
+  link: faArrowUpRightFromSquare,
 };
 
 // Helper function to get icon with fallback
