@@ -13,6 +13,9 @@ import { get_qs } from "./hooks/history";
 export interface Settings {
   am_url: string;
   cp_url: string;
+  openai_api_endpoint: string;
+  openai_api_key: string;
+  openai_model: string;
 }
 
 export const get_settings = () => {
@@ -33,6 +36,16 @@ export const get_settings = () => {
   const cp_url =
     get_qs("cp_url") || getLocalStorageItem("cp_url") || "/cp/api/v1";
   const am_url = get_qs("am_url") || getLocalStorageItem("am_url") || "/api/v1";
+  const openai_api_key =
+    get_qs("openai_api_key") ||
+    getLocalStorageItem("openai_api_key") ||
+    "deepseek-r1";
+  const openai_model =
+    get_qs("openai_model") || getLocalStorageItem("openai_model") || "llama3.2";
+  const openai_api_endpoint =
+    get_qs("openai_api_endpoint") ||
+    getLocalStorageItem("openai_api_endpoint") ||
+    "https://api.openai.com/v1";
 
   if (getLocalStorageItem("am_url") != am_url) {
     setLocalStorageItem("am_url", am_url);
@@ -40,10 +53,22 @@ export const get_settings = () => {
   if (getLocalStorageItem("cp_url") != cp_url) {
     setLocalStorageItem("cp_url", cp_url);
   }
+  if (getLocalStorageItem("openai_api_endpoint") != openai_api_endpoint) {
+    setLocalStorageItem("openai_api_endpoint", openai_api_endpoint);
+  }
+  if (getLocalStorageItem("openai_api_key") != openai_api_key) {
+    setLocalStorageItem("openai_api_key", openai_api_key);
+  }
+  if (getLocalStorageItem("openai_model") != openai_model) {
+    setLocalStorageItem("openai_model", openai_model);
+  }
 
   return {
     am_url,
     cp_url,
+    openai_api_endpoint,
+    openai_api_key,
+    openai_model,
   };
 };
 

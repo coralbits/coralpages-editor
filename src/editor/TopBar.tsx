@@ -13,6 +13,7 @@ import { PageHooks } from "app/hooks/page";
 import { Page } from "app/types";
 import { selectFile } from "app/utils/file";
 import Icon from "app/components/Icon";
+import { useLLM } from "app/hooks/llm";
 
 interface TopBarProps {
   page_hooks: PageHooks;
@@ -20,6 +21,8 @@ interface TopBarProps {
 }
 
 const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
+  const llm_hooks = useLLM();
+
   return (
     <nav className="topbar">
       <button
@@ -37,6 +40,26 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
       </div>
 
       <div className="topbar-actions">
+        <button
+          className={`topbar-icon-btn ${
+            llm_hooks.isAIModeEnabled ? "text-blue-500" : ""
+          }`}
+          aria-label={i18n("AI Assistant")}
+          title={i18n("AI Assistant")}
+          onClick={async () => {
+            llm_hooks.toggleAIMode();
+            if (!llm_hooks.isAIModeEnabled) {
+              const question = await llm_hooks.promptForText(
+                "What would you like me to help you with?"
+              );
+              if (question) {
+                await llm_hooks.askAI(question);
+              }
+            }
+          }}
+        >
+          <Icon name="ai" />
+        </button>
         <button
           className="topbar-icon-btn"
           aria-label={i18n("Undo")}
