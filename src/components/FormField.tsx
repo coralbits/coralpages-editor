@@ -140,13 +140,15 @@ export const FormFieldImage = ({
   className,
 }: FormFieldProps) => {
   return (
-    <AssetSelectorButton
-      placeholder={label}
-      name={name}
-      value={value}
-      className={`m-2 ${className}`}
-      onChange={(value) => onChange(value)}
-    />
+    <FormLabel label={label} className={className}>
+      <AssetSelectorButton
+        placeholder={label}
+        name={name}
+        value={value}
+        className={`m-2 ${className}`}
+        onChange={(value) => onChange(value)}
+      />
+    </FormLabel>
   );
 };
 
