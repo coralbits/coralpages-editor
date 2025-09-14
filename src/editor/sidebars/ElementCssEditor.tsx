@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import { PageHooks } from "app/hooks/page";
-import { Element } from "app/types";
+import { Element, Page } from "app/types";
 import { i18n } from "app/utils/i18n";
 import { FormField, FormFieldType } from "app/components/FormField";
 
@@ -254,16 +254,70 @@ const styles: Record<string, Style> = {
   },
 };
 
-export const ElementCssEditor = ({
-  selected_element,
-  page_hooks,
-}: {
-  selected_element: Element;
-  page_hooks: PageHooks;
-}) => {
-  const [search, setSearch] = useState("");
+/**
+ * Counts the usage of each style property in a page's element tree
+ */
+const countStyleUsage = (
+  page: Page,
+  styleKeys: string[]
+): Map<string, number> => {
+  const usageCount = new Map<string, number>();
 
-  const filtered_styles = Object.entries(styles).filter(([css_key, style]) => {
+  // Initialize all style keys with 0 usage
+  styleKeys.forEach((styleKey) => usageCount.set(styleKey, 0));
+
+  // Recursively count style usage in elements
+  const countInElement = (element: Element) => {
+    if (element.style) {
+      Object.keys(element.style).forEach((styleKey) => {
+        const currentCount = usageCount.get(styleKey) || 0;
+        usageCount.set(styleKey, currentCount + 1);
+      });
+    }
+
+    if (element.children) {
+      element.children.forEach(countInElement);
+    }
+  };
+
+  // Count usage in all page elements
+  page.children.forEach(countInElement);
+
+  return usageCount;
+};
+
+/**
+ * Sorts style entries by usage count (descending) then alphabetically by label
+ */
+const sortStylesByUsage = (
+  styleEntries: [string, Style][],
+  page: Page
+): [string, Style][] => {
+  const styleKeys = styleEntries.map(([key]) => key);
+  const usageCount = countStyleUsage(page, styleKeys);
+
+  return [...styleEntries].sort(([keyA, styleA], [keyB, styleB]) => {
+    const usageA = usageCount.get(keyA) || 0;
+    const usageB = usageCount.get(keyB) || 0;
+
+    // First sort by usage count (descending)
+    if (usageA !== usageB) {
+      return usageB - usageA;
+    }
+
+    // Then sort alphabetically by label
+    return styleA.label.localeCompare(styleB.label);
+  });
+};
+
+/**
+ * Filters style entries based on search term
+ */
+const filterStyles = (
+  styleEntries: [string, Style][],
+  search: string
+): [string, Style][] => {
+  return styleEntries.filter(([css_key, style]) => {
     if (style.type === "select") {
       return (
         css_key.includes(search) ||
@@ -278,6 +332,24 @@ export const ElementCssEditor = ({
     if (style.label.includes(search)) return true;
     return false;
   });
+};
+
+export const ElementCssEditor = ({
+  selected_element,
+  page_hooks,
+}: {
+  selected_element: Element;
+  page_hooks: PageHooks;
+}) => {
+  const [search, setSearch] = useState("");
+
+  // Get all style entries, sort them by usage, then filter by search
+  const allStyleEntries = Object.entries(styles);
+  const sortedStyleEntries = page_hooks.page
+    ? sortStylesByUsage(allStyleEntries, page_hooks.page)
+    : allStyleEntries;
+
+  const filtered_styles = filterStyles(sortedStyleEntries, search);
 
   return (
     <div>
