@@ -14,58 +14,26 @@ import { Page } from "app/types";
 import { PageHooks } from "./page";
 import useElementDefinitions from "./element_definitions";
 import { applyJSONPatch, JSONPatch } from "app/utils/jsonPatch";
+import { useClassesDefinitions } from "./classes";
 
 export interface LLMHooks {
   isAIModeEnabled: boolean;
-  toggleAIMode: () => void;
-  enableAIMode: () => void;
-  disableAIMode: () => void;
-  promptForText: (message?: string) => Promise<string | null>;
   askAI: (question: string) => Promise<string | null>;
-  applyJSONPatch: (patch: JSONPatch) => Page | null;
 }
 
 export const useLLM = (page_hooks: PageHooks): LLMHooks => {
   // Handle backward compatibility - if config is PageHooks directly, use it
   const page = page_hooks?.page;
-
+  const classes = useClassesDefinitions();
   const [isAIModeEnabled, setIsAIModeEnabled] = useState(false);
   const [elementDefinitions] = useElementDefinitions();
-  const toggleAIMode = () => {
-    const newState = !isAIModeEnabled;
-    setIsAIModeEnabled(newState);
-    console.log(`AI Mode ${newState ? "enabled" : "disabled"}`);
-  };
-
-  const enableAIMode = () => {
-    setIsAIModeEnabled(true);
-    console.log("AI Mode enabled");
-  };
-
-  const disableAIMode = () => {
-    setIsAIModeEnabled(false);
-    console.log("AI Mode disabled");
-  };
-
-  const promptForText = async (
-    message: string = "Enter some text:"
-  ): Promise<string | null> => {
-    try {
-      const text = prompt(message);
-      if (text !== null) {
-        console.log("User input:", text);
-        return text;
-      }
-      return null;
-    } catch (error) {
-      console.error("Error prompting for text:", error);
-      return null;
-    }
-  };
 
   const askAI = async (question: string): Promise<string | null> => {
     try {
       console.log("Asking AI:", question);
+
+      // Enable AI mode when starting the request
+      setIsAIModeEnabled(true);
 
       // Create context with page data
       const pageContext = page
@@ -79,6 +47,9 @@ ${pageContext}
 
 There are these elements available:
 ${JSON.stringify(elementDefinitions, null, 2)}
+
+These are the predefined CSS classes. You can not add new classes if its not here:
+${JSON.stringify(classes, null, 2)}
 
 You can also add any CSS style class at any child's style property.
 
@@ -150,14 +121,22 @@ If you cannot perform the requested action, respond with:
           }
         }
 
+        // Disable AI mode when request completes successfully
+        setIsAIModeEnabled(false);
         return answer;
       } catch (parseError) {
         console.warn("AI response is not valid JSON:", answer);
         console.error("Parse error:", parseError);
+
+        // Disable AI mode even if JSON parsing fails
+        setIsAIModeEnabled(false);
         return answer; // Return raw response even if not JSON
       }
     } catch (error) {
       console.error("Error calling AI:", error);
+
+      // Disable AI mode on error
+      setIsAIModeEnabled(false);
       return null;
     }
   };
@@ -173,11 +152,6 @@ If you cannot perform the requested action, respond with:
 
   return {
     isAIModeEnabled,
-    toggleAIMode,
-    enableAIMode,
-    disableAIMode,
-    promptForText,
     askAI,
-    applyJSONPatch: applyJSONPatchToPage,
   };
 };

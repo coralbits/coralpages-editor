@@ -47,14 +47,9 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           aria-label={i18n("AI Assistant")}
           title={i18n("AI Assistant")}
           onClick={async () => {
-            llm_hooks.toggleAIMode();
-            if (!llm_hooks.isAIModeEnabled) {
-              const question = await llm_hooks.promptForText(
-                "What would you like me to help you with?"
-              );
-              if (question) {
-                await llm_hooks.askAI(question);
-              }
+            const question = prompt("What would you like me to help you with?");
+            if (question) {
+              await llm_hooks.askAI(question);
             }
           }}
         >
