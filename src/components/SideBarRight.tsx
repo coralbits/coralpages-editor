@@ -69,7 +69,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
           className: editor_hooks.showHighlightedElements ? "bg-focus" : "",
           onClick: () =>
             editor_hooks.setShowHighlightedElements(
-              !editor_hooks.showHighlightedElements
+              !editor_hooks.showHighlightedElements,
             ),
         },
       ]}
@@ -150,7 +150,7 @@ const DocumentLayout = ({
           <div key={child.id || idx}>
             <DocumentItem child={child} editor_hooks={editor_hooks} />
           </div>
-        )
+        ),
       )}
     </div>
   );
@@ -225,14 +225,15 @@ const DocumentItem = ({
       style={{ width: "calc(100% - 2rem )" }}
       onClick={() => {
         editor_hooks.setSelectedElementId(child.id);
-        editor_hooks.setSelectedTab("edit");
+        if (editor_hooks.selectedTab === "add")
+          editor_hooks.setSelectedTab("edit");
       }}
       draggable
       onDragStart={(e) => {
         editor_hooks.setSelectedElementId(child.id);
         e.dataTransfer.setData(
           "application/json",
-          JSON.stringify({ action: "move", element_id: child.id })
+          JSON.stringify({ action: "move", element_id: child.id }),
         );
       }}
       onDragOver={(e) => {
