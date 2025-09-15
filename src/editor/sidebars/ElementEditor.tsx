@@ -16,6 +16,7 @@ import { i18n } from "app/utils/i18n";
 import HoldButton from "app/components/HoldButton";
 import { FormField, FormFieldType } from "app/components/FormField";
 import Icon from "app/components/Icon";
+import { showMessage } from "app/components/messages";
 
 const ElementEditor = ({
   editor_hooks,
@@ -82,6 +83,25 @@ const ElementEditor = ({
 
   return (
     <div className="flex flex-col gap-2 ">
+      <div className="p-2 flex justify-end gap-2">
+        <div className="flex-1"></div>
+        <button
+          className="sidebar-button p-2 flex-0  "
+          title={i18n("Copy to clipboard")}
+          onClick={() => {
+            editor_hooks.copyCurrentElement(page_hooks);
+          }}
+        >
+          <Icon name="copy" />
+        </button>
+        <button
+          className="sidebar-button p-2 flex-0"
+          title={i18n("Paste from clipboard")}
+          onClick={() => editor_hooks.pasteElement(page_hooks)}
+        >
+          <Icon name="paste" />
+        </button>
+      </div>
       {editor?.map((field, idx) => (
         <EditorFieldEditor
           field={field}

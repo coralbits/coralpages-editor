@@ -47,6 +47,8 @@ import {
   faChartPie,
   faObjectUngroup,
   faArrowUpRightFromSquare,
+  faCopy,
+  faPaste,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -101,6 +103,8 @@ const iconMap: Record<string, any> = {
   chartPie: faChartPie,
   highlight: faObjectUngroup,
   link: faArrowUpRightFromSquare,
+  copy: faCopy,
+  paste: faPaste,
 };
 
 // Helper function to get icon with fallback

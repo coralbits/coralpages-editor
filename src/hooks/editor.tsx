@@ -12,6 +12,8 @@ import { Element, Widget } from "app/types";
 import useElementDefinitions from "./element_definitions";
 import { useEffect, useState } from "react";
 import { PageHooks } from "./page";
+import { showMessage } from "app/components/messages";
+import { i18n } from "app/utils/i18n";
 
 export type EditorTab = "add" | "edit" | "style";
 
@@ -34,6 +36,8 @@ export interface EditorHooks {
 
   setShowHighlightedElements: (show: boolean) => void;
   showHighlightedElements: boolean;
+  pasteElement: (page_hooks: PageHooks) => void;
+  copyCurrentElement: (page_hooks: PageHooks) => void;
 }
 
 export const useEditor = (): EditorHooks => {
@@ -55,6 +59,43 @@ export const useEditor = (): EditorHooks => {
     return page_hooks.findElement(hoveredElementId);
   };
 
+  const pasteElement = async (page_hooks: PageHooks) => {
+    const text = await navigator.clipboard.readText();
+    let new_element: Element;
+    try {
+      new_element = JSON.parse(text);
+    } catch (e) {
+      showMessage(i18n("Invalid element"), { level: "error" });
+      return;
+    }
+    // basic check is an element
+    if (!new_element.type) {
+      showMessage(i18n("Invalid element"), { level: "error" });
+      return;
+    }
+    if (!selectedElementId) {
+      showMessage(i18n("No element selected"), { level: "error" });
+      return;
+    }
+    new_element.id = selectedElementId;
+    if (!new_element.id) {
+      showMessage(i18n("No element id"), { level: "error" });
+      return;
+    }
+    showMessage(i18n("Pasted from clipboard"));
+    page_hooks.onChangeElement(new_element as Element);
+  };
+
+  const copyCurrentElement = (page_hooks: PageHooks) => {
+    const element = page_hooks.findElement(selectedElementId);
+    if (!element) {
+      showMessage(i18n("No element selected"), { level: "error" });
+      return;
+    }
+    showMessage(i18n("Copied to clipboard"));
+    navigator.clipboard.writeText(JSON.stringify(element));
+  };
+
   return {
     selectedElementId,
     setSelectedElementId,
@@ -69,6 +110,8 @@ export const useEditor = (): EditorHooks => {
     setWidth,
     showHighlightedElements,
     setShowHighlightedElements,
+    pasteElement,
+    copyCurrentElement,
   };
 };
 

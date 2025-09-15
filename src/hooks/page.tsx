@@ -44,6 +44,7 @@ export interface PageHooks {
   savePage: () => Promise<void>;
 }
 
+/// In the element list (recursive) find the element by id and replace it with the new element
 const children_update_element_rec = (
   elements: Element[],
   element: Element
