@@ -87,7 +87,7 @@ const ElementEditor = ({
         <div className="flex-1"></div>
         <button
           className="sidebar-button p-2 flex-0  "
-          title={i18n("Copy to clipboard")}
+          title={i18n("Copy to clipboard (Ctrl+C)")}
           onClick={() => {
             editor_hooks.copyCurrentElement(page_hooks);
           }}
@@ -96,10 +96,17 @@ const ElementEditor = ({
         </button>
         <button
           className="sidebar-button p-2 flex-0"
-          title={i18n("Paste from clipboard")}
+          title={i18n("Paste from clipboard over current element")}
           onClick={() => editor_hooks.pasteElement(page_hooks)}
         >
           <Icon name="paste" />
+        </button>
+        <button
+          className="sidebar-button p-2 flex-0"
+          title={i18n("Paste after current element (Ctrl+V)")}
+          onClick={() => editor_hooks.pasteElementAfter(page_hooks)}
+        >
+          <Icon name="pasteAfter" />
         </button>
       </div>
       {editor?.map((field, idx) => (

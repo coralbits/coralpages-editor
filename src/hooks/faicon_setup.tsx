@@ -105,6 +105,7 @@ const iconMap: Record<string, any> = {
   link: faArrowUpRightFromSquare,
   copy: faCopy,
   paste: faPaste,
+  pasteAfter: faArrowDown,
 };
 
 // Helper function to get icon with fallback

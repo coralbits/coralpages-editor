@@ -16,6 +16,8 @@ import BottomBar from "app/components/BottomBar";
 import usePage from "app/hooks/page";
 import { useEditor } from "app/hooks/editor";
 import { useEffect } from "react";
+import { i18n } from "app/utils/i18n";
+import { showMessage } from "app/components/messages";
 
 interface EditorProps {
   path: string;
@@ -33,15 +35,26 @@ export const Editor = ({ path, preview_url }: EditorProps) => {
       editor_hooks.copyCurrentElement(page_hooks);
     };
     const paste_handler = (e: ClipboardEvent) => {
-      editor_hooks.pasteElement(page_hooks);
       e.preventDefault();
+      editor_hooks.pasteElementAfter(page_hooks);
     };
+    const keydown_handler = (e: KeyboardEvent) => {
+      // Ctrl+Shift+V for paste after
+      if (e.ctrlKey && e.shiftKey && e.key === "V") {
+        e.preventDefault();
+        showMessage(i18n("Pasting after current element"));
+        editor_hooks.pasteElement(page_hooks);
+      }
+    };
+
     addEventListener("copy", copy_handler);
     addEventListener("paste", paste_handler);
+    // addEventListener("keydown", keydown_handler);
 
     return () => {
       removeEventListener("copy", copy_handler);
       removeEventListener("paste", paste_handler);
+      // removeEventListener("keydown", keydown_handler);
     };
   }, [editor_hooks, page_hooks]);
 

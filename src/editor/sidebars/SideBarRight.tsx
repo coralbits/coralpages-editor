@@ -189,7 +189,7 @@ const DropItem = ({
         const data = JSON.parse(e.dataTransfer.getData("application/json"));
         switch (data.action) {
           case "create":
-            page_hooks.onAddElement(data.element_definition, parent_id, idx);
+            page_hooks.onCreateElement(data.element_definition, parent_id, idx);
             break;
           case "move":
             page_hooks.onMoveElement(data.element_id, parent_id, idx);

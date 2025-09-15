@@ -26,13 +26,17 @@ export interface PageHooks {
   findElement: (element_id?: string) => Element | undefined;
   onChangeElement: (element: Element) => void;
   onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
-  onAddElement: (
+  onCreateElement: (
     element_definition: Widget,
     parent_id: string,
     idx: number
   ) => void;
-  onAddElementAfter: (
+  onCreateElementAfter: (
     element_definition: Widget,
+    after_element_id: string
+  ) => string | undefined;
+  onInsertElementAfter: (
+    element: Element,
     after_element_id: string
   ) => string | undefined;
   onDeleteElement: (element_id: string) => void;
@@ -151,16 +155,6 @@ const usePage = (path: string): PageHooks => {
     });
   };
 
-  const getRandomId = () => {
-    let id = crypto.randomUUID();
-    // if starts with a number, change it for 'a' + id
-    if (/^\d/.test(id)) {
-      id = "a" + id;
-    }
-    // keep it to 32 characters
-    return id.slice(0, 32);
-  };
-
   const onAddElement = (
     element_definition: Widget,
     parent_id: string,
@@ -228,6 +222,43 @@ const usePage = (path: string): PageHooks => {
         parentInfo.parent_id,
         parentInfo.index
       );
+      setNeedSave(true);
+      return new_page;
+    });
+
+    return element.id;
+  };
+
+  const onInsertElementAfter = (
+    element: Element,
+    after_element_id: string
+  ): string | undefined => {
+    if (!page) {
+      return undefined;
+    }
+
+    // Find the parent and index of the element to insert after
+    const parentInfo = find_element_parent_and_index(
+      page.children,
+      after_element_id
+    );
+
+    let parent_id: string;
+    let index: number;
+    if (parentInfo) {
+      parent_id = parentInfo.parent_id;
+      index = parentInfo.index;
+    } else {
+      parent_id = "root";
+      index = 10000;
+    }
+
+    setPage((page) => {
+      if (!page) {
+        return page;
+      }
+
+      const new_page = insert_element_at_idx(page, element, parent_id, index);
       setNeedSave(true);
       return new_page;
     });
@@ -349,8 +380,9 @@ const usePage = (path: string): PageHooks => {
     findElement,
     onUpdatePage,
     onChangeElement,
-    onAddElement,
-    onAddElementAfter,
+    onCreateElement: onAddElement,
+    onCreateElementAfter: onAddElementAfter,
+    onInsertElementAfter,
     onMoveElement,
     onDeleteElement,
     onDeletePage,
@@ -529,5 +561,24 @@ export function fix_element(element: Element): Element {
   return {
     ...element,
     id,
+  };
+}
+
+export const getRandomId = () => {
+  let id = crypto.randomUUID();
+  // if starts with a number, change it for 'a' + id
+  if (/^\d/.test(id)) {
+    id = "a" + id;
+  }
+  // keep it to 32 characters
+  return id.slice(0, 32);
+};
+
+// Recursively clone an element, changing the id of itself and children
+export function clone_element(element: Element): Element {
+  return {
+    ...element,
+    id: getRandomId(),
+    children: element.children?.map(clone_element),
   };
 }

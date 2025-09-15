@@ -11,7 +11,7 @@
 import { Element, Widget } from "app/types";
 import useElementDefinitions from "./element_definitions";
 import { useEffect, useState } from "react";
-import { PageHooks } from "./page";
+import { clone_element, PageHooks } from "./page";
 import { showMessage } from "app/components/messages";
 import { i18n } from "app/utils/i18n";
 
@@ -37,6 +37,7 @@ export interface EditorHooks {
   setShowHighlightedElements: (show: boolean) => void;
   showHighlightedElements: boolean;
   pasteElement: (page_hooks: PageHooks) => void;
+  pasteElementAfter: (page_hooks: PageHooks) => void;
   copyCurrentElement: (page_hooks: PageHooks) => void;
 }
 
@@ -77,6 +78,7 @@ export const useEditor = (): EditorHooks => {
       showMessage(i18n("No element selected"), { level: "error" });
       return;
     }
+    new_element = clone_element(new_element);
     new_element.id = selectedElementId;
     if (!new_element.id) {
       showMessage(i18n("No element id"), { level: "error" });
@@ -84,6 +86,39 @@ export const useEditor = (): EditorHooks => {
     }
     showMessage(i18n("Pasted from clipboard"));
     page_hooks.onChangeElement(new_element as Element);
+  };
+
+  const pasteElementAfter = async (page_hooks: PageHooks) => {
+    const text = await navigator.clipboard.readText();
+    let new_element: Element;
+    try {
+      new_element = JSON.parse(text);
+    } catch (e) {
+      showMessage(i18n("Invalid element"), { level: "error" });
+      return;
+    }
+    // basic check is an element
+    if (!new_element.type) {
+      showMessage(i18n("Invalid element"), { level: "error" });
+      return;
+    }
+    if (!selectedElementId) {
+      showMessage(i18n("No element selected"), { level: "error" });
+      return;
+    }
+    new_element = clone_element(new_element);
+
+    // Insert the element after the currently selected element
+    const newElementId = page_hooks.onInsertElementAfter(
+      new_element,
+      selectedElementId
+    );
+
+    if (newElementId) {
+      showMessage(i18n("Pasted after current element"));
+    } else {
+      showMessage(i18n("Failed to paste element"), { level: "error" });
+    }
   };
 
   const copyCurrentElement = (page_hooks: PageHooks) => {
@@ -111,6 +146,7 @@ export const useEditor = (): EditorHooks => {
     showHighlightedElements,
     setShowHighlightedElements,
     pasteElement,
+    pasteElementAfter,
     copyCurrentElement,
   };
 };

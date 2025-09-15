@@ -42,12 +42,12 @@ const ElementSelectorItem = (props: {
     // If there's a selected element, add after it; otherwise add at the end
     let newElementId;
     if (props.editor_hooks.selectedElementId) {
-      newElementId = props.page_hooks.onAddElementAfter(
+      newElementId = props.page_hooks.onCreateElementAfter(
         props.element,
         props.editor_hooks.selectedElementId
       );
     } else {
-      newElementId = props.page_hooks.onAddElement(
+      newElementId = props.page_hooks.onCreateElement(
         props.element,
         "root",
         10000
