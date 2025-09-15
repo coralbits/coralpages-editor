@@ -218,8 +218,9 @@ const DocumentItem = ({
     child.id === editor_hooks.selectedElementId;
 
   return (
-    <button
-      className={`sidebar-button ${
+    <div
+      role="button"
+      className={`sidebar-button focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${
         is_selected ? "sidebar-button-active" : ""
       } ${className || ""}`}
       style={{ width: "calc(100% - 2rem )" }}
@@ -254,7 +255,7 @@ const DocumentItem = ({
       >
         {preview_text(child)}
       </span>
-    </button>
+    </div>
   );
 };
 

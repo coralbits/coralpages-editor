@@ -61,10 +61,11 @@ const ElementSelectorItem = (props: {
   };
 
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       key={props.element.name}
-      className="flex flex-col gap-2 items-center justify-center w-[calc(33%-1rem)] aspect-square sidebar-button shadow-md m-auto"
-      onClick={handleAddElement}
+      className="flex flex-col gap-2 items-center justify-center w-[calc(33%-1rem)] aspect-square sidebar-button shadow-md m-auto cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       title={props.element.description}
       draggable
       onDragStart={(e) => {
@@ -76,12 +77,19 @@ const ElementSelectorItem = (props: {
           })
         );
       }}
+      onClick={handleAddElement}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleAddElement();
+        }
+      }}
     >
       <Icon name={props.element.icon} className="text-2xl" />
       <span className="text-sm text-nowrap">
         {getBasicName(props.element.name)}
       </span>
-    </button>
+    </div>
   );
 };
 
