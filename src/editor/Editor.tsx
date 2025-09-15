@@ -15,6 +15,7 @@ import SideBarRight from "./sidebars/SideBarRight";
 import BottomBar from "app/components/BottomBar";
 import usePage from "app/hooks/page";
 import { useEditor } from "app/hooks/editor";
+import { useEffect } from "react";
 
 interface EditorProps {
   path: string;
@@ -26,10 +27,27 @@ export const Editor = ({ path, preview_url }: EditorProps) => {
   const page_hooks = usePage(path);
   const editor_hooks = useEditor();
 
+  useEffect(() => {
+    const copy_handler = (e: ClipboardEvent) => {
+      e.preventDefault();
+      editor_hooks.copyCurrentElement(page_hooks);
+    };
+    const paste_handler = (e: ClipboardEvent) => {
+      editor_hooks.pasteElement(page_hooks);
+      e.preventDefault();
+    };
+    addEventListener("copy", copy_handler);
+    addEventListener("paste", paste_handler);
+
+    return () => {
+      removeEventListener("copy", copy_handler);
+      removeEventListener("paste", paste_handler);
+    };
+  }, [editor_hooks, page_hooks]);
+
   if (!page_hooks?.page || !editor_hooks.elementDefinitions) {
     return <div>Loading...</div>;
   }
-
   return (
     <div className="flex flex-col bg-primary h-full w-full">
       <TopBar page_hooks={page_hooks} preview_url={preview_url} />
