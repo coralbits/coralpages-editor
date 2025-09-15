@@ -39,6 +39,27 @@ export const Editor = ({ path, preview_url }: EditorProps) => {
       editor_hooks.pasteElementAfter(page_hooks);
     };
     const keydown_handler = (e: KeyboardEvent) => {
+      // Ctrl+Z for undo
+      if (e.ctrlKey && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        if (page_hooks.canUndo) {
+          page_hooks.undo();
+        }
+        return;
+      }
+
+      // Ctrl+Y or Ctrl+Shift+Z for redo
+      if (
+        (e.ctrlKey && e.key === "y") ||
+        (e.ctrlKey && e.shiftKey && e.key === "Z")
+      ) {
+        e.preventDefault();
+        if (page_hooks.canRedo) {
+          page_hooks.redo();
+        }
+        return;
+      }
+
       // Ctrl+Shift+V for paste after
       if (e.ctrlKey && e.shiftKey && e.key === "V") {
         e.preventDefault();
@@ -49,12 +70,12 @@ export const Editor = ({ path, preview_url }: EditorProps) => {
 
     addEventListener("copy", copy_handler);
     addEventListener("paste", paste_handler);
-    // addEventListener("keydown", keydown_handler);
+    addEventListener("keydown", keydown_handler);
 
     return () => {
       removeEventListener("copy", copy_handler);
       removeEventListener("paste", paste_handler);
-      // removeEventListener("keydown", keydown_handler);
+      removeEventListener("keydown", keydown_handler);
     };
   }, [editor_hooks, page_hooks]);
 

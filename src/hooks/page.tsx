@@ -8,12 +8,18 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Page, Element, Widget, IdName } from "../types";
 import settings from "../settings";
 import { ResultI } from "../components/Table";
 import { showMessage } from "../components/messages";
 import { i18n } from "../utils/i18n";
+import {
+  ActionLogger,
+  Action,
+  applyActionsToPage,
+  applyActionToPage,
+} from "./actions";
 
 type setPageFn =
   | ((prev_state: Page | undefined) => Page | undefined)
@@ -46,6 +52,12 @@ export interface PageHooks {
 
   need_save: boolean;
   savePage: () => Promise<void>;
+
+  // Undo/Redo functionality
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 }
 
 /// In the element list (recursive) find the element by id and replace it with the new element
@@ -123,36 +135,70 @@ const usePage = (path: string): PageHooks => {
   const [page, setPageReal] = useState<Page | undefined>(undefined);
   const [page_gen, setPageGen] = useState(0);
   const [need_save, setNeedSave] = useState(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
+
+  // Action logger for undo/redo
+  const actionLoggerRef = useRef<ActionLogger>(new ActionLogger());
+  const basePageRef = useRef<Page | undefined>(undefined);
 
   const setPage = (pf: setPageFn) => {
     setPageReal(pf);
     setPageGen(page_gen + 1);
   };
 
+  // Update undo/redo state
+  const updateUndoRedoState = () => {
+    setCanUndo(actionLoggerRef.current.canUndo());
+    setCanRedo(actionLoggerRef.current.canRedo());
+  };
+
+  // Apply a single action to current page
+  const applyActionToCurrentPage = (action: Action) => {
+    if (!page) return;
+
+    const newPage = applyActionToPage(page, action);
+    setPage(newPage);
+    updateUndoRedoState();
+  };
+
+  // Apply all actions from base (used for undo/redo)
+  const applyAllActionsFromBase = () => {
+    if (!basePageRef.current) return;
+
+    const actions = actionLoggerRef.current.getActionsUpToCurrent();
+    const newPage = applyActionsToPage(basePageRef.current, actions);
+    setPage(newPage);
+    updateUndoRedoState();
+  };
+
   const onUpdatePage = (update: Partial<Page>) => {
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
-      setNeedSave(true);
-      return {
-        ...page,
-        ...update,
-      };
-    });
+    if (!page) return;
+
+    const action: Action = {
+      type: "UPDATE_PAGE",
+      changes: update,
+      timestamp: Date.now(),
+    };
+
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
   };
 
   const onChangeElement = (element: Element) => {
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
-      setNeedSave(true);
-      return {
-        ...page,
-        children: children_update_element_rec(page.children || [], element),
-      };
-    });
+    if (!page) return;
+
+    const action: Action = {
+      type: "UPDATE_ELEMENT",
+      elementId: element.id,
+      changes: element,
+      timestamp: Date.now(),
+    };
+
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
   };
 
   const onAddElement = (
@@ -160,6 +206,8 @@ const usePage = (path: string): PageHooks => {
     parent_id: string,
     index: number
   ): string | undefined => {
+    if (!page) return undefined;
+
     const element = {
       id: getRandomId(),
       type: element_definition.name,
@@ -167,19 +215,17 @@ const usePage = (path: string): PageHooks => {
       children: [],
     };
 
-    if (!page) {
-      return undefined;
-    }
+    const action: Action = {
+      type: "CREATE_ELEMENT",
+      element,
+      parentId: parent_id,
+      index,
+      timestamp: Date.now(),
+    };
 
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
-
-      const new_page = insert_element_at_idx(page, element, parent_id, index);
-      setNeedSave(true);
-      return new_page;
-    });
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
     return element.id;
   };
 
@@ -187,9 +233,7 @@ const usePage = (path: string): PageHooks => {
     element_definition: Widget,
     after_element_id: string
   ): string | undefined => {
-    if (!page) {
-      return undefined;
-    }
+    if (!page) return undefined;
 
     // Find the parent and index of the element to insert after
     const parentInfo = find_element_parent_and_index(
@@ -199,8 +243,7 @@ const usePage = (path: string): PageHooks => {
 
     if (!parentInfo) {
       // If element not found, fall back to adding at the end of root
-      onAddElement(element_definition, "root", 10000);
-      return undefined;
+      return onAddElement(element_definition, "root", 10000);
     }
 
     // Create the new element
@@ -211,21 +254,17 @@ const usePage = (path: string): PageHooks => {
       children: [],
     };
 
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
+    const action: Action = {
+      type: "CREATE_ELEMENT",
+      element,
+      parentId: parentInfo.parent_id,
+      index: parentInfo.index,
+      timestamp: Date.now(),
+    };
 
-      const new_page = insert_element_at_idx(
-        page,
-        element,
-        parentInfo.parent_id,
-        parentInfo.index
-      );
-      setNeedSave(true);
-      return new_page;
-    });
-
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
     return element.id;
   };
 
@@ -233,9 +272,7 @@ const usePage = (path: string): PageHooks => {
     element: Element,
     after_element_id: string
   ): string | undefined => {
-    if (!page) {
-      return undefined;
-    }
+    if (!page) return undefined;
 
     // Find the parent and index of the element to insert after
     const parentInfo = find_element_parent_and_index(
@@ -253,16 +290,17 @@ const usePage = (path: string): PageHooks => {
       index = 10000;
     }
 
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
+    const action: Action = {
+      type: "CREATE_ELEMENT",
+      element,
+      parentId: parent_id,
+      index,
+      timestamp: Date.now(),
+    };
 
-      const new_page = insert_element_at_idx(page, element, parent_id, index);
-      setNeedSave(true);
-      return new_page;
-    });
-
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
     return element.id;
   };
 
@@ -278,36 +316,38 @@ const usePage = (path: string): PageHooks => {
     parent_id: string,
     idx: number
   ) => {
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
-      const new_page = move_element({
-        page,
-        element_id,
-        parent_id,
-        idx,
-      });
-      setNeedSave(true);
-      return new_page;
-    });
+    if (!page) return;
+
+    const action: Action = {
+      type: "MOVE_ELEMENT",
+      elementId: element_id,
+      parentId: parent_id,
+      index: idx,
+      timestamp: Date.now(),
+    };
+
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
   };
 
   const onDeleteElement = (element_id: string) => {
-    setPage((page) => {
-      if (!page) {
-        return page;
-      }
-      const { element, page: new_page } = find_element_and_remove(
-        page,
-        element_id
-      );
-      if (!element) {
-        return page;
-      }
-      setNeedSave(true);
-      return new_page;
-    });
+    if (!page) return;
+
+    // Find the element to delete to store it for undo
+    const element = findElement(element_id);
+    if (!element) return;
+
+    const action: Action = {
+      type: "DELETE_ELEMENT",
+      elementId: element_id,
+      element,
+      timestamp: Date.now(),
+    };
+
+    actionLoggerRef.current.addAction(action);
+    applyActionToCurrentPage(action);
+    setNeedSave(true);
   };
 
   useEffect(() => {
@@ -315,8 +355,15 @@ const usePage = (path: string): PageHooks => {
       .then((res) => res.json())
       .then((page) => {
         page = fix_page(page);
-        setPage(page as Page);
+        const fixedPage = page as Page;
+
+        // Store the base page and clear action log
+        basePageRef.current = fixedPage;
+        actionLoggerRef.current.clear();
+
+        setPage(fixedPage);
         setNeedSave(false);
+        updateUndoRedoState();
       });
   }, [path]);
 
@@ -374,6 +421,19 @@ const usePage = (path: string): PageHooks => {
     return true;
   };
 
+  // Undo/Redo functions
+  const undo = () => {
+    if (actionLoggerRef.current.undo()) {
+      applyAllActionsFromBase();
+    }
+  };
+
+  const redo = () => {
+    if (actionLoggerRef.current.redo()) {
+      applyAllActionsFromBase();
+    }
+  };
+
   return {
     page,
     page_gen,
@@ -389,6 +449,10 @@ const usePage = (path: string): PageHooks => {
     setPage,
     savePage,
     need_save,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
   };
 };
 

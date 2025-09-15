@@ -39,6 +39,24 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
       <div className="topbar-actions">
         <button
           className="topbar-icon-btn"
+          aria-label={i18n("Undo")}
+          title={i18n("Undo (Ctrl+Z)")}
+          onClick={page_hooks.undo}
+          disabled={!page_hooks.canUndo}
+        >
+          <Icon name="undo" />
+        </button>
+        <button
+          className="topbar-icon-btn"
+          aria-label={i18n("Redo")}
+          title={i18n("Redo (Ctrl+Y)")}
+          onClick={page_hooks.redo}
+          disabled={!page_hooks.canRedo}
+        >
+          <Icon name="redo" />
+        </button>
+        <button
+          className="topbar-icon-btn"
           aria-label={i18n("Download")}
           title={i18n("Download")}
           onClick={() => {

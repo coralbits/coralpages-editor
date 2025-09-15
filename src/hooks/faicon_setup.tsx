@@ -49,6 +49,8 @@ import {
   faArrowUpRightFromSquare,
   faCopy,
   faPaste,
+  faUndo,
+  faRedo,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -106,6 +108,8 @@ const iconMap: Record<string, any> = {
   copy: faCopy,
   paste: faPaste,
   pasteAfter: faArrowDown,
+  undo: faUndo,
+  redo: faRedo,
 };
 
 // Helper function to get icon with fallback
