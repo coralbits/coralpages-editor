@@ -25,7 +25,7 @@ export class PatchLogger {
   private readonly BATCH_TIMEOUT_MS = 30000; // 30 seconds
 
   // Add a new patch operation to the log
-  addPatch(patch: JSONPatch, description?: string): void {
+  addPatch(patch: JSONPatch, description?: string, timestamp?: number): void {
     // If we're not at the end of the history, truncate future operations
     if (this.currentPosition < this.operations.length - 1) {
       this.operations = this.operations.slice(0, this.currentPosition + 1);
@@ -33,19 +33,20 @@ export class PatchLogger {
 
     // Check if we can batch with the previous operation
     const lastOperation = this.operations[this.operations.length - 1];
-    if (this.canBatchWithPrevious(patch, lastOperation)) {
+    const currentTimestamp = timestamp ?? Date.now();
+    if (this.canBatchWithPrevious(patch, lastOperation, currentTimestamp)) {
       // Merge patches by combining them
       const mergedPatch = [...lastOperation.patch, ...patch];
       this.operations[this.operations.length - 1] = {
         patch: mergedPatch,
-        timestamp: Date.now(),
+        timestamp: lastOperation.timestamp, // Keep the original timestamp for batching
         description: description || lastOperation.description,
       };
     } else {
       // Add as new operation
       this.operations.push({
         patch,
-        timestamp: Date.now(),
+        timestamp: timestamp ?? Date.now(),
         description,
       });
       this.currentPosition++;
@@ -55,17 +56,59 @@ export class PatchLogger {
   // Check if a patch can be batched with the previous one
   private canBatchWithPrevious(
     newPatch: JSONPatch,
-    lastOperation: PatchOperation | undefined
+    lastOperation: PatchOperation | undefined,
+    newTimestamp: number
   ): boolean {
     if (!lastOperation) return false;
 
-    // Batch if the patches are small and within time threshold
-    const timeDiff = Date.now() - lastOperation.timestamp;
-    return (
-      newPatch.length <= 3 && // Only batch small patches
-      lastOperation.patch.length <= 3 &&
-      timeDiff <= this.BATCH_TIMEOUT_MS
-    );
+    const timeDiff = newTimestamp - lastOperation.timestamp;
+
+    // Only batch if within time threshold
+    if (timeDiff > this.BATCH_TIMEOUT_MS) return false;
+
+    // Only batch small patches (1-5 operations) to allow for character edits
+    if (newPatch.length > 5 || lastOperation.patch.length > 5) return false;
+
+    // Only batch operations on the same element/path
+    // This prevents batching unrelated operations
+    const newFirstOp = newPatch[0];
+    const lastFirstOp = lastOperation.patch[0];
+
+    if (!newFirstOp || !lastFirstOp) return false;
+
+    // Don't batch different operation types (replace vs add vs remove, etc.)
+    if (newFirstOp.op !== lastFirstOp.op) return false;
+
+    // Don't batch add operations with other operations (add element should be separate)
+    if (newFirstOp.op === "add" || lastFirstOp.op === "add") return false;
+
+    // Extract the base path (without array indices) for comparison
+    const getBasePath = (path: string) => {
+      // For element operations, we want to group by the element path
+      // For page operations, we want to group by the page root
+
+      // If it's a page-level operation (starts with / but not /children)
+      if (path.startsWith("/") && !path.startsWith("/children")) {
+        return "/"; // All page-level operations should batch together
+      }
+
+      // For element operations, extract the element path up to the element itself
+      // /children/0/data -> /children/0
+      // /children/0/type -> /children/0
+      // /children/0/children/1 -> /children/0
+      const elementMatch = path.match(/^(\/children\/\d+)/);
+      if (elementMatch) {
+        return elementMatch[1]; // Return /children/0, /children/1, etc.
+      }
+
+      return path; // Fallback to original path
+    };
+
+    const newBasePath = getBasePath(newFirstOp.path);
+    const lastBasePath = getBasePath(lastFirstOp.path);
+
+    // Batch if they're operating on the same element or page
+    return newBasePath === lastBasePath;
   }
 
   // Get all patches up to current position
@@ -117,6 +160,12 @@ export class PatchLogger {
   // Get total operations count for debugging
   getTotalOperations(): number {
     return this.operations.length;
+  }
+
+  // Get the timestamp of the last operation for debugging
+  getLastOperationTimestamp(): number | null {
+    const lastOp = this.operations[this.operations.length - 1];
+    return lastOp ? lastOp.timestamp : null;
   }
 }
 
@@ -175,15 +224,22 @@ export function createElementPatch(
   parentId: string,
   index: number
 ): JSONPatch {
-  const parentPath =
-    parentId === "root"
-      ? "/children"
-      : findElementPath(page.children, parentId);
+  if (parentId === "root") {
+    return [
+      {
+        op: "add",
+        path: `/children/${index}`,
+        value: element,
+      },
+    ];
+  }
+
+  const parentPath = findElementPath(page.children, parentId);
   if (!parentPath) {
     throw new Error(`Parent element with id ${parentId} not found`);
   }
 
-  const targetPath = `${parentPath}/${index}`;
+  const targetPath = `${parentPath}/children/${index}`;
   return [
     {
       op: "add",
@@ -227,15 +283,16 @@ export function moveElementPatch(
     throw new Error(`Element with id ${elementId} not found`);
   }
 
-  const newParentPath =
-    parentId === "root"
-      ? "/children"
-      : findElementPath(page.children, parentId);
-  if (!newParentPath) {
-    throw new Error(`Parent element with id ${parentId} not found`);
+  let newPath: string;
+  if (parentId === "root") {
+    newPath = `/children/${index}`;
+  } else {
+    const newParentPath = findElementPath(page.children, parentId);
+    if (!newParentPath) {
+      throw new Error(`Parent element with id ${parentId} not found`);
+    }
+    newPath = `${newParentPath}/children/${index}`;
   }
-
-  const newPath = `${newParentPath}/${index}`;
 
   return [
     {

@@ -43,6 +43,10 @@ export const usePath = () => {
 };
 
 export const get_qs = (key: string) => {
+  // Handle case when running in Node.js (tests) where window is not available
+  if (typeof window === "undefined") {
+    return null;
+  }
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(key);
 };

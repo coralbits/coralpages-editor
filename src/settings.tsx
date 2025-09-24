@@ -16,16 +16,29 @@ export interface Settings {
 }
 
 export const get_settings = () => {
-  const cp_url =
-    get_qs("cp_url") || localStorage.getItem("cp_url") || "/cp/api/v1";
-  const am_url =
-    get_qs("am_url") || localStorage.getItem("am_url") || "/api/v1";
+  // Handle case when running in Node.js (tests) where localStorage is not available
+  const getLocalStorageItem = (key: string) => {
+    if (typeof localStorage === "undefined") {
+      return null;
+    }
+    return localStorage.getItem(key);
+  };
 
-  if (localStorage.getItem("am_url") != am_url) {
-    localStorage.setItem("am_url", am_url);
+  const setLocalStorageItem = (key: string, value: string) => {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(key, value);
+    }
+  };
+
+  const cp_url =
+    get_qs("cp_url") || getLocalStorageItem("cp_url") || "/cp/api/v1";
+  const am_url = get_qs("am_url") || getLocalStorageItem("am_url") || "/api/v1";
+
+  if (getLocalStorageItem("am_url") != am_url) {
+    setLocalStorageItem("am_url", am_url);
   }
-  if (localStorage.getItem("cp_url") != cp_url) {
-    localStorage.setItem("cp_url", cp_url);
+  if (getLocalStorageItem("cp_url") != cp_url) {
+    setLocalStorageItem("cp_url", cp_url);
   }
 
   return {
