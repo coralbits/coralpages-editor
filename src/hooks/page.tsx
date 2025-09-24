@@ -10,15 +10,20 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Page, Element, Widget, IdName } from "../types";
+import { JSONPatch } from "../utils/jsonPatch";
 import settings from "../settings";
 import { ResultI } from "../components/Table";
 import { showMessage } from "../components/messages";
 import { i18n } from "../utils/i18n";
 import {
-  ActionLogger,
-  Action,
-  applyActionsToPage,
-  applyActionToPage,
+  PatchLogger,
+  applyPatchesToPage,
+  applyPatchToPage,
+  createElementPatch,
+  updateElementPatch,
+  moveElementPatch,
+  deleteElementPatch,
+  updatePagePatch,
 } from "./actions";
 
 type setPageFn =
@@ -138,8 +143,8 @@ const usePage = (path: string): PageHooks => {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
-  // Action logger for undo/redo
-  const actionLoggerRef = useRef<ActionLogger>(new ActionLogger());
+  // Patch logger for undo/redo
+  const patchLoggerRef = useRef<PatchLogger>(new PatchLogger());
   const basePageRef = useRef<Page | undefined>(undefined);
 
   const setPage = (pf: setPageFn) => {
@@ -149,25 +154,26 @@ const usePage = (path: string): PageHooks => {
 
   // Update undo/redo state
   const updateUndoRedoState = () => {
-    setCanUndo(actionLoggerRef.current.canUndo());
-    setCanRedo(actionLoggerRef.current.canRedo());
+    setCanUndo(patchLoggerRef.current.canUndo());
+    setCanRedo(patchLoggerRef.current.canRedo());
   };
 
-  // Apply a single action to current page
-  const applyActionToCurrentPage = (action: Action) => {
+  // Apply a single patch to current page
+  const applyPatchToCurrentPage = (patch: JSONPatch, description?: string) => {
     if (!page) return;
 
-    const newPage = applyActionToPage(page, action);
+    patchLoggerRef.current.addPatch(patch, description);
+    const newPage = applyPatchToPage(page, patch);
     setPage(newPage);
     updateUndoRedoState();
   };
 
-  // Apply all actions from base (used for undo/redo)
-  const applyAllActionsFromBase = () => {
+  // Apply all patches from base (used for undo/redo)
+  const applyAllPatchesFromBase = () => {
     if (!basePageRef.current) return;
 
-    const actions = actionLoggerRef.current.getActionsUpToCurrent();
-    const newPage = applyActionsToPage(basePageRef.current, actions);
+    const patches = patchLoggerRef.current.getPatchesUpToCurrent();
+    const newPage = applyPatchesToPage(basePageRef.current, patches);
     setPage(newPage);
     updateUndoRedoState();
   };
@@ -175,29 +181,16 @@ const usePage = (path: string): PageHooks => {
   const onUpdatePage = (update: Partial<Page>) => {
     if (!page) return;
 
-    const action: Action = {
-      type: "UPDATE_PAGE",
-      changes: update,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+    const patch = updatePagePatch(page, update);
+    applyPatchToCurrentPage(patch, "Update page");
     setNeedSave(true);
   };
 
   const onChangeElement = (element: Element) => {
     if (!page) return;
 
-    const action: Action = {
-      type: "UPDATE_ELEMENT",
-      elementId: element.id,
-      changes: element,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+    const patch = updateElementPatch(page, element.id, element);
+    applyPatchToCurrentPage(patch, `Update element ${element.id}`);
     setNeedSave(true);
   };
 
@@ -215,16 +208,8 @@ const usePage = (path: string): PageHooks => {
       children: [],
     };
 
-    const action: Action = {
-      type: "CREATE_ELEMENT",
-      element,
-      parentId: parent_id,
-      index,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+    const patch = createElementPatch(page, element, parent_id, index);
+    applyPatchToCurrentPage(patch, `Create element ${element.type}`);
     setNeedSave(true);
     return element.id;
   };
@@ -254,16 +239,16 @@ const usePage = (path: string): PageHooks => {
       children: [],
     };
 
-    const action: Action = {
-      type: "CREATE_ELEMENT",
+    const patch = createElementPatch(
+      page,
       element,
-      parentId: parentInfo.parent_id,
-      index: parentInfo.index,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+      parentInfo.parent_id,
+      parentInfo.index
+    );
+    applyPatchToCurrentPage(
+      patch,
+      `Create element ${element.type} after ${after_element_id}`
+    );
     setNeedSave(true);
     return element.id;
   };
@@ -290,16 +275,11 @@ const usePage = (path: string): PageHooks => {
       index = 10000;
     }
 
-    const action: Action = {
-      type: "CREATE_ELEMENT",
-      element,
-      parentId: parent_id,
-      index,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+    const patch = createElementPatch(page, element, parent_id, index);
+    applyPatchToCurrentPage(
+      patch,
+      `Insert element ${element.type} after ${after_element_id}`
+    );
     setNeedSave(true);
     return element.id;
   };
@@ -318,35 +298,16 @@ const usePage = (path: string): PageHooks => {
   ) => {
     if (!page) return;
 
-    const action: Action = {
-      type: "MOVE_ELEMENT",
-      elementId: element_id,
-      parentId: parent_id,
-      index: idx,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+    const patch = moveElementPatch(page, element_id, parent_id, idx);
+    applyPatchToCurrentPage(patch, `Move element ${element_id}`);
     setNeedSave(true);
   };
 
   const onDeleteElement = (element_id: string) => {
     if (!page) return;
 
-    // Find the element to delete to store it for undo
-    const element = findElement(element_id);
-    if (!element) return;
-
-    const action: Action = {
-      type: "DELETE_ELEMENT",
-      elementId: element_id,
-      element,
-      timestamp: Date.now(),
-    };
-
-    actionLoggerRef.current.addAction(action);
-    applyActionToCurrentPage(action);
+    const patch = deleteElementPatch(page, element_id);
+    applyPatchToCurrentPage(patch, `Delete element ${element_id}`);
     setNeedSave(true);
   };
 
@@ -357,9 +318,9 @@ const usePage = (path: string): PageHooks => {
         page = fix_page(page);
         const fixedPage = page as Page;
 
-        // Store the base page and clear action log
+        // Store the base page and clear patch log
         basePageRef.current = fixedPage;
-        actionLoggerRef.current.clear();
+        patchLoggerRef.current.clear();
 
         setPage(fixedPage);
         setNeedSave(false);
@@ -423,14 +384,14 @@ const usePage = (path: string): PageHooks => {
 
   // Undo/Redo functions
   const undo = () => {
-    if (actionLoggerRef.current.undo()) {
-      applyAllActionsFromBase();
+    if (patchLoggerRef.current.undo()) {
+      applyAllPatchesFromBase();
     }
   };
 
   const redo = () => {
-    if (actionLoggerRef.current.redo()) {
-      applyAllActionsFromBase();
+    if (patchLoggerRef.current.redo()) {
+      applyAllPatchesFromBase();
     }
   };
 

@@ -9,115 +9,70 @@
  */
 
 import { Page, Element } from "../types";
+import { JSONPatch, applyJSONPatch } from "../utils/jsonPatch";
 
-// Action types for the undo/redo system
-export type Action =
-  | {
-      type: "CREATE_ELEMENT";
-      element: Element;
-      parentId: string;
-      index: number;
-      timestamp: number;
-    }
-  | {
-      type: "UPDATE_ELEMENT";
-      elementId: string;
-      changes: Partial<Element>;
-      timestamp: number;
-    }
-  | {
-      type: "MOVE_ELEMENT";
-      elementId: string;
-      parentId: string;
-      index: number;
-      timestamp: number;
-    }
-  | {
-      type: "DELETE_ELEMENT";
-      elementId: string;
-      element: Element;
-      timestamp: number;
-    }
-  | { type: "UPDATE_PAGE"; changes: Partial<Page>; timestamp: number }
-  | {
-      type: "BATCH_ELEMENT_UPDATE";
-      elementId: string;
-      finalElement: Element;
-      timestamp: number;
-    };
+// Patch operation with metadata for undo/redo system
+export interface PatchOperation {
+  patch: JSONPatch;
+  timestamp: number;
+  description?: string; // Optional description for debugging
+}
 
-// Action logger class to manage the action history
-export class ActionLogger {
-  private actions: Action[] = [];
+// Patch logger class to manage the patch history
+export class PatchLogger {
+  private operations: PatchOperation[] = [];
   private currentPosition: number = -1;
   private readonly BATCH_TIMEOUT_MS = 30000; // 30 seconds
 
-  // Add a new action to the log
-  addAction(action: Action): void {
-    // If we're not at the end of the history, truncate future actions
-    if (this.currentPosition < this.actions.length - 1) {
-      this.actions = this.actions.slice(0, this.currentPosition + 1);
+  // Add a new patch operation to the log
+  addPatch(patch: JSONPatch, description?: string): void {
+    // If we're not at the end of the history, truncate future operations
+    if (this.currentPosition < this.operations.length - 1) {
+      this.operations = this.operations.slice(0, this.currentPosition + 1);
     }
 
-    // Check if we can batch with the previous action
-    const lastAction = this.actions[this.actions.length - 1];
-    if (this.canBatchWithPrevious(action, lastAction)) {
-      // Replace the last action with the batched version
-      this.actions[this.actions.length - 1] = this.mergeActions(
-        lastAction,
-        action
-      );
+    // Check if we can batch with the previous operation
+    const lastOperation = this.operations[this.operations.length - 1];
+    if (this.canBatchWithPrevious(patch, lastOperation)) {
+      // Merge patches by combining them
+      const mergedPatch = [...lastOperation.patch, ...patch];
+      this.operations[this.operations.length - 1] = {
+        patch: mergedPatch,
+        timestamp: Date.now(),
+        description: description || lastOperation.description,
+      };
     } else {
-      // Add as new action
-      this.actions.push(action);
+      // Add as new operation
+      this.operations.push({
+        patch,
+        timestamp: Date.now(),
+        description,
+      });
       this.currentPosition++;
     }
   }
 
-  // Check if an action can be batched with the previous one
+  // Check if a patch can be batched with the previous one
   private canBatchWithPrevious(
-    newAction: Action,
-    lastAction: Action | undefined
+    newPatch: JSONPatch,
+    lastOperation: PatchOperation | undefined
   ): boolean {
-    if (!lastAction) return false;
+    if (!lastOperation) return false;
 
-    // Only batch UPDATE_ELEMENT actions for the same element
-    if (
-      newAction.type === "UPDATE_ELEMENT" &&
-      lastAction.type === "UPDATE_ELEMENT"
-    ) {
-      const timeDiff = newAction.timestamp - lastAction.timestamp;
-      return (
-        newAction.elementId === lastAction.elementId &&
-        timeDiff <= this.BATCH_TIMEOUT_MS
-      );
-    }
-
-    return false;
+    // Batch if the patches are small and within time threshold
+    const timeDiff = Date.now() - lastOperation.timestamp;
+    return (
+      newPatch.length <= 3 && // Only batch small patches
+      lastOperation.patch.length <= 3 &&
+      timeDiff <= this.BATCH_TIMEOUT_MS
+    );
   }
 
-  // Merge two UPDATE_ELEMENT actions into a single action
-  private mergeActions(lastAction: Action, newAction: Action): Action {
-    if (
-      lastAction.type === "UPDATE_ELEMENT" &&
-      newAction.type === "UPDATE_ELEMENT"
-    ) {
-      return {
-        type: "UPDATE_ELEMENT",
-        elementId: newAction.elementId,
-        changes: {
-          ...lastAction.changes,
-          ...newAction.changes,
-        },
-        timestamp: newAction.timestamp, // Use the newer timestamp
-      };
-    }
-    return newAction;
-  }
-
-  // Get actions up to current position
-  getActionsUpToCurrent(): Action[] {
-    return this.actions.slice(0, this.currentPosition + 1);
+  // Get all patches up to current position
+  getPatchesUpToCurrent(): JSONPatch[] {
+    return this.operations
+      .slice(0, this.currentPosition + 1)
+      .map((op) => op.patch);
   }
 
   // Undo - move position back
@@ -131,7 +86,7 @@ export class ActionLogger {
 
   // Redo - move position forward
   redo(): boolean {
-    if (this.currentPosition < this.actions.length - 1) {
+    if (this.currentPosition < this.operations.length - 1) {
       this.currentPosition++;
       return true;
     }
@@ -145,12 +100,12 @@ export class ActionLogger {
 
   // Check if redo is possible
   canRedo(): boolean {
-    return this.currentPosition < this.actions.length - 1;
+    return this.currentPosition < this.operations.length - 1;
   }
 
-  // Clear all actions (useful when loading a new document)
+  // Clear all operations (useful when loading a new document)
   clear(): void {
-    this.actions = [];
+    this.operations = [];
     this.currentPosition = -1;
   }
 
@@ -159,217 +114,162 @@ export class ActionLogger {
     return this.currentPosition;
   }
 
-  // Get total actions count for debugging
-  getTotalActions(): number {
-    return this.actions.length;
+  // Get total operations count for debugging
+  getTotalOperations(): number {
+    return this.operations.length;
   }
 }
 
-// Apply a single action to a page
-export function applyActionToPage(page: Page, action: Action): Page {
-  switch (action.type) {
-    case "CREATE_ELEMENT":
-      return insertElementAtIdx(
-        page,
-        action.element,
-        action.parentId,
-        action.index
+// Helper function to find element path in the page tree
+function findElementPath(
+  elements: Element[],
+  elementId: string,
+  currentPath: string = ""
+): string | null {
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    const elementPath =
+      currentPath === "" ? `/children/${i}` : `${currentPath}/children/${i}`;
+
+    if (element.id === elementId) {
+      return elementPath;
+    }
+
+    if (element.children) {
+      const childPath = findElementPath(
+        element.children,
+        elementId,
+        elementPath
       );
-
-    case "UPDATE_ELEMENT":
-      return updateElementInPage(page, action.elementId, action.changes);
-
-    case "MOVE_ELEMENT":
-      return moveElementInPage(
-        page,
-        action.elementId,
-        action.parentId,
-        action.index
-      );
-
-    case "DELETE_ELEMENT":
-      return removeElementFromPage(page, action.elementId);
-
-    case "UPDATE_PAGE":
-      return { ...page, ...action.changes };
-
-    case "BATCH_ELEMENT_UPDATE":
-      return updateElementInPage(page, action.elementId, action.finalElement);
-
-    default:
-      return page;
+      if (childPath) {
+        return childPath;
+      }
+    }
   }
+  return null;
 }
 
-// Apply multiple actions to a page (for undo/redo)
-export function applyActionsToPage(page: Page, actions: Action[]): Page {
+// Apply a single patch to a page
+export function applyPatchToPage(page: Page, patch: JSONPatch): Page {
+  const result = applyJSONPatch(page, patch);
+  if (result === null) {
+    console.error("Failed to apply JSON Patch:", patch);
+    return page; // Return original page if patch fails
+  }
+  return result;
+}
+
+// Apply multiple patches to a page (for undo/redo)
+export function applyPatchesToPage(page: Page, patches: JSONPatch[]): Page {
   let currentPage = page;
-  for (const action of actions) {
-    currentPage = applyActionToPage(currentPage, action);
+  for (const patch of patches) {
+    currentPage = applyPatchToPage(currentPage, patch);
   }
   return currentPage;
 }
 
-// Helper function to insert element at specific index
-function insertElementAtIdx(
+// Convenience functions for common operations
+export function createElementPatch(
   page: Page,
   element: Element,
   parentId: string,
   index: number
-): Page {
-  const children = insertElementAtIdxRec({
-    elements: page.children,
-    currentId: "root",
-    parentId,
-    index,
-    element,
-  });
-  return {
-    ...page,
-    children: children || [],
-  };
-}
-
-function insertElementAtIdxRec({
-  element,
-  elements,
-  currentId,
-  parentId,
-  index,
-}: {
-  element: Element;
-  elements?: Element[];
-  currentId: string;
-  parentId: string;
-  index: number;
-}): Element[] | undefined {
-  if (!elements) {
-    if (currentId === parentId) {
-      return [element];
-    }
-    return undefined;
+): JSONPatch {
+  const parentPath =
+    parentId === "root"
+      ? "/children"
+      : findElementPath(page.children, parentId);
+  if (!parentPath) {
+    throw new Error(`Parent element with id ${parentId} not found`);
   }
 
-  if (currentId === parentId) {
-    const [pre, post] = [elements.slice(0, index), elements.slice(index)];
-    return [...pre, element, ...post];
-  }
-  const newElements = elements.map((e) => ({
-    ...e,
-    children: insertElementAtIdxRec({
-      element,
-      elements: e.children,
-      currentId: e.id,
-      parentId,
-      index,
-    }),
-  }));
-  return newElements;
+  const targetPath = `${parentPath}/${index}`;
+  return [
+    {
+      op: "add",
+      path: targetPath,
+      value: element,
+    },
+  ];
 }
 
-// Helper function to update element in page
-function updateElementInPage(
+export function updateElementPatch(
   page: Page,
   elementId: string,
   changes: Partial<Element>
-): Page {
-  return {
-    ...page,
-    children: updateElementInChildren(page.children, elementId, changes),
-  };
+): JSONPatch {
+  const elementPath = findElementPath(page.children, elementId);
+  if (!elementPath) {
+    throw new Error(`Element with id ${elementId} not found`);
+  }
+
+  const patches: JSONPatch = [];
+  for (const [key, value] of Object.entries(changes)) {
+    if (value !== undefined) {
+      patches.push({
+        op: "replace",
+        path: `${elementPath}/${key}`,
+        value: value,
+      });
+    }
+  }
+  return patches;
 }
 
-function updateElementInChildren(
-  elements: Element[],
-  elementId: string,
-  changes: Partial<Element>
-): Element[] {
-  return elements.map((element) => {
-    if (element.id === elementId) {
-      return { ...element, ...changes };
-    }
-    if (element.children) {
-      return {
-        ...element,
-        children: updateElementInChildren(element.children, elementId, changes),
-      };
-    }
-    return element;
-  });
-}
-
-// Helper function to move element in page
-function moveElementInPage(
+export function moveElementPatch(
   page: Page,
   elementId: string,
   parentId: string,
   index: number
-): Page {
-  // First remove the element
-  const { element, page: pageWithoutElement } = removeElementFromPageHelper(
-    page,
-    elementId
-  );
-  if (!element) {
-    return page;
+): JSONPatch {
+  const elementPath = findElementPath(page.children, elementId);
+  if (!elementPath) {
+    throw new Error(`Element with id ${elementId} not found`);
   }
 
-  // Then insert it at the new location
-  return insertElementAtIdx(pageWithoutElement, element, parentId, index);
-}
-
-// Helper function to remove element from page
-function removeElementFromPage(page: Page, elementId: string): Page {
-  const { page: newPage } = removeElementFromPageHelper(page, elementId);
-  return newPage;
-}
-
-function removeElementFromPageHelper(
-  page: Page,
-  elementId: string
-): { element: Element | undefined; page: Page } {
-  const { element, elements } = removeElementFromChildren(
-    page.children,
-    elementId
-  );
-  if (element) {
-    return {
-      element,
-      page: { ...page, children: elements },
-    };
+  const newParentPath =
+    parentId === "root"
+      ? "/children"
+      : findElementPath(page.children, parentId);
+  if (!newParentPath) {
+    throw new Error(`Parent element with id ${parentId} not found`);
   }
-  return {
-    element: undefined,
-    page: page,
-  };
+
+  const newPath = `${newParentPath}/${index}`;
+
+  return [
+    {
+      op: "move",
+      from: elementPath,
+      path: newPath,
+    },
+  ];
 }
 
-function removeElementFromChildren(
-  elements: Element[],
-  elementId: string
-): { element: Element | undefined; elements: Element[] } {
-  for (const [idx, element] of elements.entries()) {
-    if (element.id === elementId) {
-      return {
-        element,
-        elements: elements.filter((e) => e.id !== elementId),
-      };
-    }
+export function deleteElementPatch(page: Page, elementId: string): JSONPatch {
+  const elementPath = findElementPath(page.children, elementId);
+  if (!elementPath) {
+    throw new Error(`Element with id ${elementId} not found`);
+  }
 
-    if (element.children) {
-      const { element: childElement, elements: childElements } =
-        removeElementFromChildren(element.children, elementId);
-      if (childElement) {
-        return {
-          element: childElement,
-          elements: [
-            ...elements.slice(0, idx),
-            { ...element, children: childElements },
-            ...elements.slice(idx + 1),
-          ],
-        };
-      }
+  return [
+    {
+      op: "remove",
+      path: elementPath,
+    },
+  ];
+}
+
+export function updatePagePatch(page: Page, changes: Partial<Page>): JSONPatch {
+  const patches: JSONPatch = [];
+  for (const [key, value] of Object.entries(changes)) {
+    if (value !== undefined) {
+      patches.push({
+        op: "replace",
+        path: `/${key}`,
+        value: value,
+      });
     }
   }
-  return { element: undefined, elements: elements };
+  return patches;
 }
