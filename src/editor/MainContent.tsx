@@ -15,7 +15,7 @@ import React from "react";
 import settings from "app/settings";
 import { showMessage } from "app/components/messages";
 import { i18n } from "app/utils/i18n";
-import { Page } from "app/types";
+import { LinkRef, MetaRef, Page } from "app/types";
 import Icon from "app/components/Icon";
 import "app/webcomponent/page-preview";
 
@@ -61,11 +61,38 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
         return;
       }
 
+      // It is a known bug that fonts loading inside a web componen does not work as expeceted. For that if we detect it might be a font, we add it (if not there yet) to the main page head.
+
+      page_json.head.link.forEach((link: LinkRef) => {
+        if (link.rel === "stylesheet" && link.href.includes("font")) {
+          // check if not already there
+          if (
+            document.head.querySelector(
+              `link[rel="${link.rel}"][href="${link.href}"]`
+            )
+          ) {
+            return;
+          }
+          const link_element = document.createElement("link");
+          link_element.rel = link.rel;
+          link_element.href = link.href;
+          document.head.appendChild(link_element);
+        }
+      });
+
       const head_html = `
         <style>${page_json.head.css}</style>
         <script>${page_json.head.js}</script>
         ${page_json.head.meta
-          .map((meta: string) => `<meta ${meta} />`)
+          .map(
+            (meta: MetaRef) =>
+              `<meta name="${meta.name}" content="${meta.content}" />`
+          )
+          .join("\n")}
+        ${page_json.head.link
+          .map(
+            (link: LinkRef) => `<link rel="${link.rel}" href="${link.href}" />`
+          )
           .join("\n")}
       `;
 
@@ -127,20 +154,6 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
     </div>
   );
 };
-
-interface PageJson {
-  title: string;
-  body: string;
-  head: {
-    css: string;
-    js: string;
-    meta: string[];
-  };
-  http: {
-    headers: Record<string, string>;
-    response_code: number;
-  };
-}
 
 let last_body_sha1: string | null = null; // a one item cache, as normally one instance only, no problem.
 let last_page_response: string | null = null;

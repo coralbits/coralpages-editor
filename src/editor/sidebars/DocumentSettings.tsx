@@ -49,9 +49,10 @@ const DocumentSettings = ({
       />
 
       <FormLabel label={i18n("Meta Tags")}>
-        {page_hooks?.page?.head?.meta?.map((meta) => (
-          <div key={meta.name} className="flex flex-row gap-2">
+        {page_hooks?.page?.head?.meta?.map((meta, idx) => (
+          <div key={idx} className="flex flex-row gap-2 ml-4">
             <FormField
+              className="flex-1 w-1/2"
               name={meta.name}
               type="text"
               label={i18n("Name")}
@@ -59,10 +60,34 @@ const DocumentSettings = ({
               onChange={(value) => {}}
             />
             <FormField
+              className="flex-1 w-1/2"
               name={meta.content}
               type="text"
               label={i18n("Content")}
               value={meta.content}
+              onChange={(value) => {}}
+            />
+          </div>
+        ))}
+      </FormLabel>
+
+      <FormLabel label={i18n("Link Tags")}>
+        {page_hooks?.page?.head?.link?.map((link, idx) => (
+          <div key={idx} className="flex flex-row gap-2 ml-4">
+            <FormField
+              className="flex-1 w-1/2"
+              name={link.rel}
+              type="text"
+              label={i18n("Rel")}
+              value={link.rel}
+              onChange={(value) => {}}
+            />
+            <FormField
+              className="flex-1 w-1/2"
+              name={link.href}
+              type="text"
+              label={i18n("Href")}
+              value={link.href}
               onChange={(value) => {}}
             />
           </div>

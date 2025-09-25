@@ -69,15 +69,15 @@ const select_font_dialog = (
       {
         label: "Select",
         onClick: (props) => {
-          page_hooks.onPatchPage("add", "/head/meta/-", {
+          page_hooks.onPatchPage("add", "/head/link/-", {
             rel: "preconnect",
             href: "https://fonts.googleapis.com",
           });
-          page_hooks.onPatchPage("add", "/head/meta/-", {
+          page_hooks.onPatchPage("add", "/head/link/-", {
             rel: "preconnect",
             href: "https://fonts.gstatic.com",
           });
-          page_hooks.onPatchPage("add", "/head/meta/-", {
+          page_hooks.onPatchPage("add", "/head/link/-", {
             rel: "stylesheet",
             href: `https://fonts.googleapis.com/css2?family=${props.state.font_name}`,
           });

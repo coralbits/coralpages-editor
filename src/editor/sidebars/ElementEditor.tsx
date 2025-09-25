@@ -37,7 +37,7 @@ const ElementEditor = ({
     const definition = editor_hooks.elementDefinitions.find(
       (definition) =>
         definition.name ===
-        page_hooks?.findElement(editor_hooks.selectedElementId)?.type
+        page_hooks?.findElement(editor_hooks.selectedElementId)?.widget
     );
     setElementDefinition(definition);
   }, [editor_hooks.selectedElementId, page_hooks?.page]);
