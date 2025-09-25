@@ -248,7 +248,7 @@ const usePage = (path: string): PageHooks => {
     setNeedSave(true);
   };
 
-  const onAddElement = (
+  const onCreateElement = (
     element_definition: Widget,
     parent_id: string,
     index: number
@@ -257,7 +257,7 @@ const usePage = (path: string): PageHooks => {
 
     const element = {
       id: getRandomId(),
-      type: element_definition.name,
+      widget: element_definition.name,
       data: {},
       children: [],
     };
@@ -268,12 +268,12 @@ const usePage = (path: string): PageHooks => {
       parent_id,
       index
     );
-    applyPatchToCurrentPage(patch, `Create element ${element.type}`);
+    applyPatchToCurrentPage(patch, `Create element ${element.widget}`);
     setNeedSave(true);
     return element.id;
   };
 
-  const onAddElementAfter = (
+  const onCreateElementAfter = (
     element_definition: Widget,
     after_element_id: string
   ): string | undefined => {
@@ -287,13 +287,13 @@ const usePage = (path: string): PageHooks => {
 
     if (!parentInfo) {
       // If element not found, fall back to adding at the end of root
-      return onAddElement(element_definition, "root", 10000);
+      return onCreateElement(element_definition, "root", 10000);
     }
 
     // Create the new element
     const element = {
       id: getRandomId(),
-      type: element_definition.name,
+      widget: element_definition.name,
       data: {},
       children: [],
     };
@@ -306,7 +306,7 @@ const usePage = (path: string): PageHooks => {
     );
     applyPatchToCurrentPage(
       patch,
-      `Create element ${element.type} after ${after_element_id}`
+      `Create element ${element.widget} after ${after_element_id}`
     );
     setNeedSave(true);
     return element.id;
@@ -342,7 +342,7 @@ const usePage = (path: string): PageHooks => {
     );
     applyPatchToCurrentPage(
       patch,
-      `Insert element ${element.type} after ${after_element_id}`
+      `Insert element ${element.widget} after ${after_element_id}`
     );
     setNeedSave(true);
     return element.id;
@@ -482,8 +482,8 @@ const usePage = (path: string): PageHooks => {
     onUpdatePage,
     onChangeElement,
     onChangeElementField,
-    onCreateElement: onAddElement,
-    onCreateElementAfter: onAddElementAfter,
+    onCreateElement,
+    onCreateElementAfter,
     onInsertElementAfter,
     onMoveElement,
     onDeleteElement,

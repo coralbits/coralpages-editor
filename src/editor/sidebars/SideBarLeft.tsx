@@ -25,7 +25,9 @@ interface SideBarLeftProps {
 const SideBarLeft = (props: SideBarLeftProps) => {
   const selected_element_id = props.editor_hooks.selectedElementId;
   const selected_element = props.page_hooks.findElement(selected_element_id);
-  let title = selected_element ? selected_element.type : "No element selected";
+  let title = selected_element
+    ? selected_element.widget
+    : "No element selected";
   if (selected_element_id == "root") {
     title = i18n("Document Settings");
   }

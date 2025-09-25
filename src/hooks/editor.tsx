@@ -70,7 +70,7 @@ export const useEditor = (): EditorHooks => {
       return;
     }
     // basic check is an element
-    if (!new_element.type) {
+    if (!new_element.widget) {
       showMessage(i18n("Invalid element"), { level: "error" });
       return;
     }
@@ -98,7 +98,7 @@ export const useEditor = (): EditorHooks => {
       return;
     }
     // basic check is an element
-    if (!new_element.type) {
+    if (!new_element.widget) {
       showMessage(i18n("Invalid element"), { level: "error" });
       return;
     }
@@ -167,7 +167,7 @@ export const useElementDefinition = (
 
   useEffect(() => {
     const definition = editor_hooks.elementDefinitions.find(
-      (definition) => definition.name === element?.type
+      (definition) => definition.name === element?.widget
     );
     setElementDefinition(definition);
   }, [element, editor_hooks.elementDefinitions, page_hooks.page]);

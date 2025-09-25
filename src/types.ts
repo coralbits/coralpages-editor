@@ -33,7 +33,7 @@ export interface MetaRef {
 
 export interface Element {
   id: string;
-  type: string;
+  widget: string;
   data?: any;
   style?: Record<string, string>;
   classes?: string[];

@@ -32,12 +32,12 @@ const createTestPage = (): Page => ({
   children: [
     {
       id: "element-1",
-      type: "text",
+      widget: "text",
       data: { content: "Hello World" },
       children: [
         {
           id: "element-2",
-          type: "span",
+          widget: "span",
           data: { text: "Nested text" },
           children: [],
         },
@@ -45,7 +45,7 @@ const createTestPage = (): Page => ({
     },
     {
       id: "element-3",
-      type: "button",
+      widget: "button",
       data: { text: "Click me" },
       children: [],
     },
@@ -58,7 +58,7 @@ const createTestElement = (
   data: any = {}
 ): Element => ({
   id,
-  type,
+  widget: type,
   data,
   children: [],
 });
@@ -534,7 +534,7 @@ describe("D001: PatchLogger", () => {
       expect(testLogger.getTotalOperations()).toBe(4);
 
       // Verify final state
-      expect(currentPage.children[0].type).toBe("heading");
+      expect(currentPage.children[0].widget).toBe("heading");
       expect(currentPage.children[0].data.content).toBe("Hell");
     });
   });
@@ -1012,7 +1012,7 @@ describe("D012: Complete Undo/Redo Workflow", () => {
       basePage,
       patchLogger.getPatchesUpToCurrent()
     );
-    expect(currentPage.children[0].type).toBe("updated-type");
+    expect(currentPage.children[0].widget).toBe("updated-type");
     expect(currentPage.children[0].data.content).toBe("Field-specific update");
 
     // Test undo - should revert type change but keep content change
@@ -1021,7 +1021,7 @@ describe("D012: Complete Undo/Redo Workflow", () => {
       basePage,
       patchLogger.getPatchesUpToCurrent()
     );
-    expect(currentPage.children[0].type).toBe("text"); // Original type
+    expect(currentPage.children[0].widget).toBe("text"); // Original type
     expect(currentPage.children[0].data.content).toBe("Field-specific update"); // Still updated
 
     // Test redo
@@ -1030,7 +1030,7 @@ describe("D012: Complete Undo/Redo Workflow", () => {
       basePage,
       patchLogger.getPatchesUpToCurrent()
     );
-    expect(currentPage.children[0].type).toBe("updated-type");
+    expect(currentPage.children[0].widget).toBe("updated-type");
     expect(currentPage.children[0].data.content).toBe("Field-specific update");
   });
 

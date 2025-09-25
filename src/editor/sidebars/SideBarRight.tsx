@@ -86,7 +86,7 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
           editor_hooks={editor_hooks}
           child={{
             id: "root",
-            type: i18n("Document settings"),
+            widget: i18n("Document settings"),
             children: [],
           }}
           className="ml-6 my-6 h-12"
@@ -247,7 +247,7 @@ const DocumentItem = ({
         editor_hooks.setHoveredElementId(undefined);
       }}
     >
-      {child.type}
+      {child.widget}
       <span
         className={`sidebar-button-text line-clamp-1 ${
           is_selected ? "sidebar-button-text-active" : ""

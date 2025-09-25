@@ -22,25 +22,25 @@ const EXAMPLE_PAGE: Page = {
   children: [
     {
       id: "1",
-      type: "div",
+      widget: "div",
       children: [
         {
           id: "2",
-          type: "div",
+          widget: "div",
         },
         {
           id: "3",
-          type: "div",
+          widget: "div",
           children: [
             {
               id: "4",
-              type: "div",
+              widget: "div",
             },
           ],
         },
         {
           id: "5",
-          type: "div",
+          widget: "div",
         },
       ],
     },
@@ -50,8 +50,8 @@ describe("find_element_and_remove", () => {
   it("finds an element in a page", () => {
     const page: Page = {
       children: [
-        { id: "1", type: "div" },
-        { id: "2", type: "div" },
+        { id: "1", widget: "div" },
+        { id: "2", widget: "div" },
       ],
       title: "test",
     };
