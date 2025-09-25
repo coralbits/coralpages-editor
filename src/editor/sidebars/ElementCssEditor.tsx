@@ -252,6 +252,20 @@ const styles: Record<string, Style> = {
     type: "text",
     placeholder: "0 0 5px rgba(0, 0, 0, 0.5)",
   },
+  gap: {
+    label: "Gap",
+    type: "text",
+  },
+  "object-fit": {
+    label: "Object Fit",
+    type: "select",
+    options: [
+      { label: "None", value: "" },
+      { label: "Cover", value: "cover" },
+      { label: "Contain", value: "contain" },
+      { label: "Fill", value: "fill" },
+    ],
+  },
 };
 
 /**
