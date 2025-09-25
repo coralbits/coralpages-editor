@@ -8,7 +8,7 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { FormField } from "app/components/FormField";
+import { FormField, FormLabel } from "app/components/FormField";
 import { EditorHooks } from "app/hooks/editor";
 import { PageHooks, useTemplateList } from "app/hooks/page";
 import { i18n } from "app/utils/i18n";
@@ -47,6 +47,28 @@ const DocumentSettings = ({
           })),
         ]}
       />
+
+      <FormLabel label={i18n("Meta Tags")}>
+        {page_hooks?.page?.head?.meta?.map((meta) => (
+          <div key={meta.name} className="flex flex-row gap-2">
+            <FormField
+              name={meta.name}
+              type="text"
+              label={i18n("Name")}
+              value={meta.name}
+              onChange={(value) => {}}
+            />
+            <FormField
+              name={meta.content}
+              type="text"
+              label={i18n("Content")}
+              value={meta.content}
+              onChange={(value) => {}}
+            />
+          </div>
+        ))}
+      </FormLabel>
+
       <div className="flex-1" />
 
       <HoldButton

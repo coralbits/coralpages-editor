@@ -51,6 +51,7 @@ import {
   faPaste,
   faUndo,
   faRedo,
+  faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -110,6 +111,7 @@ const iconMap: Record<string, any> = {
   pasteAfter: faArrowDown,
   undo: faUndo,
   redo: faRedo,
+  ellipsisH: faEllipsisH,
 };
 
 // Helper function to get icon with fallback

@@ -19,6 +19,7 @@ import {
   moveElementPatch,
   deleteElementPatch,
   updatePagePatch,
+  createPatch,
 } from "./actions";
 import { Page, Element } from "../types";
 import { JSONPatch } from "../utils/jsonPatch";
@@ -1068,5 +1069,50 @@ describe("D012: Complete Undo/Redo Workflow", () => {
     // Should only have 1 operation now (the two title updates were batched)
     expect(patchLogger.getTotalOperations()).toBe(1);
     expect(patchLogger.canRedo()).toBe(false);
+  });
+});
+
+describe("D013: Modify page meta using onPatchPage", () => {
+  it("I001: should create patch and apply it for updating page meta", () => {
+    const page = createTestPage();
+    const patch = createPatch("add", "/head/meta/-", {
+      name: "description",
+      content: "This is a description",
+    });
+    expect(patch).toEqual([
+      {
+        op: "add",
+        path: "/head/meta/-",
+        value: { name: "description", content: "This is a description" },
+      },
+    ]);
+    const result = applyPatchToPage(page, patch);
+    console.log(result);
+    expect(result).not.toBeNull();
+    expect(result?.head).not.toBeNull();
+    expect(result?.head?.meta).not.toBeNull();
+    expect(result?.head?.meta).toHaveLength(1);
+    expect(result?.head?.meta?.[0]?.name).toBe("description");
+    expect(result?.head?.meta?.[0]?.content).toBe("This is a description");
+  });
+
+  it("I002: should create patch and apply it for updating page rels", () => {
+    const page = createTestPage();
+    const patch = createPatch("add", "/head/link/-", {
+      rel: "preconnect",
+      href: "https://fonts.googleapis.com",
+    });
+    expect(patch).toEqual([
+      {
+        op: "add",
+        path: "/head/link/-",
+        value: { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      },
+    ]);
+    const result = applyPatchToPage(page, patch);
+    expect(result).not.toBeNull();
+    expect(result?.head?.link).toHaveLength(1);
+    expect(result?.head?.link?.[0]?.rel).toBe("preconnect");
+    expect(result?.head?.link?.[0]?.href).toBe("https://fonts.googleapis.com");
   });
 });

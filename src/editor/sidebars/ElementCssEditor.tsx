@@ -13,6 +13,7 @@ import { PageHooks } from "app/hooks/page";
 import { Element, Page } from "app/types";
 import { i18n } from "app/utils/i18n";
 import { FormField, FormFieldType } from "app/components/FormField";
+import { dialog } from "app/components/dialog";
 
 interface Style {
   label: string;
@@ -23,7 +24,70 @@ interface Style {
     forwards: (value: string) => string;
     backwards: (value: string) => string;
   };
+  other_dialog?: (
+    page_hooks: PageHooks,
+    value: string,
+    onSelect: (value: string) => void
+  ) => void;
 }
+
+const select_font_dialog = (
+  page_hooks: PageHooks,
+  value: string,
+  onSelect: (value: string) => void
+) => {
+  return dialog({
+    title: "Select Font",
+    state: {
+      font_name: value,
+    },
+    content: (props) => {
+      return (
+        <div>
+          <div>{i18n("Choose a google fonts by name")}</div>
+          <div className="my-4">
+            <a
+              href="https://fonts.google.com/"
+              target="_blank"
+              className="text-primary decoration-underline"
+            >
+              {i18n("Go to Google Fonts")}
+            </a>
+          </div>
+          <FormField
+            label={i18n("Font Name")}
+            name="font_name"
+            type="text"
+            value={props.state.font_name}
+            onChange={(e) => props.setState({ font_name: e })}
+            placeholder={i18n("Noto Sans")}
+          />
+        </div>
+      );
+    },
+    buttons: [
+      {
+        label: "Select",
+        onClick: (props) => {
+          page_hooks.onPatchPage("add", "/head/meta/-", {
+            rel: "preconnect",
+            href: "https://fonts.googleapis.com",
+          });
+          page_hooks.onPatchPage("add", "/head/meta/-", {
+            rel: "preconnect",
+            href: "https://fonts.gstatic.com",
+          });
+          page_hooks.onPatchPage("add", "/head/meta/-", {
+            rel: "stylesheet",
+            href: `https://fonts.googleapis.com/css2?family=${props.state.font_name}`,
+          });
+          onSelect(props.state.font_name);
+          props.close();
+        },
+      },
+    ],
+  });
+};
 
 const styles: Record<string, Style> = {
   color: {
@@ -229,7 +293,15 @@ const styles: Record<string, Style> = {
   },
   "font-family": {
     label: "Text Font",
-    type: "text",
+    type: "select",
+    options: [
+      { label: "Arial", value: "Arial" },
+      { label: "Helvetica", value: "Helvetica" },
+      { label: "Times New Roman", value: "Times New Roman" },
+      { label: "Courier New", value: "Courier New" },
+      { label: "Verdana", value: "Verdana" },
+    ],
+    other_dialog: select_font_dialog,
   },
   "font-weight": {
     label: "Text Weight",
@@ -387,6 +459,13 @@ export const ElementCssEditor = ({
             className="p-2"
             value={selected_element.style?.[css_key] || ""}
             placeholder={style.placeholder}
+            other_dialog={
+              style.other_dialog
+                ? (value, onSelect) => {
+                    style.other_dialog?.(page_hooks, value, onSelect);
+                  }
+                : undefined
+            }
             setValue={(value) => {
               // Use field-specific update for better undo/redo granularity
               page_hooks.onChangeElementField(
@@ -408,12 +487,14 @@ const EditStyleField = ({
   value,
   setValue,
   placeholder,
+  other_dialog,
 }: {
   style: Style;
   className?: string;
   value: string;
   setValue: (value: string) => void;
   placeholder?: string;
+  other_dialog?: (value: string, onSelect: (value: string) => void) => void;
 }) => {
   if (style.transform) {
     value = style.transform.backwards(value);
@@ -443,6 +524,7 @@ const EditStyleField = ({
       options={style.options}
       onChange={(value) => handleChange(value)}
       placeholder={placeholder}
+      other_dialog={other_dialog}
     />
   );
 };

@@ -41,6 +41,7 @@ export interface FormFieldProps {
   label_props?: Partial<FormLabelProps>;
   onEnter?: () => void; // called when enter is pressed
   onEscape?: () => void; // called when escape is pressed
+  other_dialog?: (value: string, onSelect: (value: string) => void) => void;
 }
 
 interface FormLabelProps {
@@ -112,21 +113,37 @@ export const FormFieldSelect = ({
   onChange,
   className,
   label_props,
+  other_dialog,
 }: FormFieldProps) => {
+  const is_selected_in_options = options?.some(
+    (option) => option.value === value
+  );
+
   return (
     <FormLabel label={label} className={className} {...label_props}>
-      <select
-        className="border border-primary rounded-md p-2"
-        name={name}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {options?.map((option, idx) => (
-          <option key={idx} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="flex flex-row">
+        <select
+          className="border border-primary rounded-md p-2 flex-1 gap-2"
+          name={name}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {options?.map((option, idx) => (
+            <option key={idx} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+          {!is_selected_in_options && <option value={value}>{value}</option>}
+        </select>
+        {other_dialog && (
+          <button
+            className="border border-primary rounded-md p-2 max-w-10 max-h-10 cursor-pointer ml-2"
+            onClick={() => other_dialog(value, onChange)}
+          >
+            <Icon name="ellipsisH" />
+          </button>
+        )}
+      </div>
     </FormLabel>
   );
 };

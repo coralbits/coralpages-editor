@@ -14,6 +14,21 @@ export interface Page {
   title: string;
   template?: string;
   children: Element[];
+  head?: {
+    link?: LinkRef[];
+    meta?: MetaRef[];
+    raw?: string;
+  };
+}
+
+export interface LinkRef {
+  href: string;
+  rel: string;
+}
+
+export interface MetaRef {
+  content: string;
+  name: string;
 }
 
 export interface Element {

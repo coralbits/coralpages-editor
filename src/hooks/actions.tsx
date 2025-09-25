@@ -382,6 +382,20 @@ export function updateElementFieldPatch(
   ];
 }
 
+export function createPatch(
+  op: "add" | "replace" | "remove",
+  path: string,
+  value: any
+): JSONPatch {
+  return [
+    {
+      op: op,
+      path: path,
+      value: value,
+    },
+  ];
+}
+
 function mergePatches(patch1: JSONPatch, patch2: JSONPatch): JSONPatch {
   return patch2;
 }

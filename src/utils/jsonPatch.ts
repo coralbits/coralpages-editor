@@ -105,62 +105,57 @@ export const applyJSONPatch = <T = any>(
     return null;
   }
 
-  try {
-    // console.log("Applying JSON Patch:", patch);
+  // console.log("Applying JSON Patch:", patch);
 
-    // Create a deep copy of the target to avoid mutating the original
-    const patchedObject = JSON.parse(JSON.stringify(target));
+  // Create a deep copy of the target to avoid mutating the original
+  const patchedObject = JSON.parse(JSON.stringify(target));
 
-    // Apply each patch operation
-    for (const operation of patch) {
-      // console.log(
-      // `Applying operation: ${operation.op} at path: ${operation.path}`
-      // );
+  // Apply each patch operation
+  for (const operation of patch) {
+    // console.log(
+    // `Applying operation: ${operation.op} at path: ${operation.path}`
+    // );
 
-      switch (operation.op) {
-        case "add": {
-          const addOp = operation as AddOperation;
-          addOperation(patchedObject, addOp.path, addOp.value);
-          break;
-        }
-        case "remove": {
-          const removeOp = operation as RemoveOperation;
-          removeOperation(patchedObject, removeOp.path);
-          break;
-        }
-        case "replace": {
-          const replaceOp = operation as ReplaceOperation;
-          replaceOperation(patchedObject, replaceOp.path, replaceOp.value);
-          break;
-        }
-        case "move": {
-          const moveOp = operation as MoveOperation;
-          moveOperation(patchedObject, moveOp.from, moveOp.path);
-          break;
-        }
-        case "copy": {
-          const copyOp = operation as CopyOperation;
-          copyOperation(patchedObject, copyOp.from, copyOp.path);
-          break;
-        }
-        case "test": {
-          const testOp = operation as TestOperation;
-          if (!testOperation(patchedObject, testOp.path, testOp.value)) {
-            throw new Error(`Test operation failed at path: ${testOp.path}`);
-          }
-          break;
-        }
-        default:
-          console.warn(`Unknown operation: ${(operation as any).op}`);
+    switch (operation.op) {
+      case "add": {
+        const addOp = operation as AddOperation;
+        addOperation(patchedObject, addOp.path, addOp.value);
+        break;
       }
+      case "remove": {
+        const removeOp = operation as RemoveOperation;
+        removeOperation(patchedObject, removeOp.path);
+        break;
+      }
+      case "replace": {
+        const replaceOp = operation as ReplaceOperation;
+        replaceOperation(patchedObject, replaceOp.path, replaceOp.value);
+        break;
+      }
+      case "move": {
+        const moveOp = operation as MoveOperation;
+        moveOperation(patchedObject, moveOp.from, moveOp.path);
+        break;
+      }
+      case "copy": {
+        const copyOp = operation as CopyOperation;
+        copyOperation(patchedObject, copyOp.from, copyOp.path);
+        break;
+      }
+      case "test": {
+        const testOp = operation as TestOperation;
+        if (!testOperation(patchedObject, testOp.path, testOp.value)) {
+          throw new Error(`Test operation failed at path: ${testOp.path}`);
+        }
+        break;
+      }
+      default:
+        console.warn(`Unknown operation: ${(operation as any).op}`);
     }
-
-    // console.log("Patch applied successfully. New object:", patchedObject);
-    return patchedObject;
-  } catch (error) {
-    console.error("Error applying JSON Patch:", error);
-    return null;
   }
+
+  // console.log("Patch applied successfully. New object:", patchedObject);
+  return patchedObject;
 };
 
 // Helper functions for JSON Patch operations
@@ -242,18 +237,48 @@ const addOperation = (obj: any, path: string, value: any): void => {
     // Adding to root
     obj[lastPart] = value;
   } else {
-    const parent = getValueAtPath(obj, parentPath);
-    if (Array.isArray(parent)) {
+    // Create parent objects if they don't exist
+    let current = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+      const part = parts[i];
+
+      if (Array.isArray(current)) {
+        const index = parseInt(part, 10);
+        if (isNaN(index)) {
+          throw new Error(`Invalid array index: ${part}`);
+        }
+        if (!current[index]) {
+          current[index] = {};
+        }
+        current = current[index];
+      } else if (typeof current === "object") {
+        if (!current[part]) {
+          // If the next part is "-" or a number, create an array, otherwise create an object
+          const nextPart = parts[i + 1];
+          if (nextPart === "-" || !isNaN(parseInt(nextPart, 10))) {
+            current[part] = [];
+          } else {
+            current[part] = {};
+          }
+        }
+        current = current[part];
+      } else {
+        throw new Error(`Cannot add to non-object at path: ${parentPath}`);
+      }
+    }
+
+    // Now add the value to the parent
+    if (Array.isArray(current)) {
       const index = parseInt(lastPart, 10);
       if (lastPart === "-") {
-        parent.push(value);
+        current.push(value);
       } else if (!isNaN(index)) {
-        parent.splice(index, 0, value);
+        current.splice(index, 0, value);
       } else {
         throw new Error(`Invalid array index: ${lastPart}`);
       }
-    } else if (typeof parent === "object") {
-      parent[lastPart] = value;
+    } else if (typeof current === "object") {
+      current[lastPart] = value;
     } else {
       throw new Error(`Cannot add to non-object at path: ${parentPath}`);
     }

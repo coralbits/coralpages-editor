@@ -25,6 +25,7 @@ import {
   moveElementPatch,
   deleteElementPatch,
   updatePagePatch,
+  createPatch,
 } from "./actions";
 
 type setPageFn =
@@ -57,10 +58,15 @@ export interface PageHooks {
     element: Element,
     after_element_id: string
   ) => string | undefined;
+  onPatchPage: (
+    op: "add" | "replace" | "remove",
+    path: string,
+    value: any
+  ) => void;
   onDeleteElement: (element_id: string) => void;
   onUpdatePage: (page: Partial<Page>) => void;
   onDeletePage: () => Promise<boolean>;
-  setPage: (setPageFn: setPageFn) => void;
+  setPage: (pf: Page) => void;
 
   need_save: boolean;
   savePage: () => Promise<void>;
@@ -153,9 +159,11 @@ const usePage = (path: string): PageHooks => {
   // Patch logger for undo/redo
   const patchLoggerRef = useRef<PatchLogger>(new PatchLogger());
   const basePageRef = useRef<Page | undefined>(undefined);
+  const currentPageRef = useRef<Page | undefined>(undefined);
 
-  const setPage = (pf: setPageFn) => {
+  const setPage = (pf: Page) => {
     setPageReal(pf);
+    currentPageRef.current = pf;
     setPageGen(page_gen + 1);
   };
 
@@ -171,7 +179,7 @@ const usePage = (path: string): PageHooks => {
     description?: string,
     can_batch_merge: boolean = true
   ) => {
-    if (!page) return;
+    if (!currentPageRef.current) return;
 
     patchLoggerRef.current.addPatch(
       patch,
@@ -179,8 +187,9 @@ const usePage = (path: string): PageHooks => {
       undefined,
       can_batch_merge
     );
-    const newPage = applyPatchToPage(page, patch);
+    const newPage = applyPatchToPage(currentPageRef.current, patch);
     setPage(newPage);
+    console.log("New page", newPage);
     updateUndoRedoState();
   };
 
@@ -195,17 +204,21 @@ const usePage = (path: string): PageHooks => {
   };
 
   const onUpdatePage = (update: Partial<Page>) => {
-    if (!page) return;
+    if (!currentPageRef.current) return;
 
-    const patch = updatePagePatch(page, update);
+    const patch = updatePagePatch(currentPageRef.current, update);
     applyPatchToCurrentPage(patch, "Update page");
     setNeedSave(true);
   };
 
   const onChangeElement = (element: Element) => {
-    if (!page) return;
+    if (!currentPageRef.current) return;
 
-    const patch = updateElementPatch(page, element.id, element);
+    const patch = updateElementPatch(
+      currentPageRef.current,
+      element.id,
+      element
+    );
     applyPatchToCurrentPage(patch, `Update element ${element.id}`);
     setNeedSave(true);
   };
@@ -216,12 +229,17 @@ const usePage = (path: string): PageHooks => {
     value: any,
     can_batch_merge?: boolean
   ) => {
-    if (!page) return;
+    if (!currentPageRef.current) return;
     if (can_batch_merge === undefined) {
       can_batch_merge = true;
     }
 
-    const patch = updateElementFieldPatch(page, element_id, field, value);
+    const patch = updateElementFieldPatch(
+      currentPageRef.current,
+      element_id,
+      field,
+      value
+    );
     applyPatchToCurrentPage(
       patch,
       `Update element ${element_id} field ${field}`,
@@ -235,7 +253,7 @@ const usePage = (path: string): PageHooks => {
     parent_id: string,
     index: number
   ): string | undefined => {
-    if (!page) return undefined;
+    if (!currentPageRef.current) return undefined;
 
     const element = {
       id: getRandomId(),
@@ -244,7 +262,12 @@ const usePage = (path: string): PageHooks => {
       children: [],
     };
 
-    const patch = createElementPatch(page, element, parent_id, index);
+    const patch = createElementPatch(
+      currentPageRef.current,
+      element,
+      parent_id,
+      index
+    );
     applyPatchToCurrentPage(patch, `Create element ${element.type}`);
     setNeedSave(true);
     return element.id;
@@ -254,11 +277,11 @@ const usePage = (path: string): PageHooks => {
     element_definition: Widget,
     after_element_id: string
   ): string | undefined => {
-    if (!page) return undefined;
+    if (!currentPageRef.current) return undefined;
 
     // Find the parent and index of the element to insert after
     const parentInfo = find_element_parent_and_index(
-      page.children,
+      currentPageRef.current.children,
       after_element_id
     );
 
@@ -276,7 +299,7 @@ const usePage = (path: string): PageHooks => {
     };
 
     const patch = createElementPatch(
-      page,
+      currentPageRef.current,
       element,
       parentInfo.parent_id,
       parentInfo.index
@@ -293,11 +316,11 @@ const usePage = (path: string): PageHooks => {
     element: Element,
     after_element_id: string
   ): string | undefined => {
-    if (!page) return undefined;
+    if (!currentPageRef.current) return undefined;
 
     // Find the parent and index of the element to insert after
     const parentInfo = find_element_parent_and_index(
-      page.children,
+      currentPageRef.current.children,
       after_element_id
     );
 
@@ -311,7 +334,12 @@ const usePage = (path: string): PageHooks => {
       index = 10000;
     }
 
-    const patch = createElementPatch(page, element, parent_id, index);
+    const patch = createElementPatch(
+      currentPageRef.current,
+      element,
+      parent_id,
+      index
+    );
     applyPatchToCurrentPage(
       patch,
       `Insert element ${element.type} after ${after_element_id}`
@@ -332,18 +360,34 @@ const usePage = (path: string): PageHooks => {
     parent_id: string,
     idx: number
   ) => {
-    if (!page) return;
+    if (!currentPageRef.current) return;
 
-    const patch = moveElementPatch(page, element_id, parent_id, idx);
+    const patch = moveElementPatch(
+      currentPageRef.current,
+      element_id,
+      parent_id,
+      idx
+    );
     applyPatchToCurrentPage(patch, `Move element ${element_id}`);
     setNeedSave(true);
   };
 
   const onDeleteElement = (element_id: string) => {
-    if (!page) return;
+    if (!currentPageRef.current) return;
 
-    const patch = deleteElementPatch(page, element_id);
+    const patch = deleteElementPatch(currentPageRef.current, element_id);
     applyPatchToCurrentPage(patch, `Delete element ${element_id}`);
+    setNeedSave(true);
+  };
+
+  const onPatchPage = (
+    op: "add" | "replace" | "remove",
+    path: string,
+    value: any
+  ) => {
+    if (!currentPageRef.current) return;
+    const patch = createPatch(op, path, value);
+    applyPatchToCurrentPage(patch, `Update page ${path}`);
     setNeedSave(true);
   };
 
@@ -444,6 +488,7 @@ const usePage = (path: string): PageHooks => {
     onMoveElement,
     onDeleteElement,
     onDeletePage,
+    onPatchPage,
     setPage,
     savePage,
     need_save,
