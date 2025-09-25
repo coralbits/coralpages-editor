@@ -14,6 +14,7 @@ import { PageHooks, useTemplateList } from "app/hooks/page";
 import { i18n } from "app/utils/i18n";
 import HoldButton from "app/components/HoldButton";
 import { showMessage } from "app/components/messages";
+import Icon from "app/components/Icon";
 
 const DocumentSettings = ({
   editor_hooks,
@@ -67,6 +68,13 @@ const DocumentSettings = ({
               value={meta.content}
               onChange={(value) => {}}
             />
+            <button
+              onClick={() =>
+                page_hooks?.onPatchPage("remove", `/head/meta/${idx}`, null)
+              }
+            >
+              {i18n("Delete")}
+            </button>
           </div>
         ))}
       </FormLabel>
@@ -75,7 +83,7 @@ const DocumentSettings = ({
         {page_hooks?.page?.head?.link?.map((link, idx) => (
           <div key={idx} className="flex flex-row gap-2 ml-4">
             <FormField
-              className="flex-1 w-1/2"
+              className="flex-1 w-1/3"
               name={link.rel}
               type="text"
               label={i18n("Rel")}
@@ -83,13 +91,21 @@ const DocumentSettings = ({
               onChange={(value) => {}}
             />
             <FormField
-              className="flex-1 w-1/2"
+              className="flex-1 w-1/3"
               name={link.href}
               type="text"
               label={i18n("Href")}
               value={link.href}
               onChange={(value) => {}}
             />
+            <button
+              onClick={() =>
+                page_hooks?.onPatchPage("remove", `/head/link/${idx}`, null)
+              }
+              className="border border-primary rounded-md p-2 max-w-10 max-h-10 pointer-cursor ml-2 mt-7 bg-gray-700 hover:bg-focus cursor-pointer"
+            >
+              <Icon name="trash" />
+            </button>
           </div>
         ))}
       </FormLabel>
