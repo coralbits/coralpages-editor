@@ -453,3 +453,12 @@
   @apply fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-1000;
   z-index: 1000;
 }
+
+/* Page preview must align with html view */
+page-preview {
+  margin: 0;
+  padding: 0;
+  background: white;
+  color: black;
+  font-family: system-ui;
+}
