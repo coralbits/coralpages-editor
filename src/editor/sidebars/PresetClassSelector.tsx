@@ -53,7 +53,12 @@ const PresetClassSelector = ({
           }))}
           selected={selected_element.classes || []}
           onChange={(classes) => {
-            page_hooks.onChangeElement({ ...selected_element, classes });
+            page_hooks.onChangeElementField(
+              selected_element.id,
+              "classes",
+              classes,
+              false
+            );
           }}
         >
           <Icon name="plus" />
@@ -75,12 +80,15 @@ const PresetClassSelector = ({
               <button
                 className="btn-secondary hover:bg-focus px-2 rounded-md m-2 cursor-pointer"
                 onClick={() => {
-                  page_hooks.onChangeElement({
-                    ...selected_element,
-                    classes: selected_element.classes?.filter(
-                      (c) => c !== clss
-                    ),
-                  });
+                  const updatedClasses = selected_element.classes?.filter(
+                    (c) => c !== clss
+                  );
+                  page_hooks.onChangeElementField(
+                    selected_element.id,
+                    "classes",
+                    updatedClasses,
+                    false
+                  );
                 }}
               >
                 <Icon name="trash" />

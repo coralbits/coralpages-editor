@@ -68,17 +68,15 @@ const ElementEditor = ({
   }
 
   const handleChange = (field: FieldDefinition, value: string) => {
-    if (!page_hooks) {
+    if (!page_hooks || !editor_hooks.selectedElementId) {
       return;
     }
-    const new_element = {
-      ...selected_element,
-      data: {
-        ...selected_element?.data,
-        [field.name]: value,
-      },
-    };
-    page_hooks.onChangeElement(new_element as Element);
+    // Use field-specific update for better undo/redo granularity
+    page_hooks.onChangeElementField(
+      editor_hooks.selectedElementId,
+      `data/${field.name}`,
+      value
+    );
   };
 
   return (

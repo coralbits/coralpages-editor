@@ -16,6 +16,7 @@ export interface PatchOperation {
   patch: JSONPatch;
   timestamp: number;
   description?: string; // Optional description for debugging
+  can_batch_merge: boolean; // Whether this operation can be batched with others
 }
 
 // Patch logger class to manage the patch history
@@ -25,7 +26,12 @@ export class PatchLogger {
   private readonly BATCH_TIMEOUT_MS = 30000; // 30 seconds
 
   // Add a new patch operation to the log
-  addPatch(patch: JSONPatch, description?: string, timestamp?: number): void {
+  addPatch(
+    patch: JSONPatch,
+    description?: string,
+    timestamp?: number,
+    can_batch_merge: boolean = true
+  ): void {
     // If we're not at the end of the history, truncate future operations
     if (this.currentPosition < this.operations.length - 1) {
       this.operations = this.operations.slice(0, this.currentPosition + 1);
@@ -34,13 +40,17 @@ export class PatchLogger {
     // Check if we can batch with the previous operation
     const lastOperation = this.operations[this.operations.length - 1];
     const currentTimestamp = timestamp ?? Date.now();
-    if (this.canBatchWithPrevious(patch, lastOperation, currentTimestamp)) {
-      // Merge patches by combining them
-      const mergedPatch = [...lastOperation.patch, ...patch];
+    if (
+      can_batch_merge &&
+      lastOperation?.can_batch_merge &&
+      this.canBatchWithPrevious(patch, lastOperation, currentTimestamp)
+    ) {
+      // For batching, just use the new patch (last operation)
       this.operations[this.operations.length - 1] = {
-        patch: mergedPatch,
+        patch: mergePatches(lastOperation.patch, patch), // Use only the new patch, not concatenated
         timestamp: lastOperation.timestamp, // Keep the original timestamp for batching
         description: description || lastOperation.description,
+        can_batch_merge: lastOperation.can_batch_merge,
       };
     } else {
       // Add as new operation
@@ -48,9 +58,11 @@ export class PatchLogger {
         patch,
         timestamp: timestamp ?? Date.now(),
         description,
+        can_batch_merge,
       });
       this.currentPosition++;
     }
+    console.log("Operations list", this.operations);
   }
 
   // Check if a patch can be batched with the previous one
@@ -64,51 +76,66 @@ export class PatchLogger {
     const timeDiff = newTimestamp - lastOperation.timestamp;
 
     // Only batch if within time threshold
-    if (timeDiff > this.BATCH_TIMEOUT_MS) return false;
+    if (timeDiff > this.BATCH_TIMEOUT_MS) {
+      // console.log("Time diff is greater than batch timeout", timeDiff);
+      return false;
+    }
 
     // Only batch small patches (1-5 operations) to allow for character edits
-    if (newPatch.length > 5 || lastOperation.patch.length > 5) return false;
+    if (newPatch.length > 10 || lastOperation.patch.length > 10) {
+      // console.log(
+      //   "Patch length is greater than 5",
+      //   newPatch.length,
+      //   lastOperation.patch.length
+      // );
+      return false;
+    }
 
     // Only batch operations on the same element/path
     // This prevents batching unrelated operations
     const newFirstOp = newPatch[0];
     const lastFirstOp = lastOperation.patch[0];
 
-    if (!newFirstOp || !lastFirstOp) return false;
+    if (!newFirstOp || !lastFirstOp) {
+      // console.log(
+      //   "New first op or last first op is undefined",
+      //   newFirstOp,
+      //   lastFirstOp
+      // );
+      return false;
+    }
 
     // Don't batch different operation types (replace vs add vs remove, etc.)
-    if (newFirstOp.op !== lastFirstOp.op) return false;
+    if (newFirstOp.op !== lastFirstOp.op) {
+      // console.log(
+      //   "New first op or last first op is undefined",
+      //   newFirstOp,
+      //   lastFirstOp
+      // );
+      return false;
+    }
 
     // Don't batch add operations with other operations (add element should be separate)
-    if (newFirstOp.op === "add" || lastFirstOp.op === "add") return false;
-
-    // Extract the base path (without array indices) for comparison
-    const getBasePath = (path: string) => {
-      // For element operations, we want to group by the element path
-      // For page operations, we want to group by the page root
-
-      // If it's a page-level operation (starts with / but not /children)
-      if (path.startsWith("/") && !path.startsWith("/children")) {
-        return "/"; // All page-level operations should batch together
-      }
-
-      // For element operations, extract the element path up to the element itself
-      // /children/0/data -> /children/0
-      // /children/0/type -> /children/0
-      // /children/0/children/1 -> /children/0
-      const elementMatch = path.match(/^(\/children\/\d+)/);
-      if (elementMatch) {
-        return elementMatch[1]; // Return /children/0, /children/1, etc.
-      }
-
-      return path; // Fallback to original path
-    };
-
-    const newBasePath = getBasePath(newFirstOp.path);
-    const lastBasePath = getBasePath(lastFirstOp.path);
+    if (newFirstOp.op === "add" || lastFirstOp.op === "add") {
+      // console.log(
+      //   "New first op or last first op is add",
+      //   newFirstOp,
+      //   lastFirstOp
+      // );
+      return false;
+    }
 
     // Batch if they're operating on the same element or page
-    return newBasePath === lastBasePath;
+    if (newFirstOp.path !== lastFirstOp.path) {
+      // console.log(
+      //   "New base path is not equal to last base path",
+      //   newBasePath,
+      //   lastBasePath
+      // );
+      return false;
+    }
+
+    return true;
   }
 
   // Get all patches up to current position
@@ -329,4 +356,32 @@ export function updatePagePatch(page: Page, changes: Partial<Page>): JSONPatch {
     }
   }
   return patches;
+}
+
+export function updateElementFieldPatch(
+  page: Page,
+  elementId: string,
+  field: string,
+  value: any
+): JSONPatch {
+  const elementPath = findElementPath(page.children, elementId);
+  if (!elementPath) {
+    throw new Error(`Element with id ${elementId} not found`);
+  }
+
+  // Handle nested field paths like "data/fieldName"
+  const fieldPath = field.includes("/") ? field : field;
+  const fullPath = `${elementPath}/${fieldPath}`;
+
+  return [
+    {
+      op: "replace",
+      path: fullPath,
+      value: value,
+    },
+  ];
+}
+
+function mergePatches(patch1: JSONPatch, patch2: JSONPatch): JSONPatch {
+  return patch2;
 }

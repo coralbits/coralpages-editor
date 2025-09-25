@@ -374,13 +374,12 @@ export const ElementCssEditor = ({
             value={selected_element.style?.[css_key] || ""}
             placeholder={style.placeholder}
             setValue={(value) => {
-              page_hooks.onChangeElement({
-                ...selected_element,
-                style: {
-                  ...selected_element.style,
-                  [css_key]: value,
-                },
-              });
+              // Use field-specific update for better undo/redo granularity
+              page_hooks.onChangeElementField(
+                selected_element.id,
+                `style/${css_key}`,
+                value
+              );
             }}
           />
         ))}

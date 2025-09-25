@@ -106,16 +106,16 @@ export const applyJSONPatch = <T = any>(
   }
 
   try {
-    console.log("Applying JSON Patch:", patch);
+    // console.log("Applying JSON Patch:", patch);
 
     // Create a deep copy of the target to avoid mutating the original
     const patchedObject = JSON.parse(JSON.stringify(target));
 
     // Apply each patch operation
     for (const operation of patch) {
-      console.log(
-        `Applying operation: ${operation.op} at path: ${operation.path}`
-      );
+      // console.log(
+      // `Applying operation: ${operation.op} at path: ${operation.path}`
+      // );
 
       switch (operation.op) {
         case "add": {
@@ -155,7 +155,7 @@ export const applyJSONPatch = <T = any>(
       }
     }
 
-    console.log("Patch applied successfully. New object:", patchedObject);
+    // console.log("Patch applied successfully. New object:", patchedObject);
     return patchedObject;
   } catch (error) {
     console.error("Error applying JSON Patch:", error);

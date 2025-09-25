@@ -21,6 +21,7 @@ import {
   applyPatchToPage,
   createElementPatch,
   updateElementPatch,
+  updateElementFieldPatch,
   moveElementPatch,
   deleteElementPatch,
   updatePagePatch,
@@ -36,6 +37,12 @@ export interface PageHooks {
   page_gen: number;
   findElement: (element_id?: string) => Element | undefined;
   onChangeElement: (element: Element) => void;
+  onChangeElementField: (
+    element_id: string,
+    field: string,
+    value: any,
+    can_batch_merge?: boolean
+  ) => void;
   onMoveElement: (element_id: string, parent_id: string, idx: number) => void;
   onCreateElement: (
     element_definition: Widget,
@@ -74,7 +81,7 @@ const children_update_element_rec = (
   const new_elements = elements.map((e) => {
     if (e.id === element.id) {
       found = true;
-      console.log("updating", e.id, element.id);
+      // console.log("updating", e.id, element.id);
       return element;
     }
     if (found) {
@@ -159,10 +166,19 @@ const usePage = (path: string): PageHooks => {
   };
 
   // Apply a single patch to current page
-  const applyPatchToCurrentPage = (patch: JSONPatch, description?: string) => {
+  const applyPatchToCurrentPage = (
+    patch: JSONPatch,
+    description?: string,
+    can_batch_merge: boolean = true
+  ) => {
     if (!page) return;
 
-    patchLoggerRef.current.addPatch(patch, description);
+    patchLoggerRef.current.addPatch(
+      patch,
+      description,
+      undefined,
+      can_batch_merge
+    );
     const newPage = applyPatchToPage(page, patch);
     setPage(newPage);
     updateUndoRedoState();
@@ -191,6 +207,26 @@ const usePage = (path: string): PageHooks => {
 
     const patch = updateElementPatch(page, element.id, element);
     applyPatchToCurrentPage(patch, `Update element ${element.id}`);
+    setNeedSave(true);
+  };
+
+  const onChangeElementField = (
+    element_id: string,
+    field: string,
+    value: any,
+    can_batch_merge?: boolean
+  ) => {
+    if (!page) return;
+    if (can_batch_merge === undefined) {
+      can_batch_merge = true;
+    }
+
+    const patch = updateElementFieldPatch(page, element_id, field, value);
+    applyPatchToCurrentPage(
+      patch,
+      `Update element ${element_id} field ${field}`,
+      can_batch_merge
+    );
     setNeedSave(true);
   };
 
@@ -401,6 +437,7 @@ const usePage = (path: string): PageHooks => {
     findElement,
     onUpdatePage,
     onChangeElement,
+    onChangeElementField,
     onCreateElement: onAddElement,
     onCreateElementAfter: onAddElementAfter,
     onInsertElementAfter,
