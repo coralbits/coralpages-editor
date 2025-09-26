@@ -65,10 +65,15 @@ For both there are optional arguments:
 - `css`: The CSS file to load and apply within the Shadow DOM
 - `cp_url`: The URL of the Coralpages Server API (default: `/cp/api/v1`, but you may want to change to `https://your-coralpages-server.com/cp/api/v1`)
 - `am_url`: The URL of the Coralpages Assets Manager API (default: `/am/api/v1`, but you may want to change to `https://your-coralpages-assets-manager.com/am/api/v1`)
+- `openai_api_key`: The API key for the OpenAI API (default: `""`)
+- `openai_api_endpoint`: The API endpoint for the OpenAI API (default: `https://api.openai.com/v1`)
+- `openai_model`: The model to use for the OpenAI API (default: `"llama3.2"`)
 
 On both urls beware that is to the `/api/v1/` endpoint, not just the root of the server. As the normal
 use is via some frontend and/or api gateway, you must configure it there to give access to the
 page renderer and assets manager on the proper paths of your liking.
+
+If no openai_api_key is provided, the AI mode will be disabled.
 
 ## Features
 
