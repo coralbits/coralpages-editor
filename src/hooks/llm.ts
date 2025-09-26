@@ -13,7 +13,7 @@ import settings from "app/settings";
 import { Page } from "app/types";
 import { PageHooks } from "./page";
 import useElementDefinitions from "./element_definitions";
-import { applyJSONPatch, JSONPatch } from "app/utils/jsonPatch";
+import { JSONPatch } from "app/utils/jsonPatch";
 import { useClassesDefinitions } from "./classes";
 
 export interface LLMHooks {
@@ -107,18 +107,7 @@ If you cannot perform the requested action, respond with:
         // Check if the response contains JSON Patch operations
         if (Array.isArray(jsonResponse)) {
           console.log("Applying JSON Patch operations from AI response...");
-          const updatedPage = applyJSONPatchToPage(jsonResponse);
-
-          if (updatedPage && page_hooks?.setPage) {
-            console.log("Updating page with AI changes...");
-            page_hooks.setPage(updatedPage);
-          } else if (updatedPage) {
-            console.log(
-              "Page updated successfully, but no page_hooks provided"
-            );
-          } else {
-            console.error("Failed to apply JSON Patch operations");
-          }
+          applyPatchesFromAI(jsonResponse);
         }
 
         // Disable AI mode when request completes successfully
@@ -141,13 +130,62 @@ If you cannot perform the requested action, respond with:
     }
   };
 
-  const applyJSONPatchToPage = (patch: JSONPatch): Page | null => {
-    if (!page) {
-      console.error("No page data available to apply patch");
-      return null;
+  const applyPatchesFromAI = (patches: JSONPatch): void => {
+    if (!page_hooks?.onPatchPage) {
+      console.error("No page_hooks provided for applying patches");
+      return;
     }
 
-    return applyJSONPatch<Page>(page as Page, patch);
+    console.log(
+      `Applying ${patches.length} AI patch operations as a single batch...`
+    );
+
+    // Filter out unsupported operations and log warnings
+    const supportedPatches = patches.filter((patchOp) => {
+      if (
+        patchOp.op === "add" ||
+        patchOp.op === "replace" ||
+        patchOp.op === "remove"
+      ) {
+        return true;
+      } else {
+        console.warn(
+          `AI patch operation ${patchOp.op} is not directly supported by onPatchPage. Skipping.`
+        );
+        return false;
+      }
+    });
+
+    if (supportedPatches.length === 0) {
+      console.warn("No supported AI patch operations found");
+      return;
+    }
+
+    // Apply each supported patch operation through the proper patch system
+    // All patches from a single AI response should be batched together
+    // This ensures they appear as a single undo/redo operation
+    supportedPatches.forEach((patchOp, index) => {
+      console.log(
+        `Applying AI patch operation ${index + 1}/${supportedPatches.length}:`,
+        patchOp
+      );
+
+      // Use the page_hooks.onPatchPage method which integrates with the patch system
+      // Handle different operation types properly
+      if (patchOp.op === "remove") {
+        page_hooks.onPatchPage(
+          "remove",
+          patchOp.path,
+          undefined // remove operations don't have a value
+        );
+      } else if (patchOp.op === "add" || patchOp.op === "replace") {
+        page_hooks.onPatchPage(patchOp.op, patchOp.path, patchOp.value);
+      }
+    });
+
+    console.log(
+      `All ${supportedPatches.length} supported AI patches applied successfully through patch system as a single batch`
+    );
   };
 
   return {

@@ -218,6 +218,7 @@ Implements RFC 6902 JSON Patch specification with operations:
 3. **LLM Integration** (`openai_api_*`)
    - AI-powered content generation
    - Configurable endpoint and model
+   - **CRITICAL**: All LLM modifications go through the patch system for proper undo/redo functionality
 
 ### Configuration Sources (Priority Order)
 
@@ -298,6 +299,34 @@ page_hooks.onChangeElementField(elementId, "data/content", value, true);
 page_hooks.onChangeElementField(elementId, "widget", newWidget, false);
 ```
 
+### 5. LLM Integration with Patch System
+
+**CRITICAL**: LLM modifications must use the patch system to maintain undo/redo functionality.
+
+```typescript
+// Correct: LLM applies patches through the patch system
+const applyPatchesFromAI = (patches: JSONPatch): void => {
+  patches.forEach((patchOp) => {
+    if (patchOp.op === "remove") {
+      page_hooks.onPatchPage("remove", patchOp.path, undefined);
+    } else if (patchOp.op === "add" || patchOp.op === "replace") {
+      page_hooks.onPatchPage(patchOp.op, patchOp.path, patchOp.value);
+    }
+  });
+};
+
+// Wrong: Direct page modification bypasses patch system
+page_hooks.setPage(modifiedPage); // Breaks undo/redo
+```
+
+**LLM Patch Processing:**
+
+- All AI-generated JSON Patch operations are applied through `page_hooks.onPatchPage()`
+- Operations are automatically batched by the patch system based on timing and characteristics
+- Only supported operations (`add`, `replace`, `remove`) are processed
+- Unsupported operations (`move`, `copy`, `test`) are logged as warnings
+- Each AI response is treated as a logical unit for undo/redo purposes
+
 ## Web Component Integration
 
 ### Usage
@@ -355,6 +384,9 @@ src/
 - Test undo/redo after any state management changes
 - Follow the existing component prop patterns
 - Use TypeScript interfaces for type safety
+- **For LLM operations**: Always use `page_hooks.onPatchPage()` for applying AI-generated patches
+- **For LLM operations**: Filter out unsupported patch operations (`move`, `copy`, `test`)
+- **For LLM operations**: Log warnings for unsupported operations instead of failing silently
 
 ### DON'T:
 
@@ -363,6 +395,8 @@ src/
 - Create side effects outside the hook system
 - Ignore the batching system for rapid changes
 - Break the immutable state principle
+- **For LLM operations**: Use `page_hooks.setPage()` directly with modified pages
+- **For LLM operations**: Apply patches directly without going through the patch system
 
 ### Critical Functions to Always Use:
 
@@ -372,5 +406,29 @@ src/
 - `page_hooks.onMoveElement()`
 - `page_hooks.onDeleteElement()`
 - `page_hooks.onUpdatePage()`
+- **For LLM operations**: `page_hooks.onPatchPage()` for applying AI-generated patches
+
+### LLM-Specific Integration Pattern:
+
+```typescript
+// Correct LLM integration pattern
+const applyPatchesFromAI = (patches: JSONPatch): void => {
+  const supportedPatches = patches.filter((patchOp) => {
+    return (
+      patchOp.op === "add" ||
+      patchOp.op === "replace" ||
+      patchOp.op === "remove"
+    );
+  });
+
+  supportedPatches.forEach((patchOp) => {
+    if (patchOp.op === "remove") {
+      page_hooks.onPatchPage("remove", patchOp.path, undefined);
+    } else {
+      page_hooks.onPatchPage(patchOp.op, patchOp.path, patchOp.value);
+    }
+  });
+};
+```
 
 This architecture ensures data consistency, enables powerful undo/redo functionality, and maintains the integrity of the editing experience across all interaction modes.
