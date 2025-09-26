@@ -25,16 +25,39 @@ interface EditorProps {
   preview_url?: string;
 }
 
+const is_text_input = (element: Element | null) => {
+  if (!element) {
+    return false;
+  }
+  return (
+    element.tagName === "INPUT" ||
+    element.tagName === "TEXTAREA" ||
+    element.contentEditable === "true"
+  );
+};
+
 export const Editor = ({ path, preview_url }: EditorProps) => {
   const page_hooks = usePage(path);
   const editor_hooks = useEditor();
 
   useEffect(() => {
     const copy_handler = (e: ClipboardEvent) => {
+      // Check if focus is on a text input or textarea
+      if (is_text_input(document.activeElement)) {
+        // Allow default copy behavior for text inputs
+        return;
+      }
+
       e.preventDefault();
       editor_hooks.copyCurrentElement(page_hooks);
     };
     const paste_handler = (e: ClipboardEvent) => {
+      // Check if focus is on a text input or textarea
+      if (is_text_input(document.activeElement)) {
+        // Allow default paste behavior for text inputs
+        return;
+      }
+
       e.preventDefault();
       editor_hooks.pasteElementAfter(page_hooks);
     };
