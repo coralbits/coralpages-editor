@@ -198,6 +198,8 @@ export const FormFieldTextarea = ({
   onChange,
   className,
   label_props,
+  onEnter,
+  onEscape,
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} {...label_props}>
@@ -207,6 +209,18 @@ export const FormFieldTextarea = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={10}
+        onKeyDown={(e) => {
+          // on shift enter, call onEnter
+          if (e.shiftKey && e.key === "Enter") {
+            onEnter?.();
+          }
+          if (e.ctrlKey && e.key === "Enter") {
+            onEnter?.();
+          }
+          if (e.key === "Escape") {
+            onEscape?.();
+          }
+        }}
       />
     </FormLabel>
   );

@@ -14,6 +14,7 @@ import { Page } from "app/types";
 import { selectFile } from "app/utils/file";
 import Icon from "app/components/Icon";
 import { useLLM } from "app/hooks/llm";
+import { llm_prompt_dialog } from "./sidebars/LLMPrompt";
 
 interface TopBarProps {
   page_hooks: PageHooks;
@@ -47,7 +48,9 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           aria-label={i18n("AI Assistant")}
           title={i18n("AI Assistant")}
           onClick={async () => {
-            const question = prompt("What would you like me to help you with?");
+            const question = await llm_prompt_dialog(
+              i18n("What would you like me to help you with?")
+            );
             if (question) {
               await llm_hooks.askAI(question);
             }
