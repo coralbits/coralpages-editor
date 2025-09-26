@@ -52,6 +52,9 @@ import {
   faUndo,
   faRedo,
   faEllipsisH,
+  faDesktop,
+  faTablet,
+  faMobile,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -112,6 +115,9 @@ const iconMap: Record<string, any> = {
   undo: faUndo,
   redo: faRedo,
   ellipsisH: faEllipsisH,
+  mobile: faMobile,
+  tablet: faTablet,
+  desktop: faDesktop,
 };
 
 // Helper function to get icon with fallback

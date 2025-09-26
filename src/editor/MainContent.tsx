@@ -121,20 +121,35 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
       className="relative flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center"
       id="main-content"
     >
-      <div className="absolute top-3 right-3">
+      <div className="absolute top-3 right-3 flex flex-row gap-0 bg-gray-700 rounded-md p-1">
         <button
-          className="bg-gray-700 border-amber-300 p-2 rounded-md hover:bg-amber-600 hover:cursor-pointer"
+          className="sidebar-button h-10 hover:cursor-pointer z-10"
+          onClick={() => {
+            editor_hooks.setWidth(412);
+          }}
+          title={i18n("Mobile")}
+        >
+          <Icon name="mobile" />
+        </button>
+        <button
+          className="sidebar-button h-10 hover:cursor-pointer z-10"
+          onClick={() => {
+            editor_hooks.setWidth(768);
+          }}
+          title={i18n("Tablet")}
+        >
+          <Icon name="tablet" />
+        </button>
+        <button
+          className="sidebar-button h-10 hover:cursor-pointer z-10"
           onClick={() => {
             let max_width =
               document.getElementById("main-content")?.clientWidth;
-            if (max_width !== editor_hooks.width) {
-              editor_hooks.setWidth(max_width ?? 800);
-            } else {
-              editor_hooks.setWidth(DEFAULT_WIDTH);
-            }
+            editor_hooks.setWidth(max_width ? max_width : 1920);
           }}
+          title={i18n("Desktop")}
         >
-          <Icon name="full_screen" />
+          <Icon name="desktop" />
         </button>
       </div>
       <div
