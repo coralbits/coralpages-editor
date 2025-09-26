@@ -116,10 +116,6 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
     );
   }, [url, page_hooks.page_gen, fetch_page]);
 
-  const highlight_id = editor_hooks.showHighlightedElements
-    ? editor_hooks.selectedElementId || ""
-    : "";
-
   return (
     <div
       className="relative flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center"
@@ -147,7 +143,7 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
       >
         {React.createElement("page-preview", {
           data: previewData ? JSON.stringify(previewData) : "",
-          "highlight-id": highlight_id,
+          "highlight-id": editor_hooks.selectedElementId,
           "hover-id": editor_hooks.hoveredElementId || "",
           "highlight-elements": editor_hooks.showHighlightedElements
             ? "true"

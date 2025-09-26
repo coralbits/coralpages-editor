@@ -118,20 +118,17 @@ div.show-highlighted-elements#_preview_element_ [id] {
   }
 
   private highlightElement(elementId: string | undefined) {
-    // Remove previous highlight
-    if (this.highlightId_) {
-      const element = this.shadowRoot?.querySelector(`#${this.highlightId_}`);
-      if (element) {
-        (element as HTMLElement).style.outline = "none";
-        (element as HTMLElement).classList.remove("visible");
-      }
-    }
-
     this.highlightId_ = elementId;
 
+    const selected_area_element = this.selected_area_element_;
+    if (!selected_area_element) {
+      console.log("No selected area element");
+      return;
+    }
     // Apply new highlight
     if (!elementId) {
       console.log("No element id to highlight");
+      selected_area_element.classList.remove("visible");
       return;
     }
     const element = this.shadowRoot?.querySelector(`#${elementId}`);
@@ -139,11 +136,14 @@ div.show-highlighted-elements#_preview_element_ [id] {
       console.log("No element to highlight");
       return;
     }
-    const selected_area_element = this.selected_area_element_;
-    if (!selected_area_element) {
-      console.log("No selected area element");
-      return;
-    }
+    // Check we are in the area, if not scroll into it. At this.root_ level.
+    // Make it work even if the selected_area_element is not visible
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "start",
+    });
+
     const preview_element = this.root_;
     if (!preview_element) {
       console.log("No preview element");
@@ -156,27 +156,26 @@ div.show-highlighted-elements#_preview_element_ [id] {
     const preview_pos = preview_element.getBoundingClientRect();
     const element_pos = element.getBoundingClientRect();
     const element_style = getComputedStyle(element);
-    const element_margins_width =
-      remove_px(element_style.marginLeft) +
-      remove_px(element_style.marginRight) -
-      4;
-    const element_margins_height =
-      remove_px(element_style.marginTop) +
-      remove_px(element_style.marginBottom) -
-      4;
+    const element_margins_left = remove_px(element_style.marginLeft);
+    const element_margins_right = remove_px(element_style.marginRight);
+    const element_margins_top = remove_px(element_style.marginTop);
+    const element_margins_bottom = remove_px(element_style.marginBottom);
 
-    selected_area_element.style.top = element_pos.top - preview_pos.top + "px";
-    selected_area_element.style.left =
-      element_pos.left - preview_pos.left + "px";
+    const new_top = element_pos.top - preview_pos.top - element_margins_top;
+    const new_left = element_pos.left - preview_pos.left - element_margins_left;
+    const new_width =
+      element_pos.width + element_margins_left + element_margins_right - 4;
+    const new_height =
+      element_pos.height + element_margins_top + element_margins_bottom - 4;
 
-    selected_area_element.style.width =
-      element_pos.width + element_margins_width + "px";
-    selected_area_element.style.height =
-      element_pos.height + element_margins_height + "px";
+    selected_area_element.style.top = new_top + "px";
+    selected_area_element.style.left = new_left + "px";
+    selected_area_element.style.width = new_width + "px";
+    selected_area_element.style.height = new_height + "px";
 
-    selected_area_element.classList.add("visible");
-
-    console.log("element_margins_width", selected_area_element.style);
+    if (this.highlightElements_) {
+      selected_area_element.classList.add("visible");
+    }
   }
 
   private hoverElement(elementId: string | undefined) {
