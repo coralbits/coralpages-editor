@@ -15,6 +15,8 @@ import { selectFile } from "app/utils/file";
 import Icon from "app/components/Icon";
 import { useLLM } from "app/hooks/llm";
 import { llm_prompt_dialog } from "./sidebars/LLMPrompt";
+import { useMemo } from "react";
+import settings from "app/settings";
 
 interface TopBarProps {
   page_hooks: PageHooks;
@@ -23,6 +25,23 @@ interface TopBarProps {
 
 const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
   const llm_hooks = useLLM(page_hooks);
+
+  const is_llm_enabled = useMemo(() => {
+    return (
+      settings.openai_api_key &&
+      settings.openai_api_endpoint &&
+      settings.openai_model
+    );
+  }, [
+    settings.openai_api_key,
+    settings.openai_api_endpoint,
+    settings.openai_model,
+  ]);
+  console.log([
+    settings.openai_api_key,
+    settings.openai_api_endpoint,
+    settings.openai_model,
+  ]);
 
   return (
     <nav className="topbar">
@@ -41,23 +60,25 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
       </div>
 
       <div className="topbar-actions">
-        <button
-          className={`topbar-icon-btn ${
-            llm_hooks.isAIModeEnabled ? "ai-button-active" : ""
-          }`}
-          aria-label={i18n("AI Assistant")}
-          title={i18n("AI Assistant")}
-          onClick={async () => {
-            const question = await llm_prompt_dialog(
-              i18n("What would you like me to help you with?")
-            );
-            if (question) {
-              await llm_hooks.askAI(question);
-            }
-          }}
-        >
-          <Icon name="ai" className="ai-icon" />
-        </button>
+        {is_llm_enabled && (
+          <button
+            className={`topbar-icon-btn ${
+              llm_hooks.isAIModeEnabled ? "ai-button-active" : ""
+            }`}
+            aria-label={i18n("AI Assistant")}
+            title={i18n("AI Assistant")}
+            onClick={async () => {
+              const question = await llm_prompt_dialog(
+                i18n("What would you like me to help you with?")
+              );
+              if (question) {
+                await llm_hooks.askAI(question);
+              }
+            }}
+          >
+            <Icon name="ai" className="ai-icon" />
+          </button>
+        )}
         <button
           className="topbar-icon-btn"
           aria-label={i18n("Undo")}
