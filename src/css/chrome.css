@@ -385,6 +385,9 @@
 
   .dialog {
     @apply flex items-center justify-center m-auto rounded-lg overflow-hidden shadow-lg;
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--bg-tertiary);
     z-index: 1000;
     position: fixed;
     top: 50%;
@@ -404,7 +407,8 @@
     transform: translate(-50%, 0%);
   }
   .dialog-title {
-    @apply text-2xl font-bold bg-amber-500 p-4 text-white;
+    @apply text-2xl font-bold p-5;
+    background: var(--color-primary);
   }
   .dialog-body {
     @apply p-4;
