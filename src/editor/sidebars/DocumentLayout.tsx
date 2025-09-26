@@ -198,7 +198,8 @@ export const DocumentItem = ({
         is_selected ? "sidebar-button-active" : ""
       } ${className || ""}`}
       style={{ width: "calc(100% - 2rem )" }}
-      onClick={() => {
+      onClick={(el) => {
+        el.preventDefault();
         editor_hooks.setSelectedElementId(child.id);
         if (editor_hooks.selectedTab === "add")
           editor_hooks.setSelectedTab("edit");
