@@ -456,6 +456,7 @@
 
 /* Page preview must align with html view */
 page-preview {
+  position: relative;
   margin: 0;
   padding: 0;
   background: white;

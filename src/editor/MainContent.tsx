@@ -149,6 +149,10 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
           data: previewData ? JSON.stringify(previewData) : "",
           "highlight-id": highlight_id,
           "hover-id": editor_hooks.hoveredElementId || "",
+          "highlight-elements": editor_hooks.showHighlightedElements
+            ? "true"
+            : "false",
+          "highlight-color": "var(--color-primary)",
         })}
       </div>
     </div>
