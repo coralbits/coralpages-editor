@@ -1,0 +1,35 @@
+# Coralpages Editor - LLM Development Rules
+
+## Critical Requirements
+
+- ALWAYS read docs/ARCHITECTURE.md before making any changes
+- ALL state changes MUST go through the patch system (see PageHooks interface)
+- NEVER modify page/element objects directly
+- ALWAYS use provided hook functions: onChangeElement, onChangeElementField, etc.
+- Test undo/redo functionality after any state management changes
+
+## Key Files to Understand
+
+- src/hooks/page.tsx - Main state management
+- src/hooks/actions.tsx - Undo/redo system
+- src/utils/jsonPatch.ts - Patch operations
+- src/types.ts - Core data structures
+
+## Common Patterns
+
+- Use page_hooks.onChangeElementField(elementId, "field", value) for modifications
+- Enable batching for rapid changes: onChangeElementField(id, field, value, true)
+- Components receive {page_hooks, editor_hooks} as props
+- Element IDs are used for all element operations
+
+## Forbidden Patterns
+
+- element.data.content = newValue // Breaks undo/redo
+- page.children.push(newElement) // Bypasses patch system
+- Direct object mutation of any kind
+
+## Testing Requirements
+
+- Verify undo/redo works after state changes
+- Test with multiple rapid changes (batching)
+- Ensure patch operations are logged correctly
