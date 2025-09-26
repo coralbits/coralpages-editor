@@ -74,33 +74,38 @@ export const PageList = () => {
 };
 
 const usePages = (page: number) => {
-  const [pages, setPages] = useState<PageResult>({ count: 0, results: [] });
+  const [pages, setPages] = useState<ResultI<PageInfo>>({
+    count: 0,
+    results: [],
+  });
 
   const fetch_pages = async (page: number) => {
+    console.log("fetch_pages", page);
     const page_size = 10;
     const offset = (page - 1) * page_size;
     const res = await fetch(
       `${settings.cp_url}/page/?offset=${offset}&limit=${page_size}`
     );
     const data = await res.json();
-    setPages(data);
+
+    const pagestr: ResultI<PageInfo> = {
+      count: data.count,
+      results: data.results.map((page: PageInfo) => {
+        return {
+          data: page,
+          row: [page.store, page.id, page.title],
+        };
+      }),
+    };
+
+    setPages(pagestr);
   };
 
   useEffect(() => {
     fetch_pages(page);
   }, [page]);
 
-  const pagestr = {
-    count: pages.count,
-    results: pages.results.map((page) => {
-      return {
-        data: page,
-        row: [page.store, page.id, page.title],
-      };
-    }),
-  };
-
-  return pagestr;
+  return pages;
 };
 
 const addPage = async (): Promise<boolean> => {
