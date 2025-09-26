@@ -37,11 +37,6 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
     settings.openai_api_endpoint,
     settings.openai_model,
   ]);
-  console.log([
-    settings.openai_api_key,
-    settings.openai_api_endpoint,
-    settings.openai_model,
-  ]);
 
   return (
     <nav className="topbar">

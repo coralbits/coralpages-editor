@@ -30,7 +30,7 @@ class PagePreviewWebComponent extends HTMLElement {
       "Coralpages Editor Web Component by Coralbits SL. Under AGPLv3 License. https://www.coralbits.com/coralpages/"
     );
     console.log(
-      "Beware of embdding this component in non AGPLv3 pages as thay may be a breach of license."
+      "Beware of embedding this component in non AGPLv3 pages as thay may be a breach of license."
     );
   }
 
@@ -105,7 +105,7 @@ div.show-highlighted-elements#_preview_element_ [id] {
   }
 
   private updateData() {
-    console.log("PagePreviewWebComponent updateData");
+    // console.log("PagePreviewWebComponent updateData");
     const dataAttr = this.getAttribute("data");
     if (dataAttr) {
       try {
@@ -123,18 +123,18 @@ div.show-highlighted-elements#_preview_element_ [id] {
 
     const selected_area_element = this.selected_area_element_;
     if (!selected_area_element) {
-      console.log("No selected area element");
+      // console.log("No selected area element");
       return;
     }
     // Apply new highlight
     if (!elementId) {
-      console.log("No element id to highlight");
+      // console.log("No element id to highlight");
       selected_area_element.classList.remove("visible");
       return;
     }
     const element = this.shadowRoot?.querySelector(`#${elementId}`);
     if (!element) {
-      console.log("No element to highlight");
+      // console.log("No element to highlight");
       return;
     }
     // Check we are in the area, if not scroll into it. At this.root_ level.
