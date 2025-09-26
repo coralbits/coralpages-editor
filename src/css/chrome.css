@@ -462,4 +462,7 @@ page-preview {
   background: white;
   color: black;
   font-family: system-ui;
+  display: block;
+  width: 100%;
+  height: 100%;
 }

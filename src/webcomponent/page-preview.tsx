@@ -21,6 +21,7 @@ class PagePreviewWebComponent extends HTMLElement {
   private highlightColor_: string = "red";
   private selected_area_element_: HTMLElement | null = null;
   private root_: HTMLElement | null = null;
+  private preview_element_: HTMLElement | null = null; // this is where the preview is actually rendered
 
   constructor() {
     super();
@@ -61,12 +62,18 @@ class PagePreviewWebComponent extends HTMLElement {
           break;
         case "highlight-elements":
           this.highlightElements_ = newValue === "true";
-          this.highlightElements();
+          if (this.highlightElements_) {
+            this.preview_element_?.classList.add("show-highlighted-elements");
+          } else {
+            this.preview_element_?.classList.remove(
+              "show-highlighted-elements"
+            );
+            this.selected_area_element_?.classList.remove("visible");
+          }
           break;
         case "highlight-color":
           this.highlightColor_ = newValue || "var(--color-primary)";
           this.highlightElement(this.highlightId_);
-          this.highlightElements();
           break;
       }
     }
@@ -90,6 +97,9 @@ class PagePreviewWebComponent extends HTMLElement {
 #_selection_area_element_.visible {
   opacity: 1;
 }
+div.show-highlighted-elements#_preview_element_ [id] {
+  outline: 1px dashed ${this.highlightColor_};
+}
 `;
   }
 
@@ -104,18 +114,6 @@ class PagePreviewWebComponent extends HTMLElement {
       } catch (error) {
         console.error("Failed to parse data attribute:", error);
       }
-    }
-  }
-
-  /** Highlight all components with a dashed outline */
-  private highlightElements() {
-    const elements = this.shadowRoot?.querySelectorAll("[id]");
-    if (elements) {
-      elements.forEach((element) => {
-        (
-          element as HTMLElement
-        ).style.outline = `1px dashed ${this.highlightColor_}`;
-      });
     }
   }
 
@@ -208,37 +206,46 @@ class PagePreviewWebComponent extends HTMLElement {
     return element;
   }
 
-  private render() {
+  private render_root() {
     if (!this.shadowRoot) return;
     this.root_ = this.shadowRoot.host as HTMLElement | null;
+    if (!this.root_) return;
+
+    const style_element_ = document.createElement("style");
+    style_element_.textContent = this.getCSS();
+    this.shadowRoot.appendChild(style_element_);
+
+    this.selected_area_element_ = this.createSelectionAreaElement();
+    this.selected_area_element_.style.width = "100%";
+    this.selected_area_element_.style.height = "100%";
+    this.shadowRoot.appendChild(this.selected_area_element_);
+
+    this.preview_element_ = document.createElement("div");
+    if (this.highlightElements_) {
+      this.preview_element_.classList.add("show-highlighted-elements");
+    }
+    this.preview_element_.id = "_preview_element_";
+    this.shadowRoot.appendChild(this.preview_element_);
+  }
+
+  private render() {
+    if (!this.shadowRoot) return;
+    if (!this.preview_element_) {
+      this.render_root();
+    }
+    if (!this.preview_element_) return;
 
     // get current scroll position
     const scrollTop = this.root_?.scrollTop || window.scrollY;
     const scrollLeft = this.root_?.scrollLeft || window.scrollX;
 
     const html = `
-        <style>${this.getCSS()}</style>
         ${this.currentData?.head || ""}
         ${this.currentData?.html || "Loading..."}
     `;
 
     // Clear previous content
-    this.shadowRoot.innerHTML = html;
-
-    // Create new selection area element
-    this.selected_area_element_ = this.createSelectionAreaElement();
-    this.shadowRoot.appendChild(this.selected_area_element_);
-
-    // Reapply highlighting and hovering after content loads
-    if (this.highlightElements_) {
-      this.highlightElements();
-    }
-    if (this.highlightId_) {
-      this.highlightElement(this.highlightId_);
-    }
-    if (this.hoverId_) {
-      this.hoverElement(this.hoverId_);
-    }
+    this.preview_element_.innerHTML = html;
 
     // restore scroll position
     this.root_?.scrollTo(scrollLeft, scrollTop);
