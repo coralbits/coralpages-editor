@@ -62,7 +62,7 @@ export class PatchLogger {
       });
       this.currentPosition++;
     }
-    console.log("Operations list", this.operations);
+    // console.log("Operations list", this.operations);
   }
 
   // Check if a patch can be batched with the previous one

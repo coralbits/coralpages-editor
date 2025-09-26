@@ -189,7 +189,7 @@ const usePage = (path: string): PageHooks => {
     );
     const newPage = applyPatchToPage(currentPageRef.current, patch);
     setPage(newPage);
-    console.log("New page", newPage);
+    // console.log("New page", newPage);
     updateUndoRedoState();
   };
 
