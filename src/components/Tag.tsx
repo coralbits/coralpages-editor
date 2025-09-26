@@ -49,7 +49,7 @@ const get_color_for_tag = (tag: string) => {
   const hashed_index = Math.abs(hash_string(tag)) % COLORS.length;
   const color = COLORS[hashed_index];
   COLOR_CACHE[tag] = color;
-  console.log(tag, color, hashed_index);
+  // console.log(tag, color, hashed_index);
 
   return color;
 };

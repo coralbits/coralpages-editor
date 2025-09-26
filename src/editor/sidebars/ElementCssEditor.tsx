@@ -502,14 +502,14 @@ const EditStyleField = ({
 
   const handleChange = (value: string) => {
     if (style.transform) {
-      console.log("transforming value", value);
-      console.log(
-        "style.transform.forwards(value)",
-        style.transform.forwards(value)
-      );
+      // console.log("transforming value", value);
+      // console.log(
+      //   "style.transform.forwards(value)",
+      //   style.transform.forwards(value)
+      // );
       setValue(style.transform.forwards(value));
     } else {
-      console.log("not transforming value", value);
+      // console.log("not transforming value", value);
       setValue(value);
     }
   };
