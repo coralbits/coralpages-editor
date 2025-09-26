@@ -87,7 +87,7 @@ export const MessageStack = () => {
   }, []);
 
   return (
-    <div className="fixed top-6 left-center">
+    <div className="fixed top-6 left-center z-index-10000">
       {messages.map((message) => (
         <Message key={message.id} message={message} className="mb-6" />
       ))}

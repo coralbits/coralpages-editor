@@ -64,6 +64,7 @@ class PagePreviewWebComponent extends HTMLElement {
           this.highlightElements_ = newValue === "true";
           if (this.highlightElements_) {
             this.preview_element_?.classList.add("show-highlighted-elements");
+            this.selected_area_element_?.classList.add("visible");
           } else {
             this.preview_element_?.classList.remove(
               "show-highlighted-elements"
