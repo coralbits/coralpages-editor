@@ -29,7 +29,15 @@ class PageEditorWebComponent extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["path", "css"];
+    return [
+      "path",
+      "css",
+      "cp_url",
+      "am_url",
+      "openai_api_key",
+      "openai_api_endpoint",
+      "openai_model",
+    ];
   }
 
   connectedCallback() {
@@ -47,6 +55,21 @@ class PageEditorWebComponent extends HTMLElement {
     if ((name === "path" || name === "css") && oldValue !== newValue) {
       console.log("attributeChangedCallback", name, oldValue, newValue);
       this.render();
+    }
+    if (name === "cp_url") {
+      localStorage.setItem("cp_url", newValue);
+    }
+    if (name === "am_url") {
+      localStorage.setItem("am_url", newValue);
+    }
+    if (name === "openai_api_key") {
+      localStorage.setItem("openai_api_key", newValue);
+    }
+    if (name === "openai_api_endpoint") {
+      localStorage.setItem("openai_api_endpoint", newValue);
+    }
+    if (name === "openai_model") {
+      localStorage.setItem("openai_model", newValue);
     }
   }
 

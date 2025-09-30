@@ -37,6 +37,7 @@ export interface FormFieldProps {
   value: string;
   placeholder?: string;
   options?: { label: string; value: string; icon?: string }[];
+  description?: string;
   onChange: (value: string) => void;
   label_props?: Partial<FormLabelProps>;
   onEnter?: () => void; // called when enter is pressed
@@ -200,9 +201,11 @@ export const FormFieldTextarea = ({
   label_props,
   onEnter,
   onEscape,
+  description,
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} {...label_props}>
+      <div className="flex flex-row">{description}</div>
       <textarea
         className="border border-primary rounded-md p-2"
         name={name}

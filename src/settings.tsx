@@ -35,7 +35,8 @@ export const get_settings = () => {
 
   const cp_url =
     get_qs("cp_url") || getLocalStorageItem("cp_url") || "/cp/api/v1";
-  const am_url = get_qs("am_url") || getLocalStorageItem("am_url") || "/api/v1";
+  const am_url =
+    get_qs("am_url") || getLocalStorageItem("am_url") || "/am/api/v1";
   const openai_api_key =
     get_qs("openai_api_key") || getLocalStorageItem("openai_api_key") || "";
   const openai_model =
