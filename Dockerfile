@@ -8,7 +8,7 @@ COPY ./.parcelrc /app/.parcelrc
 COPY ./.postcssrc /app/.postcssrc
 COPY ./package-lock.json /app/package-lock.json
 COPY ./package.json /app/package.json
-COPY ./parcel.config.js /app/parcel.config.js
+# COPY ./parcel.config.js /app/parcel.config.js
 COPY ./tsconfig.json /app/tsconfig.json
 
 # Install nodejs dependencies
