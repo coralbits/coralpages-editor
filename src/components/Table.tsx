@@ -61,12 +61,17 @@ export interface TableBasicProps {
 
 export const TableBasic = ({ columns, rows, onClick }: TableBasicProps) => {
   return (
-    <div className="table">
-      <table className="table-auto">
+    <div className="w-full overflow-auto rounded-md border border-slate-300 dark:border-slate-600">
+      <table className="table-auto w-full">
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column}>{column}</th>
+              <th
+                key={column}
+                className="px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100"
+              >
+                {column}
+              </th>
             ))}
           </tr>
         </thead>
@@ -75,10 +80,19 @@ export const TableBasic = ({ columns, rows, onClick }: TableBasicProps) => {
             <tr
               key={idx}
               onClick={() => onClick?.(row, idx)}
-              className={onClick ? "clickable" : ""}
+              className={
+                onClick
+                  ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200"
+                  : ""
+              }
             >
               {row.map((cell, idx) => (
-                <td key={idx}>{cell}</td>
+                <td
+                  key={idx}
+                  className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                >
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
@@ -112,8 +126,10 @@ export const Pagination = ({
         {pages.map((p) => (
           <button
             key={p}
-            className={`px-4 py-2 border border-gray-500 rounded-md  hover:bg-blue-600 cursor-pointer ${
-              page === p ? "bg-blue-500 text-white" : ""
+            className={`px-4 py-2 border border-slate-500 dark:border-slate-400 rounded-md hover:bg-blue-600 dark:hover:bg-blue-500 cursor-pointer transition-colors duration-200 ${
+              page === p
+                ? "bg-blue-500 dark:bg-blue-600 text-white"
+                : "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:text-white"
             }`}
             onClick={() => setPage(p)}
           >

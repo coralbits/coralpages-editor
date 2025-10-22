@@ -84,7 +84,7 @@ const ElementEditor = ({
       <div className="p-2 flex justify-end gap-2">
         <div className="flex-1"></div>
         <button
-          className="sidebar-button p-2 flex-0  "
+          className="inline-flex flex-col items-center justify-center w-full cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm p-2 flex-0"
           title={i18n("Copy to clipboard (Ctrl+C)")}
           onClick={() => {
             editor_hooks.copyCurrentElement(page_hooks);
@@ -93,14 +93,14 @@ const ElementEditor = ({
           <Icon name="copy" />
         </button>
         <button
-          className="sidebar-button p-2 flex-0"
+          className="inline-flex flex-col items-center justify-center w-full cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm p-2 flex-0"
           title={i18n("Paste from clipboard over current element")}
           onClick={() => editor_hooks.pasteElement(page_hooks)}
         >
           <Icon name="paste" />
         </button>
         <button
-          className="sidebar-button p-2 flex-0"
+          className="inline-flex flex-col items-center justify-center w-full cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm p-2 flex-0"
           title={i18n("Paste after current element (Ctrl+V)")}
           onClick={() => editor_hooks.pasteElementAfter(page_hooks)}
         >

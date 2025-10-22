@@ -48,7 +48,7 @@ const SearchSelect = (props: SearchSelectProps) => {
         ref={search_ref}
         type="text"
         placeholder={props.placeholder}
-        className="border border-primary rounded-md p-2 w-full text-white bg-secondary"
+        className="border border-slate-300 dark:border-slate-600 rounded-md p-2 w-full text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-400 dark:hover:border-slate-500"
         value={props.search}
         onChange={(e) => {
           props.setSearch?.(e.target.value);
@@ -93,9 +93,17 @@ const SearchSelect = (props: SearchSelectProps) => {
         {props.options.map((option, idx) => (
           <button
             key={option.value}
-            className={`flex justify-between flex-row gap-2 items-center hover:bg-focus rounded-md p-2 w-full cursor-pointer 
-            ${props.selected.includes(option.value) ? "bg-focus" : ""} 
-            ${props.highlight_idx === idx ? "border-focus border" : ""}
+            className={`flex justify-between flex-row gap-2 items-center hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white rounded-md p-2 w-full cursor-pointer transition-colors duration-200 
+            ${
+              props.selected.includes(option.value)
+                ? "bg-blue-600 dark:bg-blue-500 text-white"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+            } 
+            ${
+              props.highlight_idx === idx
+                ? "ring-2 ring-blue-500 dark:ring-blue-400 border border-blue-500 dark:border-blue-400"
+                : ""
+            }
             `}
             onClick={() => {
               toggle_option(option.value);
@@ -168,7 +176,7 @@ export const SearchSelectButton = (props: SearchSelectButtonProps) => {
             }}
           />
           <div
-            className="fixed z-10 bg-secondary p-2 shadow rounded-md max-h-[300px] overflow-hidden text-white border border-primary"
+            className="fixed z-10 bg-slate-50 dark:bg-slate-800 p-2 shadow-lg rounded-md max-h-[300px] overflow-hidden text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-600"
             style={{
               top: popover_position.top,
               left: popover_position.left,

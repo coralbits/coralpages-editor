@@ -12,9 +12,14 @@ import { i18n } from "../utils/i18n";
 
 const BottomBar = () => {
   return (
-    <div className="bottombar">
-      <div className="bottombar-title flex flex-row w-full">
-        <a href="https://www.coralbits.com">{i18n("(C) Coralbits SL 2025")}</a>
+    <div className="bar h-8 justify-between px-4 border-t border-slate-200 dark:border-slate-700">
+      <div className="text-sm font-semibold tracking-tight text-slate-900 dark:text-slate-100 flex flex-row w-full">
+        <a
+          href="https://www.coralbits.com"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          (C) Coralbits SL 2025
+        </a>
         <div className="flex-1" />
         {i18n("This software is licensed under the AGPLv3 license")}
         {" | "}
@@ -22,7 +27,7 @@ const BottomBar = () => {
           href="https://www.gnu.org/licenses/agpl-3.0.en.html"
           target="license-agpl3"
           rel="noopener noreferrer"
-          className="underline"
+          className="underline text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
         >
           {i18n("Read your rights")}
         </a>

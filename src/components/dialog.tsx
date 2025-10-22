@@ -144,18 +144,20 @@ const Dialog = ({ dialog }: { dialog: DialogState }) => {
   return (
     <dialog
       key={dialog.id}
-      className="dialog"
+      className="flex items-center justify-center m-auto rounded-lg overflow-hidden shadow-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 z-50 fixed top-1/2 left-1/2 transform -translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-300 ease-in-out"
       id={dialog.id}
       ref={dialog_ref}
       open={false}
     >
       <div className="dialog-content">
-        <h2 className="dialog-title">{dialog.title}</h2>
-        <div className="dialog-body">{dialog.content(dstate)}</div>
-        <div className="dialog-buttons">
+        <h2 className="text-2xl font-bold p-5 bg-blue-600 dark:bg-blue-500 text-white">
+          {dialog.title}
+        </h2>
+        <div className="p-4">{dialog.content(dstate)}</div>
+        <div className="flex justify-end gap-2 p-4">
           {dialog.buttons?.map((button) => (
             <button
-              className="btn btn-primary cursor-pointer"
+              className="btn cursor-pointer"
               key={button.label}
               onClick={() => button.onClick(dstate)}
             >
