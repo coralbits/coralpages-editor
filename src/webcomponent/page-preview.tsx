@@ -8,6 +8,8 @@
  * https://www.coralbits.com/coralpages/
  */
 
+import "../agplv3-notice";
+
 interface PagePreviewData {
   head: string;
   html: string;
@@ -26,12 +28,6 @@ class PagePreviewWebComponent extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    console.log(
-      "Coralpages Editor Web Component by Coralbits SL. Under AGPLv3 License. https://www.coralbits.com/coralpages/"
-    );
-    console.log(
-      "Beware of embedding this component in non AGPLv3 pages as thay may be a breach of license."
-    );
   }
 
   static get observedAttributes() {

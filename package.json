@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "prebuild": "scripts/generate-version.sh",
+    "prestart": "scripts/generate-version.sh",
     "start": "parcel src/index.html src/webcomponent/editor.tsx --port 8005",
     "build": "parcel build src/index.html src/webcomponent/editor.tsx --dist-dir ./dist/",
     "test": "vitest"

@@ -4,6 +4,7 @@ WORKDIR /app
 
 # Copy dependency files
 COPY ./src/ /app/src/
+COPY ./scripts/ /app/scripts/
 COPY ./.parcelrc /app/.parcelrc
 COPY ./.postcssrc /app/.postcssrc
 COPY ./package-lock.json /app/package-lock.json

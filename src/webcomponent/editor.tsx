@@ -8,14 +8,15 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import React from "react";
-import { createRoot, Root } from "react-dom/client";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import { Editor } from "../editor/Editor";
+import React from "react";
+import { createRoot, Root } from "react-dom/client";
 import { DialogStack } from "../components/dialog";
 import { MessageStack } from "../components/messages";
+import { Editor } from "../editor/Editor";
 import "../index.css";
+import "../agplv3-notice";
 
 // Prevent FontAwesome from adding its CSS since we did it manually above
 config.autoAddCss = false;
