@@ -82,14 +82,14 @@ export const TableBasic = ({ columns, rows, onClick }: TableBasicProps) => {
               onClick={() => onClick?.(row, idx)}
               className={
                 onClick
-                  ? "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors duration-200"
+                  ? "cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors duration-200"
                   : ""
               }
             >
               {row.map((cell, idx) => (
                 <td
                   key={idx}
-                  className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                 >
                   {cell}
                 </td>

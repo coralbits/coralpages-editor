@@ -36,7 +36,7 @@ export const PageList = () => {
   const [gen, setGen] = useState(0);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-900 dark:bg-slate-950">
+    <div className="h-screen w-screen flex flex-col bg-slate-50 dark:bg-slate-950">
       <div className="bar h-16 min-h-16">
         <div className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 px-4">
           {i18n("Page List")}
@@ -48,7 +48,7 @@ export const PageList = () => {
             key={gen}
             columns={[i18n("Store"), i18n("Id"), i18n("Title")]}
             data_hook={(page: number) => usePages(page)}
-            onClick={(row, idx) => {
+            onClick={(row: PageInfo, idx) => {
               setPath(`${row.store}/${row.id}`);
             }}
             paginator={(props) => (

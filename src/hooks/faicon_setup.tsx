@@ -56,6 +56,7 @@ import {
   faTablet,
   faMobile,
   faWandMagicSparkles,
+  faCircleHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 
 // from brands
@@ -120,6 +121,7 @@ const iconMap: Record<string, any> = {
   tablet: faTablet,
   desktop: faDesktop,
   ai: faWandMagicSparkles,
+  theme: faCircleHalfStroke,
 };
 
 // Helper function to get icon with fallback
