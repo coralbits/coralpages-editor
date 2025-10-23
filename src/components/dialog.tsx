@@ -8,7 +8,7 @@
  * https://www.coralbits.com/coralpages/
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 let dialog_id = 0;
 
@@ -72,13 +72,16 @@ export const dialog = async <T = any,>(props: DialogProps<T>) => {
     const state: DialogState = {
       id,
       close: () => {
+        // This will be overridden by the Dialog component to handle transitions
         remove_from_stack(id);
       },
       reject: (reject_state?: T) => {
+        // This will be overridden by the Dialog component to handle transitions
         remove_from_stack(id);
         reject((reject_state as T) || state.state);
       },
       accept: (accept_state?: T) => {
+        // This will be overridden by the Dialog component to handle transitions
         remove_from_stack(id);
         resolve((accept_state as T) || state.state);
       },
@@ -87,6 +90,7 @@ export const dialog = async <T = any,>(props: DialogProps<T>) => {
       content: props.content,
       title: props.title,
       buttons: props.buttons,
+      // Store original promise functions for transition handling
     };
     add_to_stack(state);
   });
@@ -110,7 +114,42 @@ export const DialogStack = () => {
 
 const Dialog = ({ dialog }: { dialog: DialogState }) => {
   const [state, setState] = useState(dialog.state);
+  const [isVisible, setIsVisible] = useState(false);
   const dialog_ref = useRef<HTMLDialogElement>(null);
+
+  // Override close functions to handle transitions
+  const closeWithTransition = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => {
+      remove_from_stack(dialog.id);
+    }, 300); // Match transition duration
+  }, [dialog.id]);
+
+  const rejectWithTransition = useCallback(
+    (reject_state?: any) => {
+      setIsVisible(false);
+      setTimeout(() => {
+        // Access the original promise reject function
+        const dialogWithPromise = dialog as any;
+        dialogWithPromise.reject(reject_state);
+        remove_from_stack(dialog.id);
+      }, 300);
+    },
+    [dialog.id, dialog]
+  );
+
+  const acceptWithTransition = useCallback(
+    (accept_state?: any) => {
+      setIsVisible(false);
+      setTimeout(() => {
+        // Access the original promise resolve function
+        const dialogWithPromise = dialog as any;
+        dialogWithPromise.accept(accept_state);
+        remove_from_stack(dialog.id);
+      }, 300);
+    },
+    [dialog.id, dialog]
+  );
 
   // close when clicking outside
   useEffect(() => {
@@ -119,12 +158,15 @@ const Dialog = ({ dialog }: { dialog: DialogState }) => {
 
     dialog_el.showModal();
 
+    // Trigger visibility transition after modal is shown
+    setTimeout(() => {
+      setIsVisible(true);
+    }, 10);
+
     const close_dialog = (e: MouseEvent) => {
       if (e.target === dialog_el) {
-        setTimeout(() => {
-          dialog.close();
-        }, 1000);
-        dialog_el.close();
+        closeWithTransition();
+        // dialog_el.close();
       }
     };
 
@@ -132,7 +174,7 @@ const Dialog = ({ dialog }: { dialog: DialogState }) => {
     return () => {
       dialog_el.removeEventListener("click", close_dialog);
     };
-  }, [dialog_ref]);
+  }, [dialog_ref, closeWithTransition]);
 
   dialog.state = state; // dirty, but works
 
@@ -140,32 +182,50 @@ const Dialog = ({ dialog }: { dialog: DialogState }) => {
     ...dialog,
     state,
     setState,
+    close: closeWithTransition,
+    reject: rejectWithTransition,
+    accept: acceptWithTransition,
   };
   return (
-    <dialog
-      key={dialog.id}
-      className="flex items-center justify-center m-auto rounded-lg overflow-hidden shadow-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 z-50 fixed top-1/2 left-1/2 transform -translate-x-full -translate-y-1/2 opacity-0 transition-opacity duration-300 ease-in-out"
-      id={dialog.id}
-      ref={dialog_ref}
-      open={false}
-    >
-      <div className="dialog-content">
-        <h2 className="text-2xl font-bold p-5 bg-blue-600 dark:bg-blue-500 text-white">
-          {dialog.title}
-        </h2>
-        <div className="p-4">{dialog.content(dstate)}</div>
-        <div className="flex justify-end gap-2 p-4">
-          {dialog.buttons?.map((button) => (
-            <button
-              className="btn cursor-pointer"
-              key={button.label}
-              onClick={() => button.onClick(dstate)}
-            >
-              {button.label}
-            </button>
-          ))}
+    <>
+      <style>
+        {`
+          dialog[data-dialog-id="${dialog.id}"]::backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 300ms ease-in-out;
+            opacity: ${isVisible ? 1 : 0};
+          }
+        `}
+      </style>
+      <dialog
+        key={dialog.id}
+        data-dialog-id={dialog.id}
+        className={`grid place-items-center m-auto rounded-lg overflow-hidden shadow-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700 z-50 transition-opacity duration-300 ease-in-out ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+        id={dialog.id}
+        ref={dialog_ref}
+      >
+        <div>
+          <h2 className="text-2xl font-bold p-5 bg-blue-600 dark:bg-blue-500 text-white">
+            {dialog.title}
+          </h2>
+          <div className="p-4">{dialog.content(dstate)}</div>
+          <div className="flex justify-end gap-2 p-4">
+            {dialog.buttons?.map((button) => (
+              <button
+                className="btn cursor-pointer"
+                key={button.label}
+                onClick={() => {
+                  button.onClick(dstate);
+                }}
+              >
+                {button.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-    </dialog>
+      </dialog>
+    </>
   );
 };
