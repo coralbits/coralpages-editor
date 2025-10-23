@@ -112,6 +112,10 @@ class PagePreviewWebComponent extends HTMLElement {
 div.show-highlighted-elements#_preview_element_ [id] {
   outline: 1px dashed ${this.highlightColor_};
 }
+:host > .dark {
+  background-color: #000;
+  color: #fff;
+}
 `;
   }
 
