@@ -207,7 +207,7 @@ const Dialog = ({ dialog }: { dialog: DialogState }) => {
         ref={dialog_ref}
       >
         <div>
-          <h2 className="text-2xl font-bold p-5 bg-blue-600 dark:bg-blue-500 text-white">
+          <h2 className="text-2xl font-bold p-5 bar text-white">
             {dialog.title}
           </h2>
           <div className="p-4">{dialog.content(dstate)}</div>
