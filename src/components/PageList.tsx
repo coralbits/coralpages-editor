@@ -36,13 +36,13 @@ export const PageList = () => {
   const [gen, setGen] = useState(0);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-50 dark:bg-slate-950">
-      <div className="bar h-16 min-h-16">
-        <div className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100 px-4">
+    <div className="overflow-hidden h-screen w-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+      <div className="bar h-16 min-h-16 items-center flex">
+        <div className="text-xl align-center flex font-semibold tracking-tight text-slate-100 px-4">
           {i18n("Page List")}
         </div>
       </div>
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto">
         <Container className="flex-1 py-10 w-full">
           <Table
             key={gen}
