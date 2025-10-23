@@ -11,35 +11,28 @@
 /* Dark theme variant is selected at html.dark */
 @custom-variant dark (&:where(.dark, .dark *));
 
-html.dark {
-  --color-primary: #e03131; /* Blue */
-  --color-secondary: #ff7a00; /* Slate */
-}
-
-html {
-  --color-primary: #e03131;
-  --color-secondary: #ff7a00;
+:root,
+:host {
+  --color-primary-default: #c92a2a;
+  --color-secondary-default: var(--color-orange-600);
 }
 
 @layer components {
   /* Bar component - for topbar and bottombar */
   .bar {
-    background-color: var(--color-red-600);
-    background-color: var(--color-primary);
+    background-color: var(--color-primary, var(--color-primary-default));
   }
 
   /* Button components */
   .btn {
     @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-transparent;
-    background-color: var(--color-red-600);
-    background-color: var(--color-primary);
+    background-color: var(--color-primary, var(--color-primary-default));
     color: white;
   }
 
   .btn:hover {
     @apply transform -translate-y-0.5 shadow-md;
-    background-color: var(--color-red-600);
-    background-color: var(--color-primary);
+    background-color: var(--color-primary, var(--color-primary-default));
     opacity: 0.9;
   }
 

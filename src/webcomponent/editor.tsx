@@ -15,6 +15,7 @@ import { createRoot, Root } from "react-dom/client";
 import { DialogStack } from "../components/dialog";
 import { MessageStack } from "../components/messages";
 import { Editor } from "../editor/Editor";
+import { DocumentThemeObserver } from "../utils/documentThemeObserver";
 import "../index.css";
 import "../agplv3-notice";
 
@@ -23,6 +24,7 @@ config.autoAddCss = false;
 
 class PageEditorWebComponent extends HTMLElement {
   private reactRoot: Root | null = null;
+  private themeObserver: DocumentThemeObserver | null = null;
 
   constructor() {
     super();
@@ -38,6 +40,7 @@ class PageEditorWebComponent extends HTMLElement {
       "openai_api_key",
       "openai_api_endpoint",
       "openai_model",
+      "theme",
     ];
   }
 
@@ -49,6 +52,10 @@ class PageEditorWebComponent extends HTMLElement {
     if (this.reactRoot) {
       this.reactRoot.unmount();
       this.reactRoot = null;
+    }
+    if (this.themeObserver) {
+      this.themeObserver.destroy();
+      this.themeObserver = null;
     }
   }
 
@@ -72,6 +79,9 @@ class PageEditorWebComponent extends HTMLElement {
     if (name === "openai_model") {
       localStorage.setItem("openai_model", newValue);
     }
+    if (name === "theme" && this.themeObserver) {
+      this.themeObserver.setThemeAttribute(newValue);
+    }
   }
 
   private async render() {
@@ -89,6 +99,17 @@ class PageEditorWebComponent extends HTMLElement {
     // Clear previous content
     this.shadowRoot!.innerHTML = "";
     this.shadowRoot!.appendChild(container);
+
+    // Set up theme observer
+    if (this.themeObserver) {
+      this.themeObserver.destroy();
+    }
+    this.themeObserver = new DocumentThemeObserver(
+      container,
+      this.getAttribute("theme") || undefined
+    );
+    this.themeObserver.applyInitialTheme();
+    this.themeObserver.startWatching();
 
     // Load CSS if provided
     if (cssUrl) {

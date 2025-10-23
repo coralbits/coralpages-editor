@@ -8,6 +8,7 @@
  * https://www.coralbits.com/coralpages/
  */
 
+import { DocumentThemeObserver } from "../utils/documentThemeObserver";
 import "../agplv3-notice";
 
 interface PagePreviewData {
@@ -24,6 +25,7 @@ class PagePreviewWebComponent extends HTMLElement {
   private selected_area_element_: HTMLElement | null = null;
   private root_: HTMLElement | null = null;
   private preview_element_: HTMLElement | null = null; // this is where the preview is actually rendered
+  private themeObserver: DocumentThemeObserver | null = null;
 
   constructor() {
     super();
@@ -37,11 +39,19 @@ class PagePreviewWebComponent extends HTMLElement {
       "hover-id",
       "highlight-elements",
       "highlight-color",
+      "theme",
     ];
   }
 
   connectedCallback() {
     this.render();
+  }
+
+  disconnectedCallback() {
+    if (this.themeObserver) {
+      this.themeObserver.destroy();
+      this.themeObserver = null;
+    }
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -71,6 +81,11 @@ class PagePreviewWebComponent extends HTMLElement {
         case "highlight-color":
           this.highlightColor_ = newValue || "var(--color-primary)";
           this.highlightElement(this.highlightId_);
+          break;
+        case "theme":
+          if (this.themeObserver) {
+            this.themeObserver.setThemeAttribute(newValue);
+          }
           break;
       }
     }
@@ -221,7 +236,19 @@ div.show-highlighted-elements#_preview_element_ [id] {
       this.preview_element_.classList.add("show-highlighted-elements");
     }
     this.preview_element_.id = "_preview_element_";
+
     this.shadowRoot.appendChild(this.preview_element_);
+
+    // Set up theme observer
+    if (this.themeObserver) {
+      this.themeObserver.destroy();
+    }
+    this.themeObserver = new DocumentThemeObserver(
+      this.preview_element_,
+      this.getAttribute("theme") || undefined
+    );
+    this.themeObserver.applyInitialTheme();
+    this.themeObserver.startWatching();
   }
 
   private render() {
@@ -275,6 +302,16 @@ div.show-highlighted-elements#_preview_element_ [id] {
   // Setter for hover-id attribute
   set hoverId(value: string) {
     this.setAttribute("hover-id", value);
+  }
+
+  // Getter for theme attribute
+  get theme(): string {
+    return this.getAttribute("theme") || "";
+  }
+
+  // Setter for theme attribute
+  set theme(value: string) {
+    this.setAttribute("theme", value);
   }
 }
 
