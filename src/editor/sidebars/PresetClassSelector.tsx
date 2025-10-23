@@ -45,7 +45,7 @@ const PresetClassSelector = ({
       <div className="flex flex-row gap-2">
         <h3 className="p-2 font-bold flex-1">{i18n("Preset classes")}</h3>
         <SearchSelectButton
-          className="p-2 btn-secondary rounded-md border-primary border-1 hover:bg-focus px-2 m-2 text-xs cursor-pointer"
+          className="p-2 btn-secondary rounded-md border border-slate-300 dark:border-slate-600 hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white px-2 m-2 text-xs cursor-pointer transition-colors duration-200"
           options={sorted_classes.map((c) => ({
             label: c.description,
             value: c.name,
@@ -66,7 +66,7 @@ const PresetClassSelector = ({
       </div>
 
       <div className="p-2">
-        <div className="border border-primary rounded-md w-full">
+        <div className="border border-slate-300 dark:border-slate-600 rounded-md w-full">
           {selected_element.classes?.map((clss: string) => (
             <div className="flex flex-row gap-2 items-center" key={clss}>
               <div className="grow">
@@ -78,7 +78,7 @@ const PresetClassSelector = ({
                 </div>
               </div>
               <button
-                className="btn-secondary hover:bg-focus px-2 rounded-md m-2 cursor-pointer"
+                className="btn-secondary hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white px-2 rounded-md m-2 cursor-pointer transition-colors duration-200"
                 onClick={() => {
                   const updatedClasses = selected_element.classes?.filter(
                     (c) => c !== clss

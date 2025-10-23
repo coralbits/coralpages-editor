@@ -91,7 +91,7 @@ const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
       style={isFloating ? { top: position.top, left: position.left } : {}}
     >
       <div
-        className={`flex flex-row p-2 bg-gray-700 shadow-md items-center ${
+        className={`flex flex-row p-2 items-center ${
           isFloating ? "cursor-move" : ""
         } ${headerClassName}`}
         onMouseDown={handleHeaderMouseDown}
@@ -100,7 +100,7 @@ const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
         {buttons.map((button, idx) => (
           <button
             key={idx}
-            className={`bg-gray-700 border-focus p-2 rounded-md hover:bg-focus hover:cursor-pointer ${
+            className={`border border-blue-500 dark:border-blue-400 p-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white hover:cursor-pointer transition-colors duration-200 ${
               button.className || ""
             }`}
             onClick={button.onClick}
@@ -109,7 +109,7 @@ const DraggableSidebar: React.FC<DraggableSidebarProps> = ({
           </button>
         ))}
         <button
-          className="bg-gray-700 border-focus p-2 rounded-md hover:bg-focus hover:cursor-pointer"
+          className=" border border-blue-500 dark:border-blue-400 p-2 rounded-md hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white hover:cursor-pointer transition-colors duration-200"
           onClick={onToggleFloating}
         >
           {isFloating ? <Icon name="pin_open" /> : <Icon name="pin" />}

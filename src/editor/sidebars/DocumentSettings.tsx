@@ -102,7 +102,7 @@ const DocumentSettings = ({
               onClick={() =>
                 page_hooks?.onPatchPage("remove", `/head/link/${idx}`, null)
               }
-              className="border border-primary rounded-md p-2 max-w-10 max-h-10 pointer-cursor ml-2 mt-7 bg-gray-700 hover:bg-focus cursor-pointer"
+              className="border border-slate-300 dark:border-slate-600 rounded-md p-2 max-w-10 max-h-10 cursor-pointer ml-2 mt-7 bg-slate-700 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white cursor-pointer transition-colors duration-200"
             >
               <Icon name="trash" />
             </button>

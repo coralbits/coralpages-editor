@@ -118,12 +118,12 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
 
   return (
     <div
-      className="relative flex flex-col h-full flex-1 bg-gray-800 m-auto items-center justify-center"
+      className="relative flex flex-col h-full flex-1 m-auto items-center justify-center bg-slate-800"
       id="main-content"
     >
-      <div className="absolute top-3 right-3 flex flex-row gap-0 bg-gray-700 rounded-md p-1">
+      <div className="absolute top-3 right-3 flex flex-row gap-0 rounded-md">
         <button
-          className="sidebar-button h-10 hover:cursor-pointer z-10"
+          className="inline-flex flex-col px-2 items-center justify-center w-8 cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-tl-md rounded-bl-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm h-10 hover:cursor-pointer z-10"
           onClick={() => {
             editor_hooks.setWidth(412);
           }}
@@ -132,7 +132,7 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
           <Icon name="mobile" />
         </button>
         <button
-          className="sidebar-button h-10 hover:cursor-pointer z-10"
+          className="inline-flex flex-col px-2 items-center justify-center w-8 cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm h-10 hover:cursor-pointer z-10"
           onClick={() => {
             editor_hooks.setWidth(768);
           }}
@@ -141,7 +141,7 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
           <Icon name="tablet" />
         </button>
         <button
-          className="sidebar-button h-10 hover:cursor-pointer z-10"
+          className="inline-flex flex-col px-2 items-center justify-center w-8 cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-tr-md rounded-br-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm h-10 hover:cursor-pointer z-10"
           onClick={() => {
             let max_width =
               document.getElementById("main-content")?.clientWidth;
@@ -154,7 +154,7 @@ const MainContent = ({ page_hooks, editor_hooks }: MainContentProps) => {
       </div>
       <div
         style={{ width: editor_hooks.width }}
-        className="bg-white h-full overflow-scroll @container"
+        className="bg-white dark:bg-white h-full overflow-scroll @container"
       >
         {React.createElement("page-preview", {
           data: previewData ? JSON.stringify(previewData) : "",

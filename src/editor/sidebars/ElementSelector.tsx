@@ -65,7 +65,7 @@ const ElementSelectorItem = (props: {
       role="button"
       tabIndex={0}
       key={props.element.name}
-      className="flex flex-col gap-2 items-center justify-center w-[calc(33%-1rem)] aspect-square sidebar-button shadow-md m-auto cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      className="gap-2 items-center justify-center w-[calc(33%-1rem)] aspect-square inline-flex flex-col cursor-pointer transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm shadow-md m-auto focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       title={props.element.description}
       draggable
       onDragStart={(e) => {

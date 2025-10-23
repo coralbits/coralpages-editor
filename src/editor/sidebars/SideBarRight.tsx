@@ -34,14 +34,16 @@ const SideBarRight = ({ page_hooks, editor_hooks }: SideBarRightProps) => {
       }}
       position={position}
       onPositionChange={setPosition}
-      className="sidebar sidebar-right"
-      contentClassName="sidebar-content"
-      headerClassName="sidebar-title"
+      className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-l border-slate-200 dark:border-slate-700"
+      contentClassName="flex-1 overflow-auto"
+      headerClassName="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100"
       buttons={[
         {
           label: i18n("Show highlighted elements"),
           icon: "highlight",
-          className: editor_hooks.showHighlightedElements ? "bg-focus" : "",
+          className: editor_hooks.showHighlightedElements
+            ? "bg-blue-600 dark:bg-blue-500 text-white"
+            : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400",
           onClick: () =>
             editor_hooks.setShowHighlightedElements(
               !editor_hooks.showHighlightedElements

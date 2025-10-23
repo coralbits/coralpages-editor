@@ -39,9 +39,9 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
   ]);
 
   return (
-    <nav className="topbar">
+    <nav className="bar h-16 min-h-16 flex">
       <button
-        className="topbar-icon-btn"
+        className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
         onClick={() => {
           history.back();
         }}
@@ -49,15 +49,23 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
         <Icon name="left" />
       </button>
       <div className="flex items-center gap-2 flex-1 px-4">
-        <span className="topbar-title">
+        <span className="text-xl font-semibold tracking-tight text-slate-50">
           {i18n("Coralpages Editor")} - {page_hooks.page?.title}
         </span>
       </div>
 
-      <div className="topbar-actions">
+      <div className="flex items-center">
+        <button
+          className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
+          onClick={() => {
+            document.documentElement.classList.toggle("dark");
+          }}
+        >
+          <Icon name="theme" />
+        </button>
         {is_llm_enabled && (
           <button
-            className={`topbar-icon-btn ${
+            className={`h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0 ${
               llm_hooks.isAIModeEnabled ? "ai-button-active" : ""
             }`}
             aria-label={i18n("AI Assistant")}
@@ -75,7 +83,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           </button>
         )}
         <button
-          className="topbar-icon-btn"
+          className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
           aria-label={i18n("Undo")}
           title={i18n("Undo (Ctrl+Z)")}
           onClick={page_hooks.undo}
@@ -84,7 +92,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           <Icon name="undo" />
         </button>
         <button
-          className="topbar-icon-btn"
+          className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
           aria-label={i18n("Redo")}
           title={i18n("Redo (Ctrl+Y)")}
           onClick={page_hooks.redo}
@@ -93,7 +101,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           <Icon name="redo" />
         </button>
         <button
-          className="topbar-icon-btn"
+          className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
           aria-label={i18n("Download")}
           title={i18n("Download")}
           onClick={() => {
@@ -106,7 +114,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           <Icon name="download" />
         </button>
         <button
-          className="topbar-icon-btn"
+          className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
           aria-label={i18n("Upload")}
           title={i18n("Upload")}
           onClick={() => upload_page(page_hooks.setPage)}
@@ -116,7 +124,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
 
         {preview_url && (
           <a
-            className="topbar-icon-btn flex items-center justify-center"
+            className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0 flex items-center justify-center"
             aria-label={i18n("View page")}
             title={i18n("View page")}
             href={preview_url}
@@ -127,7 +135,7 @@ const TopBar = ({ page_hooks, preview_url }: TopBarProps) => {
           </a>
         )}
         <button
-          className="topbar-icon-btn"
+          className="h-16 w-16 transition-all duration-200 cursor-pointer text-slate-50 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-slate-400 dark:disabled:text-slate-600 disabled:border-0 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-600 disabled:hover:bg-transparent disabled:focus:ring-0"
           aria-label={i18n("Save")}
           title={i18n("Save")}
           onClick={page_hooks.savePage}

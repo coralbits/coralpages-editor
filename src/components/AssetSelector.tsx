@@ -35,7 +35,7 @@ export const AssetSelectorButton = ({
   return (
     <>
       <button
-        className={`p-2 rounded-md bg-focus hover:bg-focus cursor-pointer flex flex-row gap-2 text-white items-center ${className} `}
+        className={`p-2 rounded-md bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 cursor-pointer flex flex-row gap-2 text-white items-center transition-colors duration-200 ${className} `}
         onClick={() => setIsOpen((open) => !open)}
       >
         <div className="flex flex-row gap-2 items-center justify-center min-w-16 min-h-16">
@@ -88,7 +88,7 @@ const AssetSelector = ({ onChange, value }: AssetSelectorProps) => {
         ))}
       </div>
       <div className="flex flex-row gap-2 justify-center m-4">
-        <button className="p-2 rounded-md bg-focus hover:bg-focus cursor-pointer text-white">
+        <button className="p-2 rounded-md bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 cursor-pointer text-white transition-colors duration-200">
           {i18n("Create Bucket")}
         </button>
       </div>
@@ -122,7 +122,7 @@ const BucketThumbnailList = ({
         />
       ))}
       <button
-        className="p-2 rounded-md bg-gray-500 hover:bg-focus cursor-pointer text-white w-20 h-20 m-2"
+        className="p-2 rounded-md bg-slate-500 dark:bg-slate-600 hover:bg-blue-600 dark:hover:bg-blue-500 cursor-pointer text-white w-20 h-20 m-2 transition-colors duration-200"
         onClick={async () => {
           await addAsset(bucket.name);
           await refreshThumbnailList();
@@ -153,10 +153,10 @@ const Thumbnail = ({
 }) => {
   return (
     <div
-      className={`flex flex-col gap-2 justify-between w-20 h-20 border-1 border-focus rounded-md p-2 overflow-hidden  hover:bg-focus transition-all duration-300 cursor-pointer ${
+      className={`flex flex-col gap-2 justify-between w-20 h-20 border border-blue-500 dark:border-blue-400 rounded-md p-2 overflow-hidden hover:bg-blue-600 dark:hover:bg-blue-500 transition-all duration-300 cursor-pointer ${
         value === thumbnail.url
-          ? "bg-focus border-focus border-2"
-          : "border-1 bg-gray-700"
+          ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 border-2"
+          : "border border-slate-300 dark:border-slate-600 bg-slate-700 dark:bg-slate-800"
       } ${className}`}
       style={{
         backgroundImage: `linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.0)), url(${thumbnail.url})`,

@@ -443,7 +443,7 @@ export const ElementCssEditor = ({
       <div className="flex flex-row m-2 mb-8">
         <input
           type="text"
-          className="border border-primary rounded-md p-2 self-stretch w-full"
+          className="border border-slate-300 dark:border-slate-600 rounded-md p-2 self-stretch w-full bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-400 dark:hover:border-slate-500"
           placeholder={i18n("Filter styles...")}
           value={search}
           onChange={(e) => {

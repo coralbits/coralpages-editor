@@ -86,7 +86,7 @@ export const FormFieldDefault = ({
   return (
     <FormLabel label={label} className={className} {...label_props}>
       <input
-        className="border border-primary rounded-md p-2"
+        className="border border-slate-300 dark:border-slate-600 rounded-md p-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-400 dark:hover:border-slate-500"
         type={type}
         name={name}
         value={value}
@@ -124,7 +124,7 @@ export const FormFieldSelect = ({
     <FormLabel label={label} className={className} {...label_props}>
       <div className="flex flex-row">
         <select
-          className="border border-primary rounded-md p-2 flex-1 gap-2"
+          className="border border-slate-300 dark:border-slate-600 rounded-md p-2 flex-1 gap-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-400 dark:hover:border-slate-500"
           name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -138,7 +138,7 @@ export const FormFieldSelect = ({
         </select>
         {other_dialog && (
           <button
-            className="border border-primary rounded-md p-2 max-w-10 max-h-10 cursor-pointer ml-2"
+            className="border border-slate-300 dark:border-slate-600 rounded-md p-2 max-w-10 max-h-10 cursor-pointer ml-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500"
             onClick={() => other_dialog(value, onChange)}
           >
             <Icon name="ellipsisH" />
@@ -207,7 +207,7 @@ export const FormFieldTextarea = ({
     <FormLabel label={label} className={className} {...label_props}>
       <div className="flex flex-row">{description}</div>
       <textarea
-        className="border border-primary rounded-md p-2"
+        className="border border-slate-300 dark:border-slate-600 rounded-md p-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-400 dark:hover:border-slate-500"
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -241,14 +241,18 @@ export const FormFieldSelectButtons = ({
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} direction="row">
-      <div className="flex flex-row bg-gray-700 rounded-md shadow-2xs border-primary border-1 shadow-gray-400/25 overflow-hidden">
+      <div className="flex flex-row bg-slate-200 dark:bg-slate-700 rounded-md shadow-sm border border-slate-300 dark:border-slate-600 overflow-hidden">
         {options?.map((option, idx) => (
           <button
             key={option.value}
             value={option.value}
-            className={`px-2 cursor-pointer hover:bg-focus hover:text-focus ${
-              idx !== 0 ? "border-l border-primary" : ""
-            } ${value === option.value ? "bg-focus text-focus" : ""}`}
+            className={`px-2 cursor-pointer hover:bg-blue-600 dark:hover:bg-blue-500 hover:text-white transition-colors duration-200 ${
+              idx !== 0 ? "border-l border-slate-300 dark:border-slate-600" : ""
+            } ${
+              value === option.value
+                ? "bg-blue-600 dark:bg-blue-500 text-white"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+            }`}
             onClick={() => onChange(option.value)}
             title={option.label}
           >
@@ -268,7 +272,9 @@ export const FormFieldDescription = ({
 }: FormFieldProps) => {
   return (
     <FormLabel label={label} className={className} {...label_props}>
-      <div className="text-gray-400 text-sm">{placeholder}</div>
+      <div className="text-slate-500 dark:text-slate-400 text-sm">
+        {placeholder}
+      </div>
     </FormLabel>
   );
 };
@@ -287,7 +293,7 @@ export const FormFieldColor = ({
     <FormLabel label={label} className={className} {...label_props}>
       <div className="flex flex-row">
         <input
-          className="border border-primary rounded-md p-2 flex-1 h-10"
+          className="border border-slate-300 dark:border-slate-600 rounded-md p-2 flex-1 h-10 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-slate-400 dark:hover:border-slate-500"
           type={type}
           name={name}
           value={value}
@@ -295,7 +301,7 @@ export const FormFieldColor = ({
           placeholder={placeholder}
         />
         <button
-          className="border border-primary rounded-md p-2 max-w-10 max-h-10 pointer-cursor ml-2"
+          className="border border-slate-300 dark:border-slate-600 rounded-md p-2 max-w-10 max-h-10 cursor-pointer ml-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500"
           onClick={() => onChange("")}
         >
           <Icon name="trash" />

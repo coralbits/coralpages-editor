@@ -194,8 +194,10 @@ export const DocumentItem = ({
   return (
     <div
       role="button"
-      className={`sidebar-button focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${
-        is_selected ? "sidebar-button-active" : ""
+      className={`inline-flex flex-col px-2 items-start justify-center w-full cursor-pointer transition-all duration-200 800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-md hover:bg-white dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${
+        is_selected
+          ? "text-slate-900 shadow-md bg-white dark:bg-slate-700 dark:text-slate-50"
+          : "bg-slate-100 dark:bg-slate-800"
       } ${className || ""}`}
       style={{ width: "calc(100% - 2rem )" }}
       onClick={(el) => {
@@ -224,8 +226,10 @@ export const DocumentItem = ({
     >
       {child.widget}
       <span
-        className={`sidebar-button-text line-clamp-1 ${
-          is_selected ? "sidebar-button-text-active" : ""
+        className={`line-clamp-1 ${
+          is_selected
+            ? "text-slate-900 font-bold dark:text-slate-50"
+            : "text-slate-600 dark:text-slate-400"
         }`}
       >
         {preview_text(child)}

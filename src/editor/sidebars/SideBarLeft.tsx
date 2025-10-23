@@ -33,12 +33,12 @@ const SideBarLeft = (props: SideBarLeftProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full sidebar sidebar-left min-w-[350px] max-w-[350px]">
-      <div className="flex flex-row w-full sidebar-tabs min-h-16">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 min-w-[350px] max-w-[350px] border-r border-slate-200 dark:border-slate-700">
+      <div className="flex flex-row w-full min-h-16">
         <button
-          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none rounded-tl-md rounded-bl-md ${
+          className={`flex-1 cursor-pointer inline-flex flex-col items-center justify-center w-full transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-none rounded-tl-md rounded-bl-md hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm ${
             props.editor_hooks.selectedTab === "add"
-              ? "sidebar-button-active"
+              ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 text-slate-900 shadow-md"
               : ""
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("add")}
@@ -46,9 +46,9 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           <Icon name="plus" />
         </button>
         <button
-          className={`flex-1 cursor-pointer sidebar-button items-center justify-center rounded-none border border-y-0 border-gray-600 ${
+          className={`flex-1 cursor-pointer inline-flex flex-col items-center justify-center w-full transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-y-0 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-none hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm ${
             props.editor_hooks.selectedTab === "edit"
-              ? "sidebar-button-active"
+              ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 text-slate-900 shadow-md"
               : ""
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("edit")}
@@ -56,9 +56,9 @@ const SideBarLeft = (props: SideBarLeftProps) => {
           {title}
         </button>
         <button
-          className={`flex-1 cursor-pointer sidebar-button border-2 items-center justify-center rounded-none rounded-tr-md rounded-br-md ${
+          className={`flex-1 cursor-pointer inline-flex flex-col items-center justify-center w-full transition-all duration-200 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-none rounded-tr-md rounded-br-md hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-100 transform hover:-translate-y-0.5 hover:shadow-sm active:transform-none active:shadow-sm ${
             props.editor_hooks.selectedTab === "style"
-              ? "sidebar-button-active"
+              ? "bg-blue-600 dark:bg-blue-500 border-blue-600 dark:border-blue-500 text-slate-900 shadow-md"
               : ""
           }`}
           onClick={() => props.editor_hooks.setSelectedTab("style")}
